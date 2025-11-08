@@ -44,48 +44,16 @@ export const AuthAPI = {
     return api.post("/auth/login-citizen", data);
   },
 
-  // Worker
-  registerWorker: (data) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Worker registered (dummy)",
-            worker: {
-              _id: "worker-dummy-" + Date.now(),
-              ...data,
-            },
-          },
-        })
-      : api.post("/auth/register-worker", data),
+// ======================== WORKER ROUTES ========================
 
-  loginWorker: (data) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Login successful",
-            token: "dummy-token",
-            worker: dummyWorkers[0],
-          },
-        })
-      : api.post("/auth/login-worker", data),
+  registerWorker: async (data) => {
+    return api.post("/auth/register-worker", data);
+  },
 
-  // Admin
-  loginAdmin: (data) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Login successful",
-            token: "dummy-token",
-            role: "Local",
-            admin: dummyAdmins[0],
-          },
-        })
-      : api.post("/auth/login-admin", data),
-};
-
+  loginWorker: async (data) => {
+    return api.post("/auth/login-worker", data);
+  },
+}
 //
 // ======================== CITIZEN ROUTES ========================
 //

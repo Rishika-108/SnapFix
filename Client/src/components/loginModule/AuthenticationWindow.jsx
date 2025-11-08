@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ThoughtProcess from "../../assets/ThoughtProcess.svg";
 import AuthHeader from "./AuthHeader";
@@ -60,16 +60,12 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
             name: formData.name,
             email: formData.email,
             password: formData.password,
-            phone: "0000000000",
-            skills: ["General Work"],
-            latitude: 18.52,
-            longitude: 73.85,
+            phone: formData.phone,
+            skills: formData.skills.split(",").map(s => s.trim()),
+            latitude: parseFloat(formData.latitude),
+            longitude: parseFloat(formData.longitude),
           });
-        } else if (formData.role === "government") {
-          alert("🛑 Admin registration is restricted to backend.");
-          setLoading(false);
-          return;
-        }
+        } 
 
         const { data } = response;
         if (!data.success) throw new Error(data.message);
@@ -87,6 +83,32 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+  // Only fetch location if gigworker registration
+  if (authMode === "register" && formData.role === "gigworker") {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFormData((prev) => ({
+          ...prev,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        }));
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        alert(
+          "Unable to get your location. Please enable location services or try again."
+        );
+      },
+      { enableHighAccuracy: true }
+    );
+  }
+}, [authMode, formData.role]);
 
   return (
     <>
