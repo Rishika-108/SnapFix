@@ -1,4 +1,5 @@
 import Bid from "../models/bidModel.js"
+import Worker from "../models/gigWorkerModel.js"
 import Report from "../models/reportModel.js"
 import Task from "../models/taskAssignmentModel.js"
 
@@ -117,7 +118,73 @@ const approveBid = async (req, res) => {
         res.status(500).json({ success: false, message: "Could not approve Bid" })
     }
 }
+// Admin will release the payment after citizen verifies the issue to be successful
+// The gigworker walletBalance will be updated with his bid amount 
+const paymentRelease = async (req, res) => {
+   try {
+    //   const userId = req.user?._id
+    // if (!userId) {
+    //         return res.status(401).json({ success: false, message: "You are not authorised to view reports" })
+    //     }
+    const {id} = req.params // Task ID
+    
+    const task = await Task.findById(id).populate("reportId gigWorkerId")
+    if(!task) {
+        return res.status(404).json({success: false, message: "Task Not Found"})
+    }
+    if (!task.verifiedByCitizen || task.status !== "Completed") {
+      return res.status(400).json({
+        success: false,
+        message: "Payment cannot be released until the task is verified and completed.",
+      });
+    }
 
-// Payment Release after posititvely verified by the citizen
+    if (!task.reportId || !task.gigWorkerId) {
+  return res.status(400).json({ success: false, message: "Task references missing or invalid" });
+}
 
-export { viewAllReports, viewReportWithBid, approveBid }
+
+    if (task.paymentStatus === "Released") {
+      return res.status(400).json({ success: false, message: "Payment already released." });
+    }
+
+    // Find the corresponding bid to get bidAmount
+    const bid = await Bid.findOne({
+      reportId: task.reportId._id,
+      gigWorkerId: task.gigWorkerId._id,
+      status: "Approved",
+    });
+
+    if (!bid) {
+      return res.status(404).json({ success: false, message: "Approved bid not found for this task" });
+    }
+
+    const bidAmount = bid.bidAmount || 0;
+
+    // Update the worker's wallet balance
+    const worker = await Worker.findById(task.gigWorkerId._id);
+    if (!worker) {
+      return res.status(404).json({ success: false, message: "Worker not found" });
+    }
+
+    worker.walletBalance += bidAmount;
+    await worker.save();
+
+    // Update the task payment status
+    task.paymentStatus = "Released";
+    await task.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Payment of ₹${bidAmount} released to ${worker.name}`,
+      updatedWallet: worker.walletBalance,
+      task,
+    });
+   } catch (error) {
+     console.log(error.message)
+     res.status(500).json({success: false, message: "Could not stimulate payment release"})
+   }
+}
+
+
+export { viewAllReports, viewReportWithBid, approveBid, paymentRelease}
