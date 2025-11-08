@@ -45,7 +45,6 @@ export const AuthAPI = {
   },
 
 // ======================== WORKER ROUTES ========================
-
   registerWorker: async (data) => {
     return api.post("/auth/register-worker", data);
   },
@@ -54,9 +53,8 @@ export const AuthAPI = {
     return api.post("/auth/login-worker", data);
   },
 }
-//
+
 // ======================== CITIZEN ROUTES ========================
-//
 export const CitizenAPI = {
   createReport: (data) =>
     USE_DUMMY
