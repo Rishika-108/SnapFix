@@ -15,7 +15,7 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
     name: "",
     email: "",
     password: "",
-    role: "citizen", // citizen | gigworker | government
+    role: "citizen", // citizen | gigworker 
   });
   const [loading, setLoading] = useState(false);
 
@@ -40,16 +40,13 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
             email: formData.email,
             password: formData.password,
           });
-        } else if (formData.role === "government") {
-          response = await AuthAPI.loginAdmin({
-            email: formData.email,
-            password: formData.password,
-          });
         }
 
         const { data } = response;
         if (!data.success) throw new Error(data.message);
-        saveAuthData(data.token, data.user || data.worker || data.admin);
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user || data.worker));
+
         alert(`✅ Logged in successfully as ${formData.role}!`);
       } else {
         if (formData.role === "citizen") {

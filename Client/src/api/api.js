@@ -10,10 +10,10 @@ import {
 } from "./dummyData";
 
 // 🌍 Toggle between dummy mode and real API
-const USE_DUMMY = true; // 🔁 set false to connect to backend
+const USE_DUMMY = false; // 🔁 set false to connect to backend
 
 // 🌍 Base URL (backend)
-const BASE_URL = "https://snapfix-backend.onrender.com/api";
+const BASE_URL = "http://localhost:3000/api";
 
 // 🧩 Axios instance
 const api = axios.create({
@@ -34,32 +34,13 @@ api.interceptors.request.use((config) => {
 // ======================== AUTH ROUTES ========================
 //
 export const AuthAPI = {
-  // Citizen
+  // RegisterCitizen 
   registerCitizen: async (data) => {
-    if (USE_DUMMY) {
-      const user = { ...data, _id: "citizen-dummy-" + Date.now() };
-      dummyCitizens.push(user);
-      return { data: { success: true, message: "Citizen registered", user } };
-    }
     return api.post("/auth/register-citizen", data);
   },
 
+  //LoginCitizen
   loginCitizen: async (data) => {
-    if (USE_DUMMY) {
-      const found = DummyAPI.loginCitizen(data.email, data.password);
-      if (found) {
-        return {
-          data: {
-            success: true,
-            message: "Login successful",
-            token: "dummy-token",
-            user: found,
-          },
-        };
-      } else {
-        return { data: { success: false, message: "Invalid credentials" } };
-      }
-    }
     return api.post("/auth/login-citizen", data);
   },
 
