@@ -56,22 +56,27 @@ export const AuthAPI = {
 
 // ======================== CITIZEN ROUTES ========================
 export const CitizenAPI = {
-  createReport: (data) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Report raised successfully (dummy)",
-            report: {
-              _id: "rep-dummy-" + Date.now(),
-              status: "Pending",
-              upvotes: 0,
-              createdBy: dummyCitizens[0],
-              ...data,
-            },
-          },
-        })
-      : api.post("/report/create-report", data),
+//   createReport: (data) =>
+//     USE_DUMMY
+//       ? Promise.resolve({
+//           data: {
+//             success: true,
+//             message: "Report raised successfully (dummy)",
+//             report: {
+//               _id: "rep-dummy-" + Date.now(),
+//               status: "Pending",
+//               upvotes: 0,
+//               createdBy: dummyCitizens[0],
+//               ...data,
+//             },
+//           },
+//         })
+//       : api.post("/report/create-report", data),
+
+   createReport: (data) => 
+    api.post("/report/create-report", data),
+
+
 
   upvoteReport: (reportId) =>
     USE_DUMMY
@@ -105,17 +110,19 @@ export const CitizenAPI = {
         })
       : api.get("/report/location"),
 
-  getMyReports: () =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Successfully fetched user reports (dummy)",
-            reports: dummyReports,
-            upvotedReports: [dummyReports[1]],
-          },
-        })
-      : api.get("/user/my-reports"),
+  // getMyReports: () =>
+  //   USE_DUMMY
+  //     ? Promise.resolve({
+  //         data: {
+  //           success: true,
+  //           message: "Successfully fetched user reports (dummy)",
+  //           reports: dummyReports,
+  //           upvotedReports: [dummyReports[1]],
+  //         },
+  //       })
+  //     : api.get("/user/my-reports"),
+  getMyReports: () => api.get("/user/my-reports"),
+
 };
 
 //
