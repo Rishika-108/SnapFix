@@ -1,13 +1,15 @@
-import GigworkerNavbar from "../components/generalComponents/Navbars/GigworkerNavbar"
+import CitizenNavbar from "../components/generalComponents/Navbars/CitizenNavbar"
 import ReportFeed from "../components/reportingModule/ReportFeed"
+// import MyBids from "../components/biddingModule/MyBids"
+import GigworkerNavbar from "../components/generalComponents/Navbars/GigworkerNavbar"
 
-const CitizenPage = () => {
+const GigWorkerPage = () => {
 
   return (
-    <div>
-    <GigworkerNavbar/>
-    <ReportFeed/>
-    </div>
+  <>
+      <GigworkerNavbar/>
+      <ReportFeed/>
+  </>
   );
 };
-export default CitizenPage;
+export default GigWorkerPage;

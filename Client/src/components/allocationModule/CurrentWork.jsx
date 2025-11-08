@@ -3,12 +3,11 @@ import { CitizenAPI } from "../../api/api"; // ✅ Integrated hybrid API
 import IssueGrid from "../issueGridModule/IssueGrid";
 import CitizenNavbar from "../generalComponents/Navbars/CitizenNavbar"
 
-const ReportFeed = () => {
+const CurrentWork = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // ✅ Fetch reports from API (dummy or live)
-  // currently dummy on integration create a param user with value "citizen", "gigworker"& "government" and fetch the reports accordingly 
   useEffect(() => {
     const fetchReports = async () => {
       try {
@@ -33,7 +32,7 @@ const ReportFeed = () => {
 
   return (
     <>
-    {/* to be updated as per user parameter */}
+      <CitizenNavbar/>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 px-4 md:px-8 transition-all">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-semibold text-gray-800 dark:text-white mb-6">
@@ -65,4 +64,4 @@ const ReportFeed = () => {
   );
 };
 
-export default ReportFeed;
+export default CurrentWork;
