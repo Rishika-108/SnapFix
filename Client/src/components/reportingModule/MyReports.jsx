@@ -33,7 +33,7 @@ const MyReports = () => {
     <>
     <CitizenNavbar/>
     <div className="flex justify-center items-center min-h-screen bg-linear-to-br from-gray-900 to-black text-white p-6">
-      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 w-full max-w-xl shadow-2xl">
+      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 w-full  shadow-2xl">
         <h1 className="text-3xl font-bold mb-6 text-center m-5">My Reports</h1>
         <p className="text-sm text-gray-300 mb-8 text-center">
           View and manage all the issues you’ve reported so far.

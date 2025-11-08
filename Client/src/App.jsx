@@ -3,11 +3,12 @@ import "./App.css";
 
 import HomePage from "./page/HomePage";
 import CitizenPage from "./page/CitizenPage";
-// import GigWorkerPage from "./page/GigWorkerPage";
+import GigWorkerPage from "./page/GigWorkerPage";
 import Navbar from "./components/generalComponents/Navbars/Navbar";
 import MyReports from "./components/reportingModule/MyReports";
 import ReportForm from "./components/reportingModule/ReportForm";
 import ReportFeed from "./components/reportingModule/ReportFeed";
+import CurrentWork from "./components/allocationModule/CurrentWork"
 
 function App() {
   return (
@@ -22,7 +23,9 @@ function App() {
         <Route path="/citizen/new-report" element={<ReportForm />} />
         <Route path="/citizen/feed" element={<ReportFeed />} />
 
-        {/* <Route path="/gigworker" element={<GigWorkerPage />} /> */}
+        <Route path="/gigworker" element={<GigWorkerPage />} />
+        <Route path="/gigworker/current-work" element={<CurrentWork />}/>
+        <Route path="/gigworker/feed" element={<ReportFeed />} />
       </Routes>
     </>
   );
