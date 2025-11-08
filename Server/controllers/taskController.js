@@ -75,7 +75,7 @@ const verifyByCitizen = async (req, res) => {
         if (isSatisfied) {
             completedTask.verifiedByCitizen = true
             completedTask.verifiedAt = new Date()
-            completedTask.status = "Completed"
+            completedTask.status = "Completed" 
             await completedTask.save()
 
             await Report.findByIdAndUpdate(completedTask.reportId._id, {
