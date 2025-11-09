@@ -265,7 +265,7 @@ const MyBids = ({ user }) => {
   return (
     <>
       <GigworkerNavbar />
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-6">
+      <div className="flex justify-center items-center min-h-screen bg-linear-to-br from-gray-900 to-black text-white p-6">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 w-full max-w-6xl shadow-2xl">
           <h1 className="text-3xl font-bold mb-6 text-center">My Bids</h1>
           <p className="text-sm text-gray-300 mb-8 text-center">
