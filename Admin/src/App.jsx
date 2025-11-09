@@ -1,4 +1,6 @@
 import { Routes, Route } from "react-router-dom";
+import "./App.css";
+
 import AuthenticationWindow from "./components/loginModule/AuthenticationWindow"
 import HomePage from "./page/HomePage";
 import Dashboard from "./page/Dashboard";
