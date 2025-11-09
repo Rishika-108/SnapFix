@@ -1,5 +1,6 @@
 import React from "react";
 import { FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
+import FooterBG from "../../assets/B-g.jpg"; // <-- import background image
 
 const socialLinks = [
   { Icon: FiGithub, href: "https://github.com/", label: "GitHub" },
@@ -9,7 +10,17 @@ const socialLinks = [
 
 const Footer = () => {
   return (
-    <footer className="relative bg-[#0E2439] text-gray-300 overflow-hidden border-t border-white/10">
+    <footer
+      className="relative text-gray-300 overflow-hidden border-t border-white/10"
+      style={{
+        backgroundImage: `url(${FooterBG})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/60 pointer-events-none"></div>
+
       {/* Subtle Glow */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(37,99,235,0.08),transparent_70%)]"></div>
 

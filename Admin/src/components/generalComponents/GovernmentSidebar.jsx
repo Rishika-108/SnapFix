@@ -78,23 +78,23 @@ const GovernmentSidebar = () => {
 
       {/* ===== Sidebar ===== */}
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform bg-[#0E2439] border-r border-white/10 transform ${
+        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform border-r border-white/10 transform bg-gradient-to-b from-[#0B1725] via-[#0E2439] to-[#142E4D] ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
           {/* ===== Brand ===== */}
-                <Link to="/government/dashboard" className="flex items-center gap-3">
-                  <img
-                    src="https://flowbite.com/docs/images/logo.svg"
-                    alt="Gov Logo"
-                    className="h-8 w-8"
-                  />
-                  <h1 className="text-lg font-semibold text-gray-100 tracking-tight">
-                    SnapFix Gov Panel
-                  </h1>
-                </Link>
+          <Link to="/government/dashboard" className="flex items-center gap-3">
+            <img
+              src="https://flowbite.com/docs/images/logo.svg"
+              alt="Gov Logo"
+              className="h-8 w-8"
+            />
+            <h1 className="text-lg font-semibold text-gray-100 tracking-tight">
+              SnapFix Gov Panel
+            </h1>
+          </Link>
 
           {/* Close button (mobile only) */}
           <button
