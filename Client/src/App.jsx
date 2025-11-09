@@ -10,7 +10,6 @@ import ViewReports from "./components/WorkerModule/ViewReports";
 import TaskAssigned from "./components/WorkerModule/TaskAssigned";
 import UploadProof from "./components/WorkerModule/UploadProof";
 import ViewProfile from "./components/WorkerModule/ViewProfile";
-import MyBids from "./components/biddingModule/MyBids";
 import Home from "./page/Home";
 import Module from "./page/Module";
 import Profile from "./page/Profile";
