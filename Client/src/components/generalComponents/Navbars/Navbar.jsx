@@ -57,12 +57,13 @@
 // };
 
 // export default Navbar;
+// Navbar.js
 import React, { useState, useEffect, createContext, useContext } from "react";
 import AuthenticationWindow from "../../loginModule/AuthenticationWindow";
 import CitizenNavbar from "./CitizenNavbar";
 import GigworkerNavbar from "./GigworkerNavbar";
 
-// ✅ Create context inside Navbar file
+// ✅ Create AuthContext
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
@@ -73,7 +74,7 @@ const Navbar = () => {
     user: JSON.parse(localStorage.getItem("user") || "{}"),
   });
 
-  // 🔄 Keep auth state synced with localStorage
+  // Keep auth state in sync with localStorage
   useEffect(() => {
     const handleStorageChange = () => {
       setAuth({
@@ -81,35 +82,33 @@ const Navbar = () => {
         user: JSON.parse(localStorage.getItem("user") || "{}"),
       });
     };
-
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // Function to manually update state after login/logout
-  const updateAuth = (newAuth) => {
-    setAuth(newAuth);
-  };
+  // Function to update auth after login/logout
+  const updateAuth = (newAuth) => setAuth(newAuth);
 
-  // ✅ Wrap entire navbar area with AuthContext
   return (
     <AuthContext.Provider value={{ auth, updateAuth, setShowLoginModal }}>
+      {/* Show the appropriate navbar based on role */}
       {auth.token && auth.user.role === "citizen" ? (
         <CitizenNavbar />
       ) : auth.token && auth.user.role === "gigworker" ? (
-        <GigworkerNavbar />
+        <GigworkerNavbar user={auth.user} />
       ) : (
+        // Default navbar when not logged in
         <nav className="bg-white border-gray-200 dark:bg-gray-900 fixed top-0 left-0 w-full z-50 shadow-sm">
           <div className="max-w-7xl flex flex-wrap items-center justify-between mx-auto p-4">
             {/* Logo */}
             <a
-              href="/gigworker"
+              href="/"
               className="flex items-center space-x-3 rtl:space-x-reverse"
             >
               <img
                 src="https://flowbite.com/docs/images/logo.svg"
                 className="h-8"
-                alt="Flowbite Logo"
+                alt="SnapFix Logo"
               />
               <span className="self-center text-2xl font-semibold text-white">
                 SnapFix

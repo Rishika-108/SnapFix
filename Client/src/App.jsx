@@ -10,7 +10,7 @@ import ViewReports from "./components/WorkerModule/ViewReports";
 import TaskAssigned from "./components/WorkerModule/TaskAssigned";
 import UploadProof from "./components/WorkerModule/UploadProof";
 import ViewProfile from "./components/WorkerModule/ViewProfile";
-import MyBids from "./components/biddingModule/MyBids";
+
 
 
 function App() {
@@ -31,7 +31,6 @@ function App() {
         <Route path="/gigworker/current-work" element={<TaskAssigned />} />
         <Route path="/gigworker/upload-proof/:taskId" element={<UploadProof />} />
         <Route path="/gigworker/profile" element={<ViewProfile />} />
-        <Route path="/gigworker/my-bids" element={<MyBids />} />
       </Routes>
     </>
   );
