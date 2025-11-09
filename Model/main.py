@@ -1,5 +1,4 @@
 # main.py
-from Model.app.utils import validate_coords
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 import logging
@@ -25,17 +24,24 @@ app = FastAPI(title="SnapFix AI Engine", version="1.0")
 CLIP_MODEL_NAME = "openai/clip-vit-base-patch32"
 SENTENCE_MODEL_NAME = "all-MiniLM-L6-v2"
 
-clip_model = CLIPModel.from_pretrained(CLIP_MODEL_NAME)
-clip_processor = CLIPProcessor.from_pretrained(CLIP_MODEL_NAME)
-text_model = SentenceTransformer(SENTENCE_MODEL_NAME)
+# Load models with explicit logging and clear failure message
+try:
+    logger.info("Loading CLIP model...")
+    clip_model = CLIPModel.from_pretrained(CLIP_MODEL_NAME)
+    clip_processor = CLIPProcessor.from_pretrained(CLIP_MODEL_NAME)
+    logger.info("Loading sentence transformer model...")
+    text_model = SentenceTransformer(SENTENCE_MODEL_NAME)
+    logger.info("Models loaded successfully.")
+except Exception as e:
+    # If model loading fails at startup, log and re-raise so user sees the error
+    logger.exception("Failed to load models at startup. Check dependencies and environment.")
+    raise
 
 MODELS = {
     "clip_model": clip_model,
     "clip_processor": clip_processor,
     "text_model": text_model
 }
-
-logger.info("Models loaded successfully.")
 
 # ---------------- DB file ----------------
 REPORTS_FILE = "reports_db.json"
@@ -72,6 +78,20 @@ def cosine_similarity(a, b):
         return 0.0
     return float(np.dot(a, b) / (na * nb))
 
+def validate_coords(lat, lon):
+    """
+    Validate latitude and longitude values.
+    Returns True if valid floats within bounds, otherwise False.
+    """
+    try:
+        lat = float(lat)
+        lon = float(lon)
+    except Exception:
+        return False
+    if not (-90.0 <= lat <= 90.0 and -180.0 <= lon <= 180.0):
+        return False
+    return True
+
 # ---------------- Validation (civic check) ----------------
 CIVIC_PROMPTS = [
     "garbage on the road",
@@ -87,6 +107,8 @@ def is_civic_image(image_bytes, threshold=0.35):
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     except UnidentifiedImageError:
+        return False, "invalid_image", 0.0
+    except Exception:
         return False, "invalid_image", 0.0
 
     inputs = clip_processor(text=CIVIC_PROMPTS, images=img, return_tensors="pt", padding=True)
@@ -105,6 +127,8 @@ def detect_category(image_bytes, description=None, conf_threshold=0.2):
         img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     except UnidentifiedImageError:
         raise HTTPException(status_code=400, detail="Invalid or corrupted image")
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid or corrupted image")
 
     inputs = clip_processor(text=CATEGORIES, images=img, return_tensors="pt", padding=True)
     outputs = clip_model(**inputs)
@@ -114,19 +138,23 @@ def detect_category(image_bytes, description=None, conf_threshold=0.2):
     category = CATEGORIES[top_idx]
 
     # simple keyword boost
-    if description and any(cat.lower() in description.lower() for cat in CATEGORIES):
+    if description and any(cat.lower() in str(description).lower() for cat in CATEGORIES):
         confidence = min(confidence + 0.08, 1.0)
 
     # description embedding similarity boost
     if description:
-        desc_emb = text_model.encode(description.strip().lower())
-        cat_embs = text_model.encode([c.lower() for c in CATEGORIES])
-        sims = [cosine_similarity(desc_emb, ce) for ce in cat_embs]
-        best_sim = max(sims)
-        if best_sim > 0.45:
-            confidence = min(confidence + 0.1, 1.0)
-            best_idx = int(np.argmax(sims))
-            category = CATEGORIES[best_idx]
+        try:
+            desc_emb = text_model.encode(str(description).strip().lower())
+            cat_embs = text_model.encode([c.lower() for c in CATEGORIES])
+            sims = [cosine_similarity(desc_emb, ce) for ce in cat_embs]
+            best_sim = max(sims) if sims else 0.0
+            if best_sim > 0.45:
+                confidence = min(confidence + 0.1, 1.0)
+                best_idx = int(np.argmax(sims))
+                category = CATEGORIES[best_idx]
+        except Exception:
+            # If embedding fails for some reason, ignore the description boost
+            logger.exception("Description embedding failed; continuing without text boost.")
 
     if confidence < conf_threshold:
         return "Unknown", round(confidence, 3)
@@ -136,11 +164,15 @@ def detect_category(image_bytes, description=None, conf_threshold=0.2):
 def check_duplicate(lat, lon, category, radius_m=10.0):
     reports = read_reports()
     for rep in reports:
-        rlat, rlon = rep.get("coordinates", [None, None])
-        if rlat is None or rlon is None:
+        coords = rep.get("coordinates", None)
+        if not coords or len(coords) < 2:
             continue
-        dist = haversine_meters(float(lat), float(lon), float(rlat), float(rlon))
-        if rep.get("category", "").lower() == category.lower() and dist <= radius_m:
+        rlat, rlon = coords[0], coords[1]
+        try:
+            dist = haversine_meters(float(lat), float(lon), float(rlat), float(rlon))
+        except Exception:
+            continue
+        if str(rep.get("category", "")).lower() == str(category).lower() and dist <= radius_m:
             rep["upvotes"] = rep.get("upvotes", 0) + 1
             save_reports(reports)
             return True, rep.get("report_id"), rep.get("upvotes", 0)
@@ -152,14 +184,14 @@ SEVERITY = {
     "water leakage": 0.85,
     "pothole": 0.75,
     "streetlight failure": 0.5,
-    "Illegal Construction": 0.8,
+    "illegal construction": 0.8,
     "road blockage": 0.7,
     "broken drain": 0.6,
     "unknown": 0.3
 }
 
 def calculate_priority(category, confidence, upvotes):
-    base = SEVERITY.get(category.lower(), 0.4)
+    base = SEVERITY.get(str(category).lower(), 0.4)
     up_norm = min(upvotes / 10.0, 1.0)
     score = (0.4 * confidence) + (0.4 * base) + (0.2 * up_norm)
     score = round(float(score), 3)
@@ -186,7 +218,7 @@ def format_report(lat, lon, category, confidence, duplicate, duplicate_id, upvot
         "duplicate_of": duplicate_id if duplicate else None,
         "image_url": image_url
     }
-    if (not duplicate) and isinstance(category, str) and category.lower() != "unknown":
+    if (not duplicate) and isinstance(category, str) and str(category).lower() != "unknown":
         records = read_reports()
         records.append(out)
         save_reports(records)
@@ -195,7 +227,10 @@ def format_report(lat, lon, category, confidence, duplicate, duplicate_id, upvot
 # ---------------- Full pipeline ----------------
 def process_image_url(image_url, lat, lon, description):
     # fetch image
-    resp = requests.get(image_url, timeout=12)
+    try:
+        resp = requests.get(image_url, timeout=12)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Failed to fetch image from URL")
     if resp.status_code != 200:
         raise HTTPException(status_code=400, detail="Failed to fetch image from URL")
     image_bytes = resp.content
@@ -230,8 +265,20 @@ def process_image_url(image_url, lat, lon, description):
     return format_report(lat, lon, category, confidence, is_dup, dup_id, upvotes, image_url)
 
 # ---------------- Routes ----------------
+@app.get("/")
+async def root():
+    """
+    Root endpoint for quick browser check.
+    """
+    return {"message": "SnapFix AI Engine is running 🚀"}
+
 @app.get("/health")
 async def health():
+    """
+    Health endpoint.
+    Swagger UI available at /docs
+    Redoc available at /redoc
+    """
     return {"status": "ok", "message": "SnapFix AI Engine running"}
 
 @app.post("/predict_url")
@@ -247,5 +294,12 @@ async def predict_url(payload: dict):
     if not validate_coords(lat, lon):
         raise HTTPException(status_code=400, detail="Invalid coordinates")
 
-    result = process_image_url(image_url, float(lat), float(lon), description)
+    try:
+        result = process_image_url(image_url, float(lat), float(lon), description)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Error processing image URL")
+        raise HTTPException(status_code=500, detail=str(e))
+
     return JSONResponse(result)
