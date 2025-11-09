@@ -67,3 +67,4 @@ const IssueGrid = ({ reports }) => {
 };
 
 export default IssueGrid;
+
