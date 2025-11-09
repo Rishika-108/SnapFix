@@ -90,28 +90,6 @@ const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading }) => 
           className="w-full border border-white/30 bg-white/10 placeholder-gray-300 px-3 py-2 rounded-lg mb-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
           required
         />
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <input
-            name="latitude"
-            value={formData.latitude || ""}
-            onChange={handleChange}
-            type="number"
-            placeholder="Latitude"
-            className="w-full border border-white/30 bg-white/10 placeholder-gray-300 px-3 py-2 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            step="any"
-            required
-          />
-          <input
-            name="longitude"
-            value={formData.longitude || ""}
-            onChange={handleChange}
-            type="number"
-            placeholder="Longitude"
-            className="w-full border border-white/30 bg-white/10 placeholder-gray-300 px-3 py-2 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            step="any"
-            required
-          />
-        </div>
       </>
     )}
 

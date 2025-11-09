@@ -10,17 +10,17 @@ import {
 } from "./dummyData";
 
 // 🌍 Toggle between dummy mode and real API
-const USE_DUMMY = true; // 🔁 set false to connect to backend
+const USE_DUMMY = false; // 🔁 set false to connect to backend
 
 // 🌍 Base URL (backend)
-const BASE_URL = "https://snapfix-backend.onrender.com/api";
+const BASE_URL = "http://localhost:3000/api";
 
 // 🧩 Axios instance
 const api = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  // headers: {
+  //   "Content-Type": "application/json",
+  // },
 });
 
 // 🛡️ Auto-attach JWT token if exists
@@ -30,233 +30,174 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-//
+
 // ======================== AUTH ROUTES ========================
-//
 export const AuthAPI = {
-  // Citizen
   registerCitizen: async (data) => {
-    if (USE_DUMMY) {
-      const user = { ...data, _id: "citizen-dummy-" + Date.now() };
-      dummyCitizens.push(user);
-      return { data: { success: true, message: "Citizen registered", user } };
-    }
     return api.post("/auth/register-citizen", data);
   },
 
   loginCitizen: async (data) => {
-    if (USE_DUMMY) {
-      const found = DummyAPI.loginCitizen(data.email, data.password);
-      if (found) {
-        return {
-          data: {
-            success: true,
-            message: "Login successful",
-            token: "dummy-token",
-            user: found,
-          },
-        };
-      } else {
-        return { data: { success: false, message: "Invalid credentials" } };
-      }
-    }
     return api.post("/auth/login-citizen", data);
   },
 
-  // Worker
-  registerWorker: (data) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Worker registered (dummy)",
-            worker: {
-              _id: "worker-dummy-" + Date.now(),
-              ...data,
-            },
-          },
-        })
-      : api.post("/auth/register-worker", data),
-
-  loginWorker: (data) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Login successful",
-            token: "dummy-token",
-            worker: dummyWorkers[0],
-          },
-        })
-      : api.post("/auth/login-worker", data),
-
-  // Admin
-  loginAdmin: (data) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Login successful",
-            token: "dummy-token",
-            role: "Local",
-            admin: dummyAdmins[0],
-          },
-        })
-      : api.post("/auth/login-admin", data),
-};
-
-//
-// ======================== CITIZEN ROUTES ========================
-//
-export const CitizenAPI = {
-  createReport: (data) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Report raised successfully (dummy)",
-            report: {
-              _id: "rep-dummy-" + Date.now(),
-              status: "Pending",
-              upvotes: 0,
-              createdBy: dummyCitizens[0],
-              ...data,
-            },
-          },
-        })
-      : api.post("/report/create-report", data),
-
-  upvoteReport: (reportId) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: `Issue ${reportId} upvoted (dummy)`,
-          },
-        })
-      : api.post(`/report/upvote/${reportId}`),
-
-  getReportById: (reportId) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            report: dummyReports.find((r) => r._id === reportId),
-          },
-        })
-      : api.get(`/report/get-report/${reportId}`),
-
-  getNearbyReports: () =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Fetched dummy reports based on location",
-            count: dummyReports.length,
-            reports: dummyReports,
-          },
-        })
-      : api.get("/report/location"),
-
-  getMyReports: () =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Successfully fetched user reports (dummy)",
-            reports: dummyReports,
-            upvotedReports: [dummyReports[1]],
-          },
-        })
-      : api.get("/user/my-reports"),
-};
-
-//
 // ======================== WORKER ROUTES ========================
-//
-export const WorkerAPI = {
-  getNearbyReports: () =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Fetched nearby dummy reports",
-            count: dummyReports.length,
-            reports: dummyReports,
-          },
-        })
-      : api.get("/worker/location"),
+  registerWorker: async (data) => { 
+    return api.post("/auth/register-worker", data);
+  },
 
-  getProfile: () =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            worker: dummyWorkers[0],
-          },
-        })
-      : api.get("/worker/profile"),
+  loginWorker: async (data) => {
+    return api.post("/auth/login-worker", data);
+  },
+}
 
-  createBid: (reportId, data) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Bid applied successfully (dummy)",
-            bid: {
-              _id: "bid-dummy-" + Date.now(),
-              reportId,
-              gigWorkerId: dummyWorkers[0],
-              status: "Pending",
-              ...data,
-            },
-          },
-        })
-      : api.post(`/bid/create-bid/${reportId}`, data),
+// ======================== CITIZEN ROUTES ========================
+export const CitizenAPI = {
+  createReport: (data,config) => api.post("/report/create-report", data, config),
 
-  getBidsForReport: (reportId) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Fetched dummy bids",
-            bids: dummyBids.filter((b) => b.reportId === reportId),
-          },
-        })
-      : api.get(`/bid/getBid-report/${reportId}`),
+  upvoteReport: (reportId) => api.post(`/report/upvote/${reportId}`),
 
-  uploadTaskProof: (taskId, data) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Proof uploaded successfully (dummy)",
-            task: {
-              _id: taskId,
-              reportId: dummyTasks[0].reportId,
-              gigWorkerId: dummyWorkers[0]._id,
-              proof: {
-                ...data,
-                uploadedAt: new Date().toISOString(),
-                location: { lat: 18.52, lng: 73.85 },
-              },
-              status: "Completed",
-            },
-          },
-        })
-      : api.post(`/task/proof-upload/${taskId}`, data),
+  getReportById: (reportId) => api.get(`/report/get-report/${reportId}`),
 
-  getTaskDetail: (taskId) =>
-    USE_DUMMY
-      ? Promise.resolve({
-          data: {
-            success: true,
-            message: "Task details fetched successfully (dummy)",
-            task: dummyTasks.find((t) => t._id === taskId),
-          },
-        })
-      : api.get(`/task/${taskId}`),
+  getNearbyReports: () => api.get("/report/location"),
+
+  getMyReports: () => api.get("/user/my-reports"),
 };
+ 
+// ======================== WORKER ROUTES ========================
+export const WorkerAPI = {
+  getNearbyReports: () => api.get("/worker/location"),
+
+  getProfile: () => api.get("/worker/profile"),
+
+  createBid: (reportId, data) => api.post(`/bid/create-bid/${reportId}`, data),
+
+  getBidsForReport: (reportId) => api.get(`/bid/getBid-report/${reportId}`),
+
+  uploadTaskProof: (taskId, data) => api.post(`/task/proof-upload/${taskId}`, data),
+
+  getTaskDetail: (taskId) => api.get(`/task/${taskId}`),
+};
+
+
+
+
+
+
+//   upvoteReport: (reportId) =>
+//     // USE_DUMMY
+//     //   ? Promise.resolve({
+//     //       data: {
+//     //         success: true,
+//     //         message: `Issue ${reportId} upvoted (dummy)`,
+//     //       },
+//     //     })
+//       api.post(`/report/upvote/${reportId}`),
+
+//   getReportById: (reportId) =>
+//     // USE_DUMMY
+//     //   ? Promise.resolve({
+//     //       data: {
+//     //         success: true,
+//     //         report: dummyReports.find((r) => r._id === reportId),
+//     //       },
+//     //     })
+//     //   : 
+//       api.get(`/report/get-report/${reportId}`),
+
+
+
+// // ======================== WORKER ROUTES ========================
+// //
+// export const WorkerAPI = {
+//   getNearbyReports: () =>
+//     // USE_DUMMY
+//     //   ? Promise.resolve({
+//     //       data: {
+//     //         success: true,
+//     //         message: "Fetched nearby dummy reports",
+//     //         count: dummyReports.length,
+//     //         reports: dummyReports,
+//     //       },
+//     //     })
+//     //   : 
+//       api.get("/worker/location"),
+
+//   getProfile: () =>
+//     // USE_DUMMY
+//     //   ? Promise.resolve({
+//     //       data: {
+//     //         success: true,
+//     //         worker: dummyWorkers[0],
+//     //       },
+//     //     })
+//     //   : 
+//       api.get("/worker/profile"),
+
+//   createBid: (reportId, data) =>
+//     // USE_DUMMY
+//     //   ? Promise.resolve({
+//     //       data: {
+//     //         success: true,
+//     //         message: "Bid applied successfully (dummy)",
+//     //         bid: {
+//     //           _id: "bid-dummy-" + Date.now(),
+//     //           reportId,
+//     //           gigWorkerId: dummyWorkers[0],
+//     //           status: "Pending",
+//     //           ...data,
+//     //         },
+//     //       },
+//     //     })
+//     //   :
+//        api.post(`/bid/create-bid/${reportId}`, data),
+
+//   getBidsForReport: (reportId) =>
+//     // USE_DUMMY
+//     //   ? Promise.resolve({
+//     //       data: {
+//     //         success: true,
+//     //         message: "Fetched dummy bids",
+//     //         bids: dummyBids.filter((b) => b.reportId === reportId),
+//     //       },
+//     //     })
+//     //   : 
+//       api.get(`/bid/getBid-report/${reportId}`),
+
+//   uploadTaskProof: (taskId, data) =>
+//     // USE_DUMMY
+//     //   ? Promise.resolve({
+//     //       data: {
+//     //         success: true,
+//     //         message: "Proof uploaded successfully (dummy)",
+//     //         task: {
+//     //           _id: taskId,
+//     //           reportId: dummyTasks[0].reportId,
+//     //           gigWorkerId: dummyWorkers[0]._id,
+//     //           proof: {
+//     //             ...data,
+//     //             uploadedAt: new Date().toISOString(),
+//     //             location: { lat: 18.52, lng: 73.85 },
+//     //           },
+//     //           status: "Completed",
+//     //         },
+//     //       },
+//     //     })
+//     //   : 
+//       api.post(`/task/proof-upload/${taskId}`, data),
+
+//   getTaskDetail: (taskId) =>
+//     // USE_DUMMY
+//     //   ? Promise.resolve({
+//     //       data: {
+//     //         success: true,
+//     //         message: "Task details fetched successfully (dummy)",
+//     //         task: dummyTasks.find((t) => t._id === taskId),
+//     //       },
+//     //     })
+//     //   : 
+//       api.get(`/task/${taskId}`),
+// };
 
 //
 // ======================== ADMIN ROUTES ========================

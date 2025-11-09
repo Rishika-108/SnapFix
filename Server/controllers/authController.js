@@ -94,7 +94,7 @@ const loginWorker = async (req,res) => {
         console.log(error.message);
         res.status(500).json({success: false, message: "Login unsuccessful"})
     }
-}
+} 
 
 // Admin Login
 const loginAdmin = async (req,res) => {

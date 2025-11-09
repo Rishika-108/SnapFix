@@ -32,7 +32,7 @@ const FeatureHighlights = () => {
 
       <div className="container mx-auto px-6 relative z-10">
         <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-16 text-gray-900">
-          Why <span className="text-indigo-600">WhisperRecall?</span>
+          Why <span className="text-indigo-600">SnapFix?</span>
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">

@@ -10,11 +10,7 @@ const IssueFooter = ({ report, user }) => {
   // ✅ Handle Like/Unlike using CitizenAPI
   const handleLike = async () => {
     try {
-      if (!user) {
-        alert("Please log in to upvote reports.");
-        return;
-      }
-
+ 
       // Toggle like visually first (optimistic update)
       setLiked(!liked);
       setLikes((prev) => (liked ? prev - 1 : prev + 1));
@@ -72,5 +68,5 @@ const IssueFooter = ({ report, user }) => {
     </div>
   );
 };
-
+ 
 export default IssueFooter;

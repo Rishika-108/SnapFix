@@ -1,71 +1,63 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { CitizenAPI } from "../../api/api"; // ✅ integrated API (optional for future location fetching)
 
-// Fix Leaflet marker icon path
 const markerIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
 
+const LocationMarker = ({ location, onLocationSelect }) => {
+  useMapEvents({
+    click(e) {
+      const { lat, lng } = e.latlng;
+      onLocationSelect({ lat, lng, name: "" });
+    },
+  });
+
+  return location?.lat && location?.lng ? (
+    <Marker position={[location.lat, location.lng]} icon={markerIcon} />
+  ) : null;
+};
+
 const LocationPicker = ({ location, detectLocation, onLocationSelect }) => {
   const [loading, setLoading] = useState(false);
-  const [mapCenter, setMapCenter] = useState([19.7515, 75.7139]); // Default Maharashtra
+  const [mapCenter, setMapCenter] = useState([19.7515, 75.7139]);
+  const mapRef = useRef(null);
 
-  // ✅ Try auto-detecting location or fallback
+  const hasCoords = location?.lat && location?.lng;
+
   useEffect(() => {
+    let isMounted = true;
+
     const fetchLocation = async () => {
       try {
         setLoading(true);
 
-        // Try browser-based detection first
-        const loc = await detectLocation?.();
-        if (loc?.latitude && loc?.longitude) {
-          setMapCenter([loc.latitude, loc.longitude]);
-          return;
-        }
+        // detectLocation may call setReport asynchronously
+        await detectLocation?.();
 
-        // (Optional) Fallback: get from backend (CitizenAPI)
-        const { data } = await CitizenAPI.getNearbyReports();
-        if (data?.reports?.length > 0) {
-          const first = data.reports[0];
-          if (first.location?.lat && first.location?.lng)
-            setMapCenter([first.location.lat, first.location.lng]);
+        if (location?.lat && location?.lng && isMounted) {
+          setMapCenter([location.lat, location.lng]);
         }
       } catch (err) {
-        console.warn("Auto location detection failed:", err);
+        console.warn("Location detection failed:", err);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
+
     fetchLocation();
-  }, [detectLocation]);
+    return () => { isMounted = false; };
+  }, []); // run only once
 
-  // ✅ Map click handler for manual location selection
-  function LocationMarker() {
-    useMapEvents({
-      click(e) {
-        const { lat, lng } = e.latlng;
-        onLocationSelect({ latitude: lat, longitude: lng });
-      },
-    });
-
-    return location && location.latitude && location.longitude ? (
-      <Marker
-        position={[location.latitude, location.longitude]}
-        icon={markerIcon}
-      />
-    ) : null;
-  }
-
-  // ✅ Helper for safe coordinate rendering
-  const hasCoords =
-    location &&
-    typeof location.latitude === "number" &&
-    typeof location.longitude === "number";
+  useEffect(() => {
+    if (mapRef.current && hasCoords) {
+      mapRef.current.setView([location.lat, location.lng], 13);
+    }
+  }, [location, hasCoords]);
 
   return (
     <div className="space-y-2 text-center">
@@ -79,20 +71,20 @@ const LocationPicker = ({ location, detectLocation, onLocationSelect }) => {
             center={mapCenter}
             zoom={13}
             style={{ height: "100%", width: "100%" }}
+            whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="&copy; OpenStreetMap contributors"
             />
-            <LocationMarker />
+            <LocationMarker location={location} onLocationSelect={onLocationSelect} />
           </MapContainer>
         </div>
       )}
 
       {hasCoords ? (
         <p className="text-gray-400 text-sm mt-1">
-          Lat: {location.latitude.toFixed(4)} | Lon:{" "}
-          {location.longitude.toFixed(4)}
+          Lat: {location.lat.toFixed(4)} | Lon: {location.lng.toFixed(4)}
         </p>
       ) : (
         <p className="text-gray-400 text-sm mt-1">📍 No location selected</p>

@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary'
 import Report from "../models/reportModel.js";
 import User from "../models/userModel.js";
-import upload from '../middleware/multer.js';
+import fs from "fs";
 
 //create a new report
 const createReport = async (req, res) => {
@@ -18,13 +18,18 @@ const createReport = async (req, res) => {
         const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
             folder: "reports_uploads",
         });
+        setTimeout(() => {
+  fs.unlink(req.file.path, (err) => {
+    if (err) console.error("Failed to delete temp file:", err);
+  });
+}, 500);
 
         const userId = req.user?._id
         const report = await Report.create({
             title, description, imageUrl: cloudinaryResult.secure_url, category, createdBy: userId || null,
             location: {
                 type: 'Point',
-                coordinates: [longitude, latitude]
+                coordinates: [parseFloat(longitude), parseFloat(latitude)]
             }
         })
 
