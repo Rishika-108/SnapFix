@@ -7,40 +7,37 @@ import IssueMapPreview from "./IssueMapPreview";
 const IssueCard = ({ report }) => {
   if (!report) return null;
 
-  // ✅ Handle both dummy & backend report formats
   const {
     title,
     description,
     image,
-    imageUrl, // for dummy data
+    imageUrl,
     mapPreview,
     location,
     date,
-    category, // optional new field
+    category,
     status = "Pending",
   } = report;
 
   const [expanded, setExpanded] = useState(false);
-
-  // ✅ Use imageUrl fallback if image is missing
   const displayImage = image || imageUrl;
 
   return (
     <div
       className="
-        bg-[#121212] 
-        rounded-2xl 
-        border border-gray-800 
-        overflow-hidden 
-        shadow-lg 
-        mx-auto 
-        mb-8 
-        transition-all 
-        hover:shadow-2xl 
+        bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50
+        rounded-2xl
+        border border-gray-200
+        overflow-hidden
+        shadow-lg
+        mx-auto
+        mb-8
+        transition-all
+        hover:shadow-xl
         w-full
-        max-w-[95%] 
-        sm:max-w-sm 
-        md:max-w-md 
+        max-w-[95%]
+        sm:max-w-sm
+        md:max-w-md
         lg:max-w-lg
       "
     >
@@ -51,13 +48,18 @@ const IssueCard = ({ report }) => {
         setExpanded={setExpanded}
       />
 
-      <IssueImage title={title} image={displayImage} location={location} status={status} category={category}/>
+      <IssueImage
+        title={title}
+        image={displayImage}
+        location={location}
+        status={status}
+        category={category}
+      />
 
-      <div className="px-4 pt-3 pb-2 text-gray-200 text-sm sm:text-base">
-        <p className="leading-relaxed wrap-break-word">
+      <div className="px-4 pt-3 pb-2 text-gray-800 text-sm sm:text-base">
+        <p className="leading-relaxed break-words">
           {description || "No description provided."}
         </p>
-
       </div>
 
       <div className="px-4 pb-4">

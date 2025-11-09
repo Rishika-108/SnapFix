@@ -66,16 +66,26 @@ const CitizenNavbar = () => {
               ref={dropdownRef}
               className="z-50 absolute top-14 right-4 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-md dark:bg-gray-700 dark:divide-gray-600"
             >
-              <ul className="py-2">
-                <li>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                  >
-                    Logout
-                  </button>
-                </li>
-              </ul>
+             <ul className="py-2">
+  <li>
+    <Link
+      to="/profile"
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+      onClick={() => setDropdownOpen(false)} // close dropdown on click
+    >
+      Profile
+    </Link>
+  </li>
+  <li>
+    <button
+      onClick={handleLogout}
+      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+    >
+      Logout
+    </button>
+  </li>
+</ul>
+
             </div>
           )}
 
@@ -135,6 +145,18 @@ const CitizenNavbar = () => {
                 md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 My Reports
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                to="/learn"
+                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 
+                md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white 
+                md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white 
+                md:dark:hover:bg-transparent dark:border-gray-700"
+              >
+                Learn
               </Link>
             </li>
             
