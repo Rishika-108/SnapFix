@@ -18,9 +18,9 @@ const BASE_URL = "http://localhost:3000/api";
 // 🧩 Axios instance
 const api = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  // headers: {
+  //   "Content-Type": "application/json",
+  // },
 });
 
 // 🛡️ Auto-attach JWT token if exists
@@ -53,7 +53,7 @@ export const AuthAPI = {
 
 // ======================== CITIZEN ROUTES ========================
 export const CitizenAPI = {
-  createReport: (data) => api.post("/report/create-report", data),
+  createReport: (data,config) => api.post("/report/create-report", data, config),
 
   upvoteReport: (reportId) => api.post(`/report/upvote/${reportId}`),
 
@@ -63,7 +63,7 @@ export const CitizenAPI = {
 
   getMyReports: () => api.get("/user/my-reports"),
 };
-
+ 
 // ======================== WORKER ROUTES ========================
 export const WorkerAPI = {
   getNearbyReports: () => api.get("/worker/location"),
@@ -80,27 +80,7 @@ export const WorkerAPI = {
 };
 
 
-// ======================== CITIZEN ROUTES ========================
-// export const CitizenAPI = {
-// //   createReport: (data) =>
-// //     USE_DUMMY
-// //       ? Promise.resolve({
-// //           data: {
-// //             success: true,
-// //             message: "Report raised successfully (dummy)",
-// //             report: {
-// //               _id: "rep-dummy-" + Date.now(),
-// //               status: "Pending",
-// //               upvotes: 0,
-// //               createdBy: dummyCitizens[0],
-// //               ...data,
-// //             },
-// //           },
-// //         })
-// //       : api.post("/report/create-report", data),
 
-//    createReport: (data) => 
-//     api.post("/report/create-report", data),
 
 
 
@@ -125,35 +105,8 @@ export const WorkerAPI = {
 //     //   : 
 //       api.get(`/report/get-report/${reportId}`),
 
-//   getNearbyReports: () =>
-//     // USE_DUMMY
-//     //   ? Promise.resolve({
-//     //       data: {
-//     //         success: true,
-//     //         message: "Fetched dummy reports based on location",
-//     //         count: dummyReports.length,
-//     //         reports: dummyReports,
-//     //       },
-//     //     })
-//     //   : 
-//       api.get("/report/location"),
 
-//   // getMyReports: () =>
-//   //   USE_DUMMY
-//   //     ? Promise.resolve({
-//   //         data: {
-//   //           success: true,
-//   //           message: "Successfully fetched user reports (dummy)",
-//   //           reports: dummyReports,
-//   //           upvotedReports: [dummyReports[1]],
-//   //         },
-//   //       })
-//   //     : api.get("/user/my-reports"),
-//   getMyReports: () => api.get("/user/my-reports"),
 
-// };
-
-// //
 // // ======================== WORKER ROUTES ========================
 // //
 // export const WorkerAPI = {
