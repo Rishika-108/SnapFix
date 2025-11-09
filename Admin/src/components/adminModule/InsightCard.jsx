@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FiArrowUpRight, FiArrowDownRight } from "react-icons/fi";
+import InsightBG from "../../assets/card.jpg"; // <-- import background image
 
 const InsightCard = ({
   title = "Issues Reported",
@@ -22,6 +23,11 @@ const InsightCard = ({
                   hover:scale-[1.02]
                   transition-all duration-300 ease-out
                   p-5 w-full max-w-sm`}
+      style={{
+        backgroundImage: `url(${InsightBG})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
       {/* Subtle glow pattern */}
       <div
@@ -39,7 +45,7 @@ const InsightCard = ({
         </h2>
 
         {/* Future Filter Toggle (Kept commented for now) */}
-        {/* 
+        {/*
         <select
           value={selectedFilter}
           onChange={(e) => setSelectedFilter(e.target.value)}
@@ -52,7 +58,7 @@ const InsightCard = ({
               {option}
             </option>
           ))}
-        </select> 
+        </select>
         */}
       </div>
 
