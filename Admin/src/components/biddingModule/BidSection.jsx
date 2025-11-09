@@ -1,62 +1,54 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { getReportWithBids, assignBid } from "../../api/bids";
 
-const BidSection = ({ report, user, token }) => {
+const BidSection = ({ report }) => {
   const [bidCount, setBidCount] = useState(0);
   const [bids, setBids] = useState([]);
   const [showAssignModal, setShowAssignModal] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [assigning, setAssigning] = useState(false);
 
-  const demo = true;
-  if (demo) {
-    useEffect(() => {
-      if (report?.bids?.length > 0) {
-        setBids(report.bids);
-        setBidCount(report.bids.length);
-      }
-    }, [report, token]);
-  } else {
-    useEffect(() => {
-      const fetchBids = async () => {
-        try {
-          if (!report?._id) return;
-          setLoading(true);
-          const data = await getReportWithBids(report._id, token);
-          if (data?.success) {
-            setBids(data.getBids || []);
-            setBidCount(data.getBids?.length || 0);
-          }
-        } catch (err) {
-          console.error("❌ Error fetching bids:", err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchBids();
-    }, [report?._id, token]);
-  }
+  const demo = true; // toggle demo mode
 
-  const handleAssignBid = async () => {
-    try {
-      setAssigning(true);
-      const response = await assignBid(token);
-      if (response?.success) {
-        alert("✅ " + response.message);
-        setShowAssignModal(false);
-      } else {
-        alert("⚠️ Failed to assign bid. Please try again.");
-      }
-    } catch (err) {
-      alert("❌ Error assigning bid: " + err.message);
-    } finally {
-      setAssigning(false);
+  useEffect(() => {
+    if (demo) {
+      // Dummy bids for demo
+      const dummyBids = [
+        {
+          _id: "bid1",
+          gigWorkerId: { name: "Ravi Sharma", email: "ravi@example.com" },
+          bidAmount: 500,
+          duration: 3,
+        },
+        {
+          _id: "bid2",
+          gigWorkerId: { name: "Anita Patel", email: "anita@example.com" },
+          bidAmount: 750,
+          duration: 2,
+        },
+        {
+          _id: "bid3",
+          gigWorkerId: { name: "Sunil Kumar", email: "sunil@example.com" },
+          bidAmount: 600,
+          duration: 4,
+        },
+      ];
+
+      setBids(report?.bids?.length > 0 ? report.bids : dummyBids);
+      setBidCount(report?.bids?.length > 0 ? report.bids.length : dummyBids.length);
     }
+  }, [report]);
+
+  const handleAssignBid = () => {
+    setAssigning(true);
+    setTimeout(() => {
+      alert("✅ Bid assigned successfully (demo mode)");
+      setAssigning(false);
+      setShowAssignModal(false);
+    }, 1000);
   };
 
   const modalContent = showAssignModal && (
-    <div className="fixed inset-0 z-9999 flex justify-center items-center bg-black/70 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/70 backdrop-blur-md">
       <div
         className="relative bg-[#0E2439]/95 backdrop-blur-xl text-gray-100 
                     p-6 rounded-2xl border border-white/10 
@@ -74,9 +66,7 @@ const BidSection = ({ report, user, token }) => {
           Bids for Report: {report?.title || "N/A"}
         </h2>
 
-        {loading ? (
-          <p className="text-center text-gray-400">Loading bids...</p>
-        ) : bids.length > 0 ? (
+        {bids.length > 0 ? (
           <div className="overflow-x-auto max-h-[70vh] rounded-xl border border-white/10">
             <table className="w-full text-sm">
               <thead className="bg-[#132F4A]/80 text-gray-300 uppercase text-xs tracking-wider sticky top-0">
@@ -108,12 +98,11 @@ const BidSection = ({ report, user, token }) => {
                       <button
                         onClick={handleAssignBid}
                         disabled={assigning}
-                        className={`px-4 py-1.5 rounded-md text-xs font-semibold 
-                          transition-all duration-200 shadow-sm ${
-                            assigning
-                              ? "bg-gray-600 text-gray-300 cursor-not-allowed"
-                              : "bg-linear-to-r from-emerald-500 to-teal-500 text-white hover:scale-[1.05] hover:shadow-[0_0_12px_rgba(52,211,153,0.3)]"
-                          }`}
+                        className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 shadow-sm ${
+                          assigning
+                            ? "bg-gray-600 text-gray-300 cursor-not-allowed"
+                            : "bg-linear-to-r from-emerald-500 to-teal-500 text-white hover:scale-[1.05] hover:shadow-[0_0_12px_rgba(52,211,153,0.3)]"
+                        }`}
                       >
                         {assigning ? "Assigning..." : "Assign Bid"}
                       </button>
@@ -124,9 +113,7 @@ const BidSection = ({ report, user, token }) => {
             </table>
           </div>
         ) : (
-          <p className="text-center text-gray-400 mt-4">
-            No bids have been submitted yet.
-          </p>
+          <p className="text-center text-gray-400 mt-4">No bids have been submitted yet.</p>
         )}
       </div>
     </div>
@@ -147,7 +134,7 @@ const BidSection = ({ report, user, token }) => {
         </button>
       </div>
 
-      {/* ✅ Render modal via portal */}
+      {/* Render modal via portal */}
       {showAssignModal && ReactDOM.createPortal(modalContent, document.body)}
     </>
   );
