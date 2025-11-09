@@ -6,7 +6,12 @@ import Navbar from "./components/generalComponents/Navbars/Navbar";
 import MyReports from "./components/reportingModule/MyReports";
 import ReportForm from "./components/reportingModule/ReportForm";
 import ReportFeed from "./components/reportingModule/ReportFeed";
-import CurrentWork from "./components/allocationModule/CurrentWork"
+import ViewReports from "./components/WorkerModule/ViewReports";
+import TaskAssigned from "./components/WorkerModule/TaskAssigned";
+import UploadProof from "./components/WorkerModule/UploadProof";
+import ViewProfile from "./components/WorkerModule/ViewProfile";
+import MyBids from "./components/biddingModule/MyBids";
+
 
 function App() {
   return (
@@ -15,15 +20,18 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
 
-        {/* Citizen routes */}
+        
         <Route path="/citizen" element={<CitizenPage />} />
         <Route path="/citizen/my-reports" element={<MyReports />} />
         <Route path="/citizen/new-report" element={<ReportForm />} />
         <Route path="/citizen/feed" element={<ReportFeed />} />
 
-        <Route path="/gigworker" element={<GigWorkerPage />} />
-        <Route path="/gigworker/current-work" element={<CurrentWork />}/>
-        <Route path="/gigworker/feed" element={<ReportFeed />} />
+       <Route path="/gigworker" element={<GigWorkerPage />} />
+        <Route path="/gigworker/feed" element={<ViewReports />} />
+        <Route path="/gigworker/current-work" element={<TaskAssigned />} />
+        <Route path="/gigworker/upload-proof/:taskId" element={<UploadProof />} />
+        <Route path="/gigworker/profile" element={<ViewProfile />} />
+        <Route path="/gigworker/my-bids" element={<MyBids />} />
       </Routes>
     </>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { WorkerAPI, AdminAPI, CitizenAPI } from "../../api/api"; // ✅ Integrated API
 import Bid from "../biddingModule/Bid";
-import Assign from "../allocationModule/Assign"; // placeholder for future
+// placeholder for future
 
 const BidSection = ({ report, user }) => {
   const [bidCount, setBidCount] = useState(0);

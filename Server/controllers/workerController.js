@@ -10,7 +10,7 @@ const getReportsByLocation = async (req, res) => {
         if (!worker) res.status(404).json({ success: false, message: "User not found" })
 
         if (!worker.location || !Array.isArray(worker.location.coordinates)) {
-            return res.status.status(400).json({ success: false, message: "Worker location not set" })
+            return res.status(400).json({ success: false, message: "Worker location not set" })
         }
         const[longitude, latitude] = worker.location.coordinates;
         const searchRadius = 5000;
@@ -45,7 +45,7 @@ const getReportsByLocation = async (req, res) => {
 const getWorkerProfile = async (req, res) => {
     try {
         if (req.role !== "gigworker")
-            return res.status(403).jsons({ success: false, message: "Access Denied" })
+            return res.status(403).json({ success: false, message: "Access Denied" })
         res.status(200).json({ success: true, worker: req.user })
     } catch (error) {
         console.log(error)

@@ -14,7 +14,7 @@ const uploadProof = async (req, res) => {
         if (req.role !== 'gigworker') {
             return res.status(403).json({ success: false, message: "Access denied: only assigned gig workers can upload proof" });
         }
-        const { id } = req.params // Report Id
+        const { id } = req.params // Task Id
         const { remarks, latitude, longitude } = req.body
 
         if (!latitude || !longitude) {

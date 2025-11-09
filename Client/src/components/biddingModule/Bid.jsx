@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { WorkerAPI } from "../../api/api"; // ✅ Integrated API system
+import  WorkerAPI  from "../../api/api"; // ✅ Integrated API system
 
 const Bid = ({ reportId, gigId, existingBid = null, onSubmit, onCancel }) => {
   const [amount, setAmount] = useState(existingBid?.amount || "");

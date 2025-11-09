@@ -6,9 +6,11 @@ import AuthToggle from "./AuthToggle";
 import AuthForm from "./AuthForm";
 import AuthSocials from "./AuthSocials";
 import { AuthAPI, saveAuthData } from "../../api/api";
+import { useAuth } from "../generalComponents/Navbars/Navbar";
 
 const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
   const navigate = useNavigate();
+  const { updateAuth } = useAuth();
 
   const [authMode, setAuthMode] = useState("login");
   const [formData, setFormData] = useState({
@@ -47,6 +49,13 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user || data.worker));
 
+        updateAuth({
+          token: data.token,
+          user: data.user || data.worker,
+        });
+
+        setShowLoginModal(false)
+
         alert(`✅ Logged in successfully as ${formData.role}!`);
       } else {
         if (formData.role === "citizen") {
@@ -65,7 +74,7 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
             latitude: parseFloat(formData.latitude),
             longitude: parseFloat(formData.longitude),
           });
-        } 
+        }
 
         const { data } = response;
         if (!data.success) throw new Error(data.message);
@@ -84,31 +93,31 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
     }
   };
   useEffect(() => {
-  // Only fetch location if gigworker registration
-  if (authMode === "register" && formData.role === "gigworker") {
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
-      return;
-    }
+    // Only fetch location if gigworker registration
+    if (authMode === "register" && formData.role === "gigworker") {
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser.");
+        return;
+      }
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setFormData((prev) => ({
-          ...prev,
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        }));
-      },
-      (error) => {
-        console.error("Error getting location:", error);
-        alert(
-          "Unable to get your location. Please enable location services or try again."
-        );
-      },
-      { enableHighAccuracy: true }
-    );
-  }
-}, [authMode, formData.role]);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData((prev) => ({
+            ...prev,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          }));
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert(
+            "Unable to get your location. Please enable location services or try again."
+          );
+        },
+        { enableHighAccuracy: true }
+      );
+    }
+  }, [authMode, formData.role]);
 
   return (
     <>
