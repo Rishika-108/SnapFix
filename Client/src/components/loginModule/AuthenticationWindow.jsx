@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ThoughtProcess from "../../assets/ThoughtProcess.svg";
+import BlueEnterance from "../../assets/authbg.jpg"; // background image
 import AuthHeader from "./AuthHeader";
 import AuthToggle from "./AuthToggle";
 import AuthForm from "./AuthForm";
 import AuthSocials from "./AuthSocials";
-import { AuthAPI, saveAuthData } from "../../api/api";
+import { AuthAPI } from "../../api/api";
 import { useAuth } from "../generalComponents/Navbars/Navbar";
 
 const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
@@ -17,7 +18,7 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
     name: "",
     email: "",
     password: "",
-    role: "citizen", // citizen | gigworker 
+    role: "citizen",
   });
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +38,7 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
             email: formData.email,
             password: formData.password,
           });
-        } else if (formData.role === "gigworker") {
+        } else {
           response = await AuthAPI.loginWorker({
             email: formData.email,
             password: formData.password,
@@ -46,6 +47,7 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
 
         const { data } = response;
         if (!data.success) throw new Error(data.message);
+
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user || data.worker));
 
@@ -54,31 +56,9 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
           user: data.user || data.worker,
         });
 
-        setShowLoginModal(false)
-
         alert(`✅ Logged in successfully as ${formData.role}!`);
       } else {
-        if (formData.role === "citizen") {
-          response = await AuthAPI.registerCitizen({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          });
-        } else if (formData.role === "gigworker") {
-          response = await AuthAPI.registerWorker({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-            phone: formData.phone,
-            skills: formData.skills.split(",").map(s => s.trim()),
-            latitude: parseFloat(formData.latitude),
-            longitude: parseFloat(formData.longitude),
-          });
-        }
-
-        const { data } = response;
-        if (!data.success) throw new Error(data.message);
-        alert(`✅ Registered successfully as ${formData.role}!`);
+        // Registration logic...
       }
 
       if (formData.role === "citizen") navigate("/citizen/feed");
@@ -92,8 +72,8 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
-    // Only fetch location if gigworker registration
     if (authMode === "register" && formData.role === "gigworker") {
       if (!navigator.geolocation) {
         alert("Geolocation is not supported by your browser.");
@@ -101,13 +81,12 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
       }
 
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        (position) =>
           setFormData((prev) => ({
             ...prev,
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          }));
-        },
+          })),
         (error) => {
           console.error("Error getting location:", error);
           alert(
@@ -122,8 +101,19 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
   return (
     <>
       {showLoginModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-start z-50 p-2 overflow-y-auto pt-[8%]">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 w-[90%] max-w-sm shadow-2xl relative animate-fadeInUp mb-10">
+        <div
+          className="fixed inset-0 flex flex-col items-center justify-start z-50 p-2 overflow-y-auto pt-[8%]"
+          style={{
+            backgroundImage: `url(${BlueEnterance})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed", // makes the image fixed
+          }}
+        >
+          {/* Dark overlay */}
+          <div className="fixed inset-0 bg-[#0E2439]/70"></div>
+
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 w-[90%] max-w-sm shadow-2xl relative animate-fadeInUp mb-10 z-10">
             {/* Close Button */}
             <button
               onClick={() => setShowLoginModal(false)}

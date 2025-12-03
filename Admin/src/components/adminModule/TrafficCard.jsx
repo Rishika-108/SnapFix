@@ -16,10 +16,10 @@ const TrafficCard = ({
 }) => {
   const [filter, setFilter] = useState("all");
   const [reportsData, setReportsData] = useState({
-    total: 0,
-    active: 0,
-    pending: 0,
-    completed: 0,
+    total: 7,
+    active: 6,
+    pending: 6,
+    completed: 1,
   });
   const [loading, setLoading] = useState(false);
 
