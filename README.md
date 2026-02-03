@@ -1,4 +1,4 @@
-# 🚧 SnapFix
+#  SnapFix
 
 ### *Snap. Report. Fix.*
 
@@ -10,7 +10,7 @@ Built for **Elvion Hackathon 2026** by **Team Risk Takers**.
 
 ---
 
-## 📌 Problem Statement
+##  Problem Statement
 
 Civic issues such as potholes, garbage dumping, broken streetlights, and water leaks often remain **unreported, delayed, or unresolved** due to:
 
@@ -23,7 +23,7 @@ Despite massive investments in smart-city infrastructure, **citizen feedback loo
 
 ---
 
-## 💡 Solution: SnapFix
+##  Solution: SnapFix
 
 SnapFix digitizes the **entire problem-to-solution lifecycle**:
 
@@ -39,9 +39,9 @@ All in **one transparent, real-time system**.
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
-### 👥 Citizen-Centric
+###  Citizen-Centric
 
 * One-minute issue reporting (Snap → Describe → Submit)
 * Auto **geo-tagged & time-stamped** photos
@@ -51,7 +51,7 @@ All in **one transparent, real-time system**.
 * Optional anonymity
 * Bilingual (English / Hindi)
 
-### 🧑‍🔧 Gig Worker Integration
+###  Gig Worker Integration
 
 * Civic issues listed as **local gigs**
 * Transparent bidding via resolution reports
@@ -59,7 +59,7 @@ All in **one transparent, real-time system**.
 * Citizen verification triggers payment
 * Ratings, badges & work portfolio
 
-### 🏛️ Admin Dashboard
+###  Admin Dashboard
 
 * Live city-wide issue heatmaps
 * Status tracking (Reported → Assigned → Resolved → Verified)
@@ -68,7 +68,7 @@ All in **one transparent, real-time system**.
 * Reopen issues if quality is poor
 * Export-ready audit data
 
-### 🤖 Smart Automation
+###  Smart Automation
 
 * Duplicate issue detection
 * AI-based issue categorization
@@ -76,7 +76,7 @@ All in **one transparent, real-time system**.
 
 ---
 
-## 🔄 Platform Workflow
+##  Platform Workflow
 
 ### Citizen Flow
 
@@ -104,7 +104,7 @@ All in **one transparent, real-time system**.
 
 ---
 
-## 🧠 Tech Stack
+##  Tech Stack
 
 **MERN Stack**
 
@@ -122,7 +122,7 @@ All in **one transparent, real-time system**.
 
 ---
 
-## 📊 Impact & Benefits
+##  Impact & Benefits
 
 * ⏱️ **Up to 60% faster issue resolution**
 * ✅ **Citizen-verified closures (up to 90%)**
@@ -132,7 +132,7 @@ All in **one transparent, real-time system**.
 
 ---
 
-## 🚀 Scalability
+##  Scalability
 
 * Deployable across **4,800+ Urban Local Bodies**
 * Cloud-native & API-driven
@@ -152,19 +152,29 @@ All in **one transparent, real-time system**.
 * Transparent public dashboards
 
 
-## 🎥 Demo & Resources
+##  Demo & Resources
 
-* 🎬 **Concept Video**:
+* **Concept Video**:
   [https://drive.google.com/file/d/1Sq1Llx_jOaHbC2B5Mddh4IoITXeh9Gek/view](https://drive.google.com/file/d/1Sq1Llx_jOaHbC2B5Mddh4IoITXeh9Gek/view)
-  
+
+ **Project Screenshots**:
+ **Admin Panel**:
+ <img width="1351" height="625" alt="Screenshot (123)" src="https://github.com/user-attachments/assets/a7361842-239e-417c-afd8-54001b453832" />
+
+ **Citizen Panel**:
+ <img width="1354" height="553" alt="Screenshot (141)" src="https://github.com/user-attachments/assets/09a13be9-c30a-4d86-a9e8-12ceec590213" />
+
+ **GigWorker Panel** :
+ <img width="1346" height="592" alt="Screenshot (146)" src="https://github.com/user-attachments/assets/ea5998a8-9039-49f1-8921-88cb3f12b915" />
 
 
-## 👩‍💼 Team
+
+##  Team
 
 **Team Name:** Risk Takers
 **Hackathon:** Elvion Hackathon 2026
 
-## 📜 License
+##  License
 This project is developed for **educational & hackathon purposes**.
 License details can be added as per future deployment requirements.
 
