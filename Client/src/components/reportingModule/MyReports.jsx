@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { CitizenAPI } from "../../api/api"; // Backend API
+import { CitizenAPI } from "../../api/api";
 import IssueGrid from "../../components/issueGridModule/IssueGrid";
 import CitizenNavbar from "../../components/generalComponents/Navbars/CitizenNavbar";
+import AppBG from "../../assets/B-g.jpg"; // background image
 
 const MyReports = () => {
   const [loading, setLoading] = useState(true);
@@ -9,7 +10,6 @@ const MyReports = () => {
   const [upvotedReports, setUpvotedReports] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Fetch user's reports on mount
   useEffect(() => {
     const fetchReports = async () => {
       try {
@@ -20,13 +20,11 @@ const MyReports = () => {
           setUserReports(data.reports || []);
           setUpvotedReports(data.upvotedReports || []);
         } else {
-          console.warn("⚠️ Failed to fetch user reports:", data.message);
           setErrorMessage(data.message || "No reports found.");
           setUserReports([]);
           setUpvotedReports([]);
         }
       } catch (error) {
-        console.error("❌ Error fetching reports:", error);
         setErrorMessage("Could not fetch your reports. Please try again.");
         setUserReports([]);
         setUpvotedReports([]);
@@ -39,11 +37,24 @@ const MyReports = () => {
   }, []);
 
   return (
-    <>
+    <div className="relative min-h-screen w-full">
       <CitizenNavbar />
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-800 p-20">
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 w-full max-w-6xl">
-          <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">My Reports</h1>
+
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${AppBG})` }}
+      />
+
+      {/* White Tint Overlay */}
+      <div className="absolute inset-0 bg-white/60" />
+
+      {/* Page Content */}
+      <div className="relative z-10 flex justify-center items-start pt-24 px-4 md:px-8 pb-10 w-full">
+        <div className=" w-full max-w-6xl">
+          <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
+            My Reports
+          </h1>
           <p className="text-sm text-gray-600 mb-8 text-center">
             View and manage all the issues you’ve reported or upvoted so far.
           </p>
@@ -65,8 +76,9 @@ const MyReports = () => {
             <>
               {userReports.length > 0 && (
                 <>
-                  <h2 className="text-2xl font-semibold mb-4 text-gray-700">Your Reports</h2>
+                <div className="bg-blue-50 rounded-3xl shadow-lg border border-gray-100  min-w-full">
                   <IssueGrid reports={userReports} />
+                  </div>
                 </>
               )}
 
@@ -82,7 +94,7 @@ const MyReports = () => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
