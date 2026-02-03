@@ -30,4 +30,4 @@ app.use('/api/bid', bidRouter)
 app.use('/api/task', taskRouter)
 
 app.get('/', (req, res)=> res.send("Backend is running"))
-app.listen(PORT, ()=>console.log(`Server is running on ${PORT}`))
+app.listen(PORT, ()=>console.log(`Server is running on ${PORT}`)) 

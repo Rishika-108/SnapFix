@@ -33,7 +33,7 @@ const GigWorkerLanding = () => {
 
         {/* Right Column: Icon Cards */}
     {/* Right Column: Classy Icon Cards */}
-<div className="md:w-1/2 flex flex-col gap-6 mb-10 md:mb-0">
+{/* <div className="md:w-1/2 flex flex-col gap-6 mb-10 md:mb-0">
   <div className="flex items-center bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-sm hover:shadow-lg transition-shadow">
     <div className="text-4xl mr-4">💼</div>
     <p className="text-white font-medium text-lg">
@@ -52,7 +52,7 @@ const GigWorkerLanding = () => {
       Make a real impact in your local community.
     </p>
   </div>
-</div>
+</div> */}
 
       </section>
 
