@@ -5,7 +5,7 @@ import HeatmapLegend from "./HeatmapLegend";
 import SelectedIssueModal from "./SelectedIssueModal";
 import NearbyIssuesModal from "./NearbyIssuesModal";
 
-const Heatmap = () => {
+const Heatmap = ({allReports}) => {
   const mapRef = useRef(null);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [nearbyIssues, setNearbyIssues] = useState([]);
@@ -21,6 +21,7 @@ const Heatmap = () => {
       {/* 🔥 Pass status filter + handlers into the map view */}
       <HeatmapMapView
         mapRef={mapRef}
+        allReports={allReports}
         setSelectedIssue={setSelectedIssue}
         setNearbyIssues={setNearbyIssues}
         filter={filter.toLowerCase()} // ensure consistency with handleReports.js

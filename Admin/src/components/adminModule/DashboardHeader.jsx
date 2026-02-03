@@ -5,10 +5,12 @@ const DashboardHeader = ({
   title = "Government Dashboard",
   subtitle = "Civic Issue Reporting Overview",
   showDateFilter = true,
-  showExport = true,
+  showExport = false,
+  onDateRangeChange,
+  onLoading
 }) => {
-  const [selectedRange, setSelectedRange] = useState("Today");
-  const dateRanges = ["Today", "This Week", "This Month", "This Year"];
+  const [selectedRange, setSelectedRange] = useState("All Reports");
+  const dateRanges = ["Today", "This Week", "This Month", "This Year", "All Reports"];
 
   return (
     <div
@@ -35,7 +37,11 @@ const DashboardHeader = ({
             <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 text-sm" />
             <select
               value={selectedRange}
-              onChange={(e) => setSelectedRange(e.target.value)}
+              onChange={(e) => {
+                setSelectedRange(e.target.value);
+                onDateRangeChange?.(e.target.value); //notify parent
+                onLoading?.(true);
+              }}
               className="
                 appearance-none pl-9 pr-6 py-2
                 text-sm font-medium text-gray-200 bg-[#132F4A]/80

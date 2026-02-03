@@ -89,14 +89,17 @@ const ReportForm = () => {
   };
 
   const categories = [
-    "Road Damage",
-    "Water Leakage",
-    "Garbage Issue",
-    "Streetlight Problem",
-    "Illegal Parking",
-    "Public Safety",
-    "Other",
-  ];
+  "Roads & Transportation",
+  "Water & Sewerage",
+  "Garbage & Sanitation",
+  "Streetlights & Electricity",
+  "Public Health",
+  "Traffic & Parking",
+  "Urban Planning",
+  "Public Safety",
+  "Other",
+];
+
 
   return (
     <>
