@@ -1,9 +1,10 @@
 import Navbar from "../components/generalComponents/Navbars/Navbar";
-import Hero1 from "../components/homeComponents/Hero1";
+import Hero from "../components/homeComponents/Hero";
 import About from "../components/homeComponents/About";
 import FeatureHighlights from "../components/homeComponents/FeatureHighlights";
 import Footer from "../components/generalComponents/Footer";
 import HomeBG from "../assets/SubtleBlue.jpg"; // <-- import background image
+
 
 const HomePage = () => {
   return (
@@ -15,11 +16,11 @@ const HomePage = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <Navbar />
-      <Hero1 />
+      <Navbar/>
+      <Hero />
       <FeatureHighlights />
       <About />
-      <Footer />
+      <Footer /> 
     </div>
   );
 };

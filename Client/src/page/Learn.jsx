@@ -5,7 +5,7 @@ import ModuleCard from '../components/eduModule/ModuleCard';
 import { MODULES } from '../mockData/modules';
 import { getUserData, calculateLevel, initializeUserData } from '../mockData/gamification';
 
-export default function Home() {
+export default function Learn() {
   const [userData, setUserData] = useState(null);
   const [level, setLevel] = useState(null);
 
