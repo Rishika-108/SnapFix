@@ -161,7 +161,7 @@ const ReportForm = () => {
               location={report.location}
               detectLocation={detectLocation}
               onLocationSelect={handleManualLocationSelect}
-            />
+            /> 
 
             <button
               type="submit"

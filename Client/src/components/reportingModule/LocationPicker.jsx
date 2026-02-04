@@ -84,7 +84,7 @@ const LocationPicker = ({ location, detectLocation, onLocationSelect }) => {
 
       {hasCoords ? (
         <p className="text-gray-400 text-sm mt-1">
-          Lat: {location.lat.toFixed(4)} | Lon: {location.lng.toFixed(4)}
+          Lat: {location.lat.toFixed(4)} | Lon: {location.lng.toFixed(4)} 
         </p>
       ) : (
         <p className="text-gray-400 text-sm mt-1">📍 No location selected</p>

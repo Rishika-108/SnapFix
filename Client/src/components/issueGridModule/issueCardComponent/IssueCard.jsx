@@ -47,7 +47,7 @@ const IssueCard = ({ report }) => {
         expanded={expanded}
         setExpanded={setExpanded}
       />
-
+ 
       <IssueImage
         title={title}
         image={displayImage}
@@ -71,6 +71,19 @@ const IssueCard = ({ report }) => {
           <IssueMapPreview location={location} mapPreview={mapPreview} />
         </div>
       )}
+       {/* ✅ Show RateAfterCompletion only if issue is completed */}
+      {/* {status === "Completed" && resolvedImage && (
+        <div className="px-4 pb-4">
+          <RateAfterCompletion
+            issueImage={displayImage}
+            // resolvedImage={resolvedImage}
+            onVerify={(verified, rating, review) => {
+              console.log("User Feedback:", { verified, rating, review });
+              // Here you can call an API to submit verification & rating
+            }}
+          />
+        </div>
+      )} */}
     </div>
   );
 };
