@@ -6,18 +6,21 @@ const RateAfterCompletion = ({ issueImage, resolvedImage, onVerify }) => {
   const [review, setReview] = useState('');
 
   const handleVerification = (isSolved) => {
-    setVerified(isSolved);
-    if (onVerify) {
-      onVerify(isSolved, rating, review);
-    }
-  };
+  setVerified(isSolved);
+};
 
-  const handleSubmitReview = () => {
-    if (onVerify) {
-      onVerify(verified, rating, review);
-    }
-    alert('Thank you for your feedback!');
-  };
+const handleSubmitReview = () => {
+  if (verified === null) {
+    alert("Please verify the task first");
+    return;
+  }
+
+  if (onVerify) {
+    onVerify(verified, rating, review);
+  }
+
+  alert("Thank you for your feedback!");
+};
 
   return (
     <div style={styles.container}>

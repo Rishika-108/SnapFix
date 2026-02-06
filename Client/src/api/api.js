@@ -9,7 +9,6 @@ import {
   dummyTasks, 
 } from "./dummyData";
 
-// 🌍 Toggle between dummy mode and real API
 const USE_DUMMY = false; // 🔁 set false to connect to backend
 
 // 🌍 Base URL (backend)
@@ -62,6 +61,8 @@ export const CitizenAPI = {
   getNearbyReports: () => api.get("/report/location"),
 
   getMyReports: () => api.get("/user/my-reports"),
+
+  verifyTask: (taskId, isSatisfied) => api.post(`/task/verify/${taskId}`, { isSatisfied }),
 };
  
 // ======================== WORKER ROUTES ========================
