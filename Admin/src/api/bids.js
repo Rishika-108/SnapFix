@@ -35,9 +35,9 @@ export const getReportWithBids = async (reportId, token = null) => {
  * @param {string} token - Admin auth token (optional)
  * @returns {Promise<Object>} Approved bid + created task
  */
-export const assignBid = async (token = null) => {
+export const assignBid = async (bidId, token = null) => {
   try {
-    const res = await axios.put(`${API_BASE_URL}/admin/approve-bid`, null, {
+    const res = await axios.put(`${API_BASE_URL}/admin/approve-bid/${bidId}`, null, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
 

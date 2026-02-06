@@ -151,6 +151,7 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { getReportWithBids } from "../../api/bids.js";
+import { assignBid } from "../../api/bids.js";
 
 const BidSection = ({ report, token }) => {
   const [bidCount, setBidCount] = useState(0);
@@ -185,20 +186,24 @@ const BidSection = ({ report, token }) => {
   }, [showAssignModal, report._id]);
 
   // Handle assignment of a bid
-  const handleAssignBid = (bidId) => {
+   const handleAssignBid = async (bidId) => {
+  try {
     setAssigningId(bidId);
 
-    // TODO: Call your API to approve/assign bid here
-    setTimeout(() => {
-      alert(`✅ Bid assigned successfully`);
-      setAssigningId(null);
-      setShowAssignModal(false);
+    await assignBid(bidId, token);
 
-      // Remove assigned bid from list
-      setBids((prev) => prev.filter((b) => b._id !== bidId));
-      setBidCount((prev) => prev - 1);
-    }, 1000);
-  };
+    alert("✅ Bid assigned successfully");
+
+    setBids((prev) => prev.filter((b) => b._id !== bidId));
+    setBidCount((prev) => prev - 1);
+    setShowAssignModal(false);
+
+  } catch (err) {
+    alert(err.response?.data?.message || "Failed to assign bid");
+  } finally {
+    setAssigningId(null);
+  }
+};
 
   const modalContent = showAssignModal && (
     <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/70 backdrop-blur-md">
