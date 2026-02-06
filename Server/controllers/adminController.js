@@ -2,6 +2,8 @@ import Bid from "../models/bidModel.js"
 import Worker from "../models/gigWorkerModel.js"
 import Report from "../models/reportModel.js"
 import Task from "../models/taskAssignmentModel.js"
+import mongoose from "mongoose";
+
 
 // Lists out all the report for the admin to view
 const viewAllReports = async (req, res) => {
@@ -39,7 +41,7 @@ const viewReportWithBid = async (req, res) => {
         if (!report)
             return res.status(404).json({ success: false, message: "Could not find this particular report" })
 
-        const getBids = await Bid.find({ reportId: id })
+        const getBids = await Bid.find({ reportId: id})
             .populate("gigWorkerId", "name email")
 
         if (getBids.length === 0)

@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import Bid from "../models/bidModel.js"
 
+// The gigworker creates a bid on a report
 const createBid = async (req,res) => {
    try {
      const userId = req.user?._id
@@ -24,7 +25,7 @@ const createBid = async (req,res) => {
 
 }
 
-//Maybe we dont need this
+//Maybe we dont need this - Yup we don't need this. The admin controller does that work
 const getBidOnReport = async (req,res) => {
     try {
         const {id} = req.params

@@ -5,13 +5,13 @@
 //   const [bidCount, setBidCount] = useState(0);
 //   const [bids, setBids] = useState([]);
 //   const [showAssignModal, setShowAssignModal] = useState(false);
-//   const [assigning, setAssigning] = useState(false);
+//   const [assigningId, setAssigningId] = useState(null);
 
-//   const demo = true; // toggle demo mode
+//   const demo = true; // demo mode
 
 //   useEffect(() => {
 //     if (demo) {
-//       // Dummy bids for demo
+//       // Dummy bids
 //       const dummyBids = [
 //         {
 //           _id: "bid1",
@@ -38,12 +38,18 @@
 //     }
 //   }, [report]);
 
-//   const handleAssignBid = () => {
-//     setAssigning(true);
+//   // Handle assignment of a single bid
+//   const handleAssignBid = (bidId) => {
+//     setAssigningId(bidId);
+
 //     setTimeout(() => {
-//       alert("✅ Bid assigned successfully (demo mode)");
-//       setAssigning(false);
+//       alert(`✅ Bid  assigned successfully`);
+//       setAssigningId(null);
 //       setShowAssignModal(false);
+
+//       // Remove assigned bid from the list
+//       setBids((prevBids) => prevBids.filter((b) => b._id !== bidId));
+//       setBidCount((prevCount) => prevCount - 1);
 //     }, 1000);
 //   };
 
@@ -96,15 +102,15 @@
 //                     <td className="px-4 py-3 text-gray-300">{bid.duration} days</td>
 //                     <td className="px-4 py-3 text-center">
 //                       <button
-//                         onClick={handleAssignBid}
-//                         disabled={assigning}
+//                         onClick={() => handleAssignBid(bid._id)}
+//                         disabled={assigningId === bid._id}
 //                         className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 shadow-sm ${
-//                           assigning
+//                           assigningId === bid._id
 //                             ? "bg-gray-600 text-gray-300 cursor-not-allowed"
 //                             : "bg-linear-to-r from-emerald-500 to-teal-500 text-white hover:scale-[1.05] hover:shadow-[0_0_12px_rgba(52,211,153,0.3)]"
 //                         }`}
 //                       >
-//                         {assigning ? "Assigning..." : "Assign Bid"}
+//                         {assigningId === bid._id ? "Assigning..." : "Assign Bid"}
 //                       </button>
 //                     </td>
 //                   </tr>
@@ -144,56 +150,53 @@
 
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
+import { getReportWithBids } from "../../api/bids.js";
 
-const BidSection = ({ report }) => {
+const BidSection = ({ report, token }) => {
   const [bidCount, setBidCount] = useState(0);
   const [bids, setBids] = useState([]);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assigningId, setAssigningId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const demo = true; // demo mode
-
-  useEffect(() => {
-    if (demo) {
-      // Dummy bids
-      const dummyBids = [
-        {
-          _id: "bid1",
-          gigWorkerId: { name: "Ravi Sharma", email: "ravi@example.com" },
-          bidAmount: 500,
-          duration: 3,
-        },
-        {
-          _id: "bid2",
-          gigWorkerId: { name: "Anita Patel", email: "anita@example.com" },
-          bidAmount: 750,
-          duration: 2,
-        },
-        {
-          _id: "bid3",
-          gigWorkerId: { name: "Sunil Kumar", email: "sunil@example.com" },
-          bidAmount: 600,
-          duration: 4,
-        },
-      ];
-
-      setBids(report?.bids?.length > 0 ? report.bids : dummyBids);
-      setBidCount(report?.bids?.length > 0 ? report.bids.length : dummyBids.length);
+  // Fetch bids from backend
+  const fetchBids = async () => {
+    if (!report?._id) return;
+    setLoading(true);
+    try {
+      const data = await getReportWithBids(report._id, token);
+      const fetchedBids = data.getBids || [];
+      setBids(fetchedBids);
+      setBidCount(fetchedBids.length);
+    } catch (err) {
+      console.error("Failed to fetch bids:", err);
+      setBids([]);
+      setBidCount(0);
+    } finally {
+      setLoading(false);
     }
-  }, [report]);
+  };
 
-  // Handle assignment of a single bid
+  // Fetch bids when modal opens
+  useEffect(() => {
+    if (showAssignModal) {
+      fetchBids();
+    }
+  }, [showAssignModal, report._id]);
+
+  // Handle assignment of a bid
   const handleAssignBid = (bidId) => {
     setAssigningId(bidId);
 
+    // TODO: Call your API to approve/assign bid here
     setTimeout(() => {
-      alert(`✅ Bid  assigned successfully`);
+      alert(`✅ Bid assigned successfully`);
       setAssigningId(null);
       setShowAssignModal(false);
 
-      // Remove assigned bid from the list
-      setBids((prevBids) => prevBids.filter((b) => b._id !== bidId));
-      setBidCount((prevCount) => prevCount - 1);
+      // Remove assigned bid from list
+      setBids((prev) => prev.filter((b) => b._id !== bidId));
+      setBidCount((prev) => prev - 1);
     }, 1000);
   };
 
@@ -216,7 +219,9 @@ const BidSection = ({ report }) => {
           Bids for Report: {report?.title || "N/A"}
         </h2>
 
-        {bids.length > 0 ? (
+        {loading ? (
+          <p className="text-center text-gray-400">Loading bids...</p>
+        ) : bids.length > 0 ? (
           <div className="overflow-x-auto max-h-[70vh] rounded-xl border border-white/10">
             <table className="w-full text-sm">
               <thead className="bg-[#132F4A]/80 text-gray-300 uppercase text-xs tracking-wider sticky top-0">

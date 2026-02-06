@@ -4,11 +4,12 @@ import { Heart, ExternalLink } from "lucide-react";
 import BidSection from "../../biddingModule/BidSection";
 
 const IssueFooter = ({ report, user }) => {
-  console.log("📦 IssueFooter:", { report, user });
+  // console.log("📦 IssueFooter:", { report, user });
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(report.upvotes || 0);
 
   // ✅ Handle Like/Unlike using CitizenAPI
+  const token = localStorage.getItem("token");
   const handleLike = async () => {
     try {
       if (!user) {
@@ -70,7 +71,7 @@ const IssueFooter = ({ report, user }) => {
         <BidSection
   report={{ _id: report._id, title: report.title, bids: report.bids }}
   user={user || { role: "government" }}
-  token={"demo-token-123"}
+  token={token}
 />
 
 

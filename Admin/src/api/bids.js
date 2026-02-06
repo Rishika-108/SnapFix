@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
 /**
  * ==========================
@@ -19,6 +19,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000
  */
 export const getReportWithBids = async (reportId, token = null) => {
   try {
+    console.log('TOKEN:', token);
     const res = await axios.get(`${API_BASE_URL}/admin/bids/${reportId}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
@@ -36,7 +37,7 @@ export const getReportWithBids = async (reportId, token = null) => {
  */
 export const assignBid = async (token = null) => {
   try {
-    const res = await axios.put(`${API_BASE_URL}/admin/approvebid`, null, {
+    const res = await axios.put(`${API_BASE_URL}/admin/approve-bid`, null, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
 

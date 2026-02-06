@@ -179,7 +179,7 @@
 //       console.warn("⚠️ Backend unavailable, returning mock reports");
 //       return recentReports;
 //     }
-//   },
+//   }, 
 // };
 
 // export default api;
@@ -270,9 +270,10 @@ export const api = {
     }
   },
 
+  // don't need this
   getReportWithBids: async (reportId) => {
     try {
-      const res = await apiInstance.get(`/admin/report-with-bid/${reportId}`);
+      const res = await apiInstance.get(`/admin/bids/${reportId}`);
       return res.data;
     } catch (err) {
       console.error("Failed to fetch report with bids:", err);
