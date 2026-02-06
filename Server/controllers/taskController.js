@@ -8,50 +8,101 @@ import fs from "fs";
 
 // Upload your proof for the work you have done - Made for gigWorker
 const uploadProof = async (req, res) => {
-    try {
-        const userId = req.user?._id // Gig Worker Id
-        if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
-        if (req.role !== 'gigworker') {
-            return res.status(403).json({ success: false, message: "Access denied: only assigned gig workers can upload proof" });
-        }
-        const { id } = req.params // Task Id
-        const { remarks, latitude, longitude } = req.body
+  try {
+    // 1️⃣ Extract params FIRST
+    const { id } = req.params; // Task ID
+    const { remarks, latitude, longitude } = req.body;
 
-        if (!latitude || !longitude) {
-            return res.status(400).json({ success: false, message: "Location is missing" })
-        }
-        if (!req.file) {
-            return res.status(400).json({ success: false, message: "Image is required" });
-        }
-        const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
-            folder: "reports_uploads",
-        });
-
-        fs.unlinkSync(req.file.path); // Removes files from from local disk storage, thereby removing
-        // EPERM erro
-        const updatedTask = await Task.findByIdAndUpdate(
-            id,
-            {
-                $set: {
-                    "proof.imageUrl": cloudinaryResult.secure_url,
-                    "proof.remarks": remarks,
-                    status: "Proof Submitted",
-                    "proof.uploadedAt": Date.now(),
-                    "proof.location": {
-                        type: "Point",
-                        coordinates: [parseFloat(longitude), parseFloat(latitude)]
-                    }
-                }
-            }, { new: true }
-        )
-        if (!updatedTask) return res.status(404).json({ success: false, message: "Task Not found or assgined yet" })
-
-        res.status(200).json({ success: true, message: "Proof uploaded successfully", task: updatedTask })
-    } catch (error) {
-        console.log(error.message)
-        res.status(500).json({ success: false, message: "Could not upload proof" })
+    // 2️⃣ Auth checks
+    const userId = req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
     }
-}
+
+    if (req.role !== "gigworker") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied: only gig workers can upload proof",
+      });
+    }
+
+    // 3️⃣ Validate input
+    if (!latitude || !longitude) {
+      return res.status(400).json({
+        success: false,
+        message: "Location is missing",
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Image is required",
+      });
+    }
+
+    // 4️⃣ Fetch task
+    const task = await Task.findById(id);
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    // 5️⃣ Ownership check
+    if (task.gigWorkerId.toString() !== userId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not assigned to this task",
+      });
+    }
+
+    if (task.status === "Proof Submitted") {
+      return res.status(400).json({
+        success: false,
+        message: "Proof already submitted",
+      });
+    }
+
+    // 6️⃣ Upload to Cloudinary
+    const cloudinaryResult = await cloudinary.uploader.upload(
+      req.file.path,
+      { folder: "reports_uploads" }
+    );
+
+    fs.unlinkSync(req.file.path); // cleanup local file
+
+    // 7️⃣ Update task
+    task.proof = {
+      imageUrl: cloudinaryResult.secure_url,
+      remarks,
+      uploadedAt: Date.now(),
+      location: {
+        type: "Point",
+        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+      },
+    };
+
+    task.status = "Proof Submitted";
+    await task.save();
+
+    // 8️⃣ Response
+    res.status(200).json({
+      success: true,
+      message: "Proof uploaded successfully",
+      task,
+    });
+
+  } catch (error) {
+    console.error("uploadProof error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Could not upload proof",
+    });
+  }
+};
+
 
 // After the proof has been uploaded - the citizen can verify if the task has been done properly or not
 const verifyByCitizen = async (req, res) => {
@@ -75,7 +126,7 @@ const verifyByCitizen = async (req, res) => {
         if (isSatisfied) {
             completedTask.verifiedByCitizen = true
             completedTask.verifiedAt = new Date()
-            completedTask.status = "Completed" 
+            completedTask.status = "Completed"
             await completedTask.save()
 
             await Report.findByIdAndUpdate(completedTask.reportId._id, {
@@ -107,37 +158,38 @@ const verifyByCitizen = async (req, res) => {
 
 // Get all the tasks assigned to the gig worker - Made for assigned GigWorker   
 const getMyTasks = async (req, res) => {
-  try {
-    const userId = req.user?._id;
+    try {
+        const userId = req.user?._id;
 
-    if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+
+        if (req.role !== "gigworker") {
+            return res.status(403).json({ success: false, message: "Access denied" });
+        }
+
+        const tasks = await Task.find({ gigWorkerId: userId })
+            .populate("reportId", "title description locationName status")
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            tasks,
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({
+            success: false,
+            message: "Could not fetch assigned tasks",
+        });
     }
-
-    if (req.role !== "gigworker") {
-      return res.status(403).json({ success: false, message: "Access denied" });
-    }
-
-    const tasks = await Task.find({ gigWorkerId: userId })
-      .populate("reportId", "title description locationName status")
-      .sort({ createdAt: -1 });
-
-    return res.status(200).json({
-      success: true,
-      tasks,
-    });
-
-  } catch (error) {
-    console.error(error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Could not fetch assigned tasks",
-    });
-  }
 };
 
 
 // Get detailed overview of the task - Made for assigned GigWorker 
+// Not currently much in use - Maybe for later versions
 const getTaskDetail = async (req, res) => {
     try {
         const { id } = req.params
@@ -162,4 +214,4 @@ const getTaskDetail = async (req, res) => {
     }
 }
 
-export { uploadProof, verifyByCitizen, getTaskDetail, getMyTasks}
+export { uploadProof, verifyByCitizen, getTaskDetail, getMyTasks }

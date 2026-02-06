@@ -57,7 +57,7 @@ const TaskAssigned = () => {
     formData.append("remarks", remarks);
     formData.append("latitude", "0");
     formData.append("longitude", "0");
-    formData.append("file", proofImage);
+    formData.append("image", proofImage);
 
     try {
       setUploading(true);
