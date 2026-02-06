@@ -105,6 +105,38 @@ const verifyByCitizen = async (req, res) => {
     }
 }
 
+// Get all the tasks assigned to the gig worker - Made for assigned GigWorker   
+const getMyTasks = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    if (req.role !== "gigworker") {
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+
+    const tasks = await Task.find({ gigWorkerId: userId })
+      .populate("reportId", "title description locationName status")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      tasks,
+    });
+
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Could not fetch assigned tasks",
+    });
+  }
+};
+
+
 // Get detailed overview of the task - Made for assigned GigWorker 
 const getTaskDetail = async (req, res) => {
     try {
@@ -130,4 +162,4 @@ const getTaskDetail = async (req, res) => {
     }
 }
 
-export { uploadProof, verifyByCitizen, getTaskDetail }
+export { uploadProof, verifyByCitizen, getTaskDetail, getMyTasks}

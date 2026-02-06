@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Loader2, MapPin, ClipboardList, Upload, FileText } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import  WorkerAPI  from "../../api/api";
 import GigworkerNavbar from "../generalComponents/Navbars/GigworkerNavbar";
+import { useAuth } from "../../context/AuthContext";
+import { WorkerAPI } from "../../api/api";
 
-const TaskAssigned = ({ user }) => {
+const TaskAssigned = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -12,30 +13,39 @@ const TaskAssigned = ({ user }) => {
   const [remarks, setRemarks] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  // ✅ Fetch assigned tasks
+  const { user } = useAuth();
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        setLoading(true);
-        const response = await WorkerAPI.getTaskDetail(user?._id); // adjust if backend uses /worker/tasks
-        const { data } = response;
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const response = await WorkerAPI.getMyTasks();
 
-        if (data?.success) {
-          setTasks(Array.isArray(data.tasks) ? data.tasks : [data.task]);
-        } else {
-          console.warn("⚠️ Failed to fetch tasks:", data?.message);
-        }
-      } catch (error) {
-        console.error("❌ Error fetching assigned tasks:", error.message);
-      } finally {
-        setLoading(false);
+      const { data } = response;
+
+      if (data?.success) {
+        // console.log("🟢 tasks received:", data.tasks);
+        setTasks(data.tasks);
+      } else {
+        console.warn("⚠️ API success=false:", data);
       }
-    };
+    } catch (error) {
+      console.error("🔴 fetchTasks ERROR:", error);
+      console.error("🔴 error.response:", error.response);
+    } finally {
+      // console.log("🟢 fetchTasks FINALLY → setLoading(false)");
+      setLoading(false);
+    }
+  };
 
-    if (user?._id) fetchTasks();
-  }, [user?._id]);
+  if (user?.id) {
+    fetchTasks();
+  } else {
+    console.log("🔴 user._id missing, fetchTasks NOT called");
+  }
+}, [user?.id]);
 
-  // ✅ Upload Proof
+
+
   const handleProofSubmit = async (e) => {
     e.preventDefault();
     if (!selectedTask || !proofImage) {

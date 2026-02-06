@@ -76,6 +76,8 @@ export const WorkerAPI = {
 
   uploadTaskProof: (taskId, data) => api.post(`/task/proof-upload/${taskId}`, data),
 
+  getMyTasks: () => api.get("/task/my-tasks"),
+
   getTaskDetail: (taskId) => api.get(`/task/${taskId}`),
 };
 
