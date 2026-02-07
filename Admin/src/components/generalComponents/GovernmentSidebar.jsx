@@ -10,6 +10,23 @@ const GovernmentSidebar = () => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
+  /* ================= Scroll Lock ================= */
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, [sidebarOpen]);
+
+  /* ================= Close avatar dropdown ================= */
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -27,21 +44,22 @@ const GovernmentSidebar = () => {
 
   return (
     <>
-      {/* ===== Topbar for Mobile ===== */}
-      <nav className="bg-[#0E2439] fixed top-0 left-0 w-full z-50 shadow-sm md:hidden border-b border-white/10">
-        <div className="flex items-center justify-between p-4">
-          <div className="flex items-center space-x-2">
+      {/* ================= Mobile Topbar ================= */}
+      <nav className="fixed top-0 left-0 w-full z-50 bg-[#0E2439] md:hidden border-b border-white/10">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
             <button
-              onClick={() => setSidebarOpen(true)}
-              className="p-2 rounded-md text-gray-300 hover:bg-blue-600/20"
+              onClick={() => setSidebarOpen((prev) => !prev)}
+              className="p-2 rounded-md text-gray-300 hover:bg-blue-600/20 active:bg-blue-600/30"
             >
               <FiMenu className="text-2xl" />
             </button>
-            <Link to="/dashboard" className="flex items-center space-x-2">
+
+            <Link to="/government/dashboard" className="flex items-center gap-2">
               <img
                 src="https://flowbite.com/docs/images/logo.svg"
                 className="h-8"
-                alt="App Logo"
+                alt="Logo"
               />
               <span className="text-xl font-semibold text-gray-100">
                 SnapFix
@@ -49,109 +67,113 @@ const GovernmentSidebar = () => {
             </Link>
           </div>
 
-          {/* User Avatar */}
+          {/* Avatar */}
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="relative"
           >
-            <img className="w-8 h-8 rounded-full" src={userAvatar} alt="user" />
+            <img
+              className="w-8 h-8 rounded-full"
+              src={userAvatar}
+              alt="user"
+            />
             {dropdownOpen && (
               <div
                 ref={dropdownRef}
                 className="absolute right-0 mt-2 w-40 bg-[#142E4D] border border-white/10 rounded-lg shadow-md"
               >
-                <ul className="py-1">
-                  <li>
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-blue-600/20"
-                    >
-                      Logout
-                    </button>
-                  </li>
-                </ul>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full px-4 py-2 text-sm text-gray-300 hover:bg-blue-600/20 text-left"
+                >
+                  Logout
+                </button>
               </div>
             )}
           </button>
         </div>
       </nav>
 
-      {/* ===== Sidebar ===== */}
+      {/* ================= Sidebar ================= */}
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform border-r border-white/10 transform bg-gradient-to-b from-[#0B1725] via-[#0E2439] to-[#142E4D] ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
+        className={`fixed top-0 left-0 z-40 w-64 h-screen overflow-y-auto overscroll-contain
+        transition-transform duration-300 transform border-r border-white/10
+        bg-gradient-to-b from-[#0B1725] via-[#0E2439] to-[#142E4D]
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
-          {/* ===== Brand ===== */}
-          <Link to="/government/dashboard" className="flex items-center gap-3">
-            <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              alt="Gov Logo"
-              className="h-8 w-8"
-            />
-            <h1 className="text-lg font-semibold text-gray-100 tracking-tight">
-              SnapFix Gov Panel
-            </h1>
-          </Link>
-
-          {/* Close button (mobile only) */}
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="p-1 rounded-md text-gray-300 hover:bg-blue-600/20 md:hidden"
-          >
-            <IoClose className="text-2xl" />
-          </button>
-        </div>
-
-        {/* Navigation Links */}
-        <div className="px-3 py-6 space-y-2">
-          {[
-            { label: "Dashboard", to: "/government/dashboard" },
-            { label: "Reports", to: "/government/reports" },
-            { label: "Fund Release", to: "/government/funds" },
-          ].map((item) => (
+        <div className="flex flex-col h-full">
+          {/* ===== Header ===== */}
+          <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
             <Link
-              key={item.label}
-              to={item.to}
-              onClick={() => setSidebarOpen(false)}
-              className="block px-4 py-2 text-gray-300 rounded-md hover:bg-blue-600/20 transition"
+              to="/government/dashboard"
+              className="flex items-center gap-3"
             >
-              {item.label}
+              <img
+                src="https://flowbite.com/docs/images/logo.svg"
+                alt="Gov Logo"
+                className="h-8 w-8"
+              />
+              <span className="text-lg font-semibold text-gray-100">
+                SnapFix Gov
+              </span>
             </Link>
-          ))}
-        </div>
 
-        {/* Footer */}
-        <div className="absolute bottom-0 left-0 w-full border-t border-white/10 p-4">
-          <div className="flex items-center space-x-3">
-            <img
-              className="w-10 h-10 rounded-full border border-white/20"
-              src={userAvatar}
-              alt="User avatar"
-            />
-            <div>
-              <p className="text-sm font-medium text-gray-100">
-                Government User
-              </p>
-              <button
-                onClick={handleLogout}
-                className="text-xs text-red-400 hover:underline"
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="p-1 rounded-md text-gray-300 hover:bg-blue-600/20 md:hidden"
+            >
+              <IoClose className="text-2xl" />
+            </button>
+          </div>
+
+          {/* ===== Navigation ===== */}
+          <div className="flex-1 px-3 py-6 space-y-2">
+            {[
+              { label: "Dashboard", to: "/government/dashboard" },
+              { label: "Reports", to: "/government/reports" },
+              { label: "Fund Release", to: "/government/funds" },
+            ].map((item) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                onClick={() => setSidebarOpen(false)}
+                className="block px-4 py-2 rounded-md text-gray-300 hover:bg-blue-600/20 transition"
               >
-                Logout
-              </button>
+                {item.label}
+              </Link>
+            ))}
+          </div>
+
+          {/* ===== Footer ===== */}
+          <div className="border-t border-white/10 p-4">
+            <div className="flex items-center gap-3">
+              <img
+                src={userAvatar}
+                alt="user"
+                className="w-10 h-10 rounded-full border border-white/20"
+              />
+              <div>
+                <p className="text-sm font-medium text-gray-100">
+                  Government User
+                </p>
+                <button
+                  onClick={handleLogout}
+                  className="text-xs text-red-400 hover:underline"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </aside>
 
-      {/* Background overlay (Mobile) */}
+      {/* ================= Mobile Overlay ================= */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-30 md:hidden"
+          className="fixed inset-0 z-30 bg-black/60 md:hidden overscroll-contain"
           onClick={() => setSidebarOpen(false)}
-        ></div>
+        />
       )}
     </>
   );
