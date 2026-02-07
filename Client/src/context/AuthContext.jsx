@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
     if (!redirect) return;
 
     //  Role-based redirect
-    if (user.role === "citizen") navigate("/citizen");
+    if (user.role === "citizen") navigate("/");
     else if (user.role === "gigworker") navigate("/gigworker");
     else navigate("/");
   };

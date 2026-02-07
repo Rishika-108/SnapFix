@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import  WorkerAPI  from "../../api/api";
 import { User, Mail, MapPin, Loader2, Briefcase, Clock } from "lucide-react";
 
+// This module is not integrated yet, but will be considered in future scope to give an overview of 
+// worker profile.
 const ViewProfile = () => {
   const [worker, setWorker] = useState(null);
   const [loading, setLoading] = useState(true);

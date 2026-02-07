@@ -11,8 +11,10 @@ const GigWorkerLayout = () => {
 
   return (
     <>
-      <GigworkerNavbar/>
-      <Outlet />
+      <GigworkerNavbar />
+      <div className="pt-16">
+        <Outlet />
+      </div>
     </>
   );
 };
