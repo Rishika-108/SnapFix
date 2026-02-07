@@ -22,102 +22,136 @@ const CitizenNavbar = ({ user }) => {
   }, []);
 
   return (
-    <nav className="bg-white border-gray-200 fixed top-0 left-0 w-full z-50 shadow-sm">
-      <div className="max-w-7xl flex flex-wrap items-center justify-between mx-auto p-4">
-        
-        {/* Logo */}
-        <Link to="/" className="flex items-center space-x-3">
-          <img
-            src="https://flowbite.com/docs/images/logo.svg"
-            className="h-8"
-            alt="SnapFix Logo"
-          />
-          <span className="text-2xl font-semibold text-gray-900">
-            SnapFix
-          </span>
-        </Link>
+    <nav className="bg-white border-b border-gray-200 fixed top-0 left-0 w-full z-50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14">
 
-        {/* Right section */}
-        <div className="flex items-center space-x-3 md:order-2">
-          
-          {/* User avatar */}
-          <button
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex rounded-full focus:ring-4 focus:ring-gray-300"
-          >
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
             <img
-              className="w-8 h-8 rounded-full"
-              src={user?.avatar || defaultAvatar}
-              alt={user?.name || "User avatar"}
+              src="https://flowbite.com/docs/images/logo.svg"
+              className="h-8 w-auto"
+              alt="SnapFix Logo"
             />
-          </button>
+            <span className="text-xl font-semibold text-gray-900">
+              SnapFix
+            </span>
+          </Link>
 
-          {/* Dropdown */}
-          {dropdownOpen && (
-            <div
-              ref={dropdownRef}
-              className="absolute top-14 right-4 bg-white rounded-lg shadow-md divide-y z-50"
-            >
-              <ul className="py-2 text-sm">
-                <li>
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2 hover:bg-gray-100"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                </li>
-                <li>
-                  <button
-                    onClick={logout}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                  >
-                    Logout
-                  </button>
-                </li>
-              </ul>
+          {/* Desktop links */}
+          <div className="hidden md:flex md:space-x-6">
+            <Link to="/citizen/new-report" className="text-gray-700 hover:text-blue-700 px-2 py-1 rounded-md">
+              Report Issue
+            </Link>
+            <Link to="/citizen/feed" className="text-gray-700 hover:text-blue-700 px-2 py-1 rounded-md">
+              Reports Feed
+            </Link>
+            <Link to="/citizen/my-reports" className="text-gray-700 hover:text-blue-700 px-2 py-1 rounded-md">
+              My Reports
+            </Link>
+            <Link to="/learn" className="text-gray-700 hover:text-blue-700 px-2 py-1 rounded-md">
+              Learn
+            </Link>
+          </div>
+
+          {/* Right section */}
+          <div className="flex items-center space-x-3">
+
+            {/* User avatar */}
+            <div className="relative">
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <img
+                  className="w-8 h-8 rounded-full"
+                  src={user?.avatar || defaultAvatar}
+                  alt={user?.name || "User avatar"}
+                />
+              </button>
+
+              {/* Dropdown */}
+              {dropdownOpen && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                >
+                  <div className="py-1">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      onClick={logout}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
 
-          {/* Mobile menu toggle */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-          >
-            <FiMenu className="w-5 h-5" />
-          </button>
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <FiMenu className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
-        {/* Nav links */}
-        <div className={`${menuOpen ? "" : "hidden"} w-full md:flex md:w-auto md:order-1`}>
-          <ul className="flex flex-col md:flex-row md:space-x-8 font-medium mt-4 md:mt-0">
-            <li>
-              <Link to="/citizen/new-report" className="block py-2 px-3 hover:text-blue-700">
-                Report Issue
-              </Link>
-            </li>
-            <li>
-              <Link to="/citizen/feed" className="block py-2 px-3 hover:text-blue-700">
-                Reports Feed
-              </Link>
-            </li>
-            <li>
-              <Link to="/citizen/my-reports" className="block py-2 px-3 hover:text-blue-700">
-                My Reports
-              </Link>
-            </li>
-            <li>
-              <Link to="/learn" className="block py-2 px-3 hover:text-blue-700">
-                Learn
-              </Link>
-            </li>
-          </ul>
-        </div>
-
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div className="md:hidden mt-1">
+            <ul className="space-y-1 px-2 pb-3">
+              <li>
+                <Link
+                  to="/citizen/new-report"
+                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Report Issue
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/citizen/feed"
+                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Reports Feed
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/citizen/my-reports"
+                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  My Reports
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/learn"
+                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Learn
+                </Link>
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     </nav>
   );
 };
 
 export default CitizenNavbar;
+

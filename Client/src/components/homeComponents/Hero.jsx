@@ -39,7 +39,7 @@ const Hero = () => {
             </button>
 
             <button
-              type="button"
+              type="button" 
               className="border border-[#3EA8FF] text-[#3EA8FF] px-6 py-3 rounded-xl font-semibold hover:bg-[#D6E8FB] transition transform hover:scale-105"
             >
               Join as a Problem Solver

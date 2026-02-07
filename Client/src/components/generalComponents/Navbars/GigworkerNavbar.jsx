@@ -21,12 +21,6 @@ const GigworkerNavbar = ({ user }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Logout handler
-  // const handleLogout = () => {
-  //   localStorage.clear();
-  //   setDropdownOpen(false);
-  //   navigate("/");
-  // };
   const { logout } = useAuth();
 
 
