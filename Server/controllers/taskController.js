@@ -3,9 +3,6 @@ import Task from "../models/taskAssignmentModel.js"
 import { v2 as cloudinary } from 'cloudinary'
 import fs from "fs";
 
-// Will need to check if endpoints are working fine or not
-
-
 // Upload your proof for the work you have done - Made for gigWorker
 const uploadProof = async (req, res) => {
   try {

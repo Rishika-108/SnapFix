@@ -42,6 +42,7 @@ const getReportsByLocation = async (req, res) => {
 
 // Worker can view his own profile - Maybe we will need to change it in future for admin's pov - that
 //admin can see the worker profile
+// Not currently in use 
 const getWorkerProfile = async (req, res) => {
     try {
         if (req.role !== "gigworker")

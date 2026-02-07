@@ -24,25 +24,4 @@ const createBid = async (req,res) => {
 
 
 }
-
-//Maybe we dont need this - Yup we don't need this. The admin controller does that work
-const getBidOnReport = async (req,res) => {
-    try {
-        const {id} = req.params
-        const getBids = await Bid.find({ reportId: id })
-        // .populate("gigworkerId", "name email")
-
-
-        if(getBids.length === 0)
-            return res.status(404).json({success: false, message: "No Bids on this particular Report"})
-
-
-        res.status(200).json({success: true, message: "Bids fetched successfully", bids: getBids})
-    } catch (error) {
-        console.log(error.message)
-        res.status(500).json({success: false, message: "Could not fetch bids on this report"})
-    }
-}
-
-
-export {createBid, getBidOnReport}
+export {createBid}

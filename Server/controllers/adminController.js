@@ -60,66 +60,6 @@ const viewReportWithBid = async (req, res) => {
 }
 
 //Updates the status of the bid for the worker side
-// const approveBid = async (req, res) => {
-//     try {
-//         const userId = req.user?._id
-//         if (!userId) {
-//             return res.status(401).json({ success: false, message: "You are not authorised to view reports" })
-//         }
-//         if (!['Local', 'State', 'Central'].includes(req.role)) {
-//             return res.status(403).json({ success: false, message: "Access Denied" });
-//         }
-//         const { id } = req.params // Obtains bid id
-//         //    const adminId = req.user?._id
-
-//         //    if(!adminId) return res.status(401).json({success: false, message: "Unauthorised Admin"})
-//         const bid = await Bid.findById(id)
-//             .populate("gigWorkerId", "name email phone")
-//             .populate("reportId", "title status")
-
-//         if (!bid)
-//             return res.status(404).json({ success: false, message: "Bid not found" })
-
-//         bid.status = "Approved"
-//         await bid.save()
-
-//         await Bid.updateMany(
-//             { reportId: bid.reportId, _id: { $ne: bid._id } },
-//             { $set: { status: "Rejected" } }
-//         );
-
-
-//         const task = await Task.create({
-//             reportId: bid.reportId, gigWorkerId: bid.gigWorkerId, /*assignedBy: adminId,*/ status: 'Assigned',
-//             paymentStatus: "Pending",
-//     //        proof: {
-//     //     location: { type: "Point", coordinates: [0, 0] } // placeholder
-//     // }
-//         })
-
-//         await Report.findByIdAndUpdate(
-//             bid.reportId,
-//             {
-//                 $set: {
-//                     assignedGigWorker: bid.gigWorkerId,
-//                     status: "In Progress",
-//                     adminApprovalStatus: "Approved"
-//                 },
-
-//             }, { new: true }
-
-//         )
-
-//         res.status(201).json({
-//             success: true, message: "Bid Approved and Task Assigned Successfully",
-//             bid, task
-//         })
-
-//     } catch (error) {
-//         console.log(error.message)
-//         res.status(500).json({ success: false, message: "Could not approve Bid" })
-//     }
-// }
 const approveBid = async (req, res) => {
   try {
     console.log("🔥 approveBid HIT", req.params.id);
