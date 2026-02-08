@@ -30,6 +30,9 @@ const ViewReports = () => {
 
         if (data?.success) {
           setReports(data.reports || []);
+          if (Array.isArray(data.myBidReportIds)) {
+            setBidPlaced(new Set(data.myBidReportIds));
+          }
           console.log("Fetched reports:", data.reports);
         } else {
           console.warn("Failed to fetch reports:", data?.message);
@@ -76,10 +79,6 @@ const ViewReports = () => {
                     <h3 className="text-lg font-semibold text-white">
                       {report.title || "Untitled Report"}
                     </h3>
-                    {/* <p className="text-gray-400 text-sm">
-                      <MapPin className="inline mr-1 text-indigo-400" size={16} />
-                      {report.locationName || "Location not specified"}
-                    </p> */}
                     <p className="text-gray-400 text-sm flex items-center gap-1">
                       <MapPin className="text-indigo-400" size={16} />
                       {report.location?.coordinates ? (
@@ -153,16 +152,17 @@ const ViewReports = () => {
                     {/* Place Bid Button */}
                     {user?.role === "gigworker" && (
                       <button
-                        disabled={report.hasBid}
+                        disabled={bidPlaced.has(report._id)}
                         onClick={() => setShowBidModal(report._id)}
                         className={`px-4 py-1.5 rounded-lg text-sm shadow-md transition-all
-                       ${report.hasBid
+                         ${bidPlaced.has(report._id)
                             ? "bg-gray-600 cursor-not-allowed"
                             : "bg-indigo-600 hover:bg-indigo-500"
                           }`}
                       >
-                        {report.hasBid ? "Bid Placed" : "Place Bid"}
+                        {bidPlaced.has(report._id) ? "Bid Placed" : "Place Bid"}
                       </button>
+
 
 
                     )}

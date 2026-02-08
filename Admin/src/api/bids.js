@@ -6,12 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000
  * ==========================
  * 🧩 Bids API Service
  * ==========================
- * Contains all admin-related bid and assignment methods.
- * - getReportWithBids(reportId)
- * - assignBid()
- */
 
-/**
  * ✅ Fetch a specific report and all its bids
  * @param {string} reportId - The ID of the report
  * @param {string} token - Admin auth token (optional)

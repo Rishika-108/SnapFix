@@ -69,12 +69,9 @@ const IssueFooter = ({ report, user }) => {
       {/* Bid Section */}
       <div className="flex items-center">
         <BidSection
-  report={{ _id: report._id, title: report.title, bids: report.bids }}
-  user={user || { role: "government" }}
+  report={{ _id: report._id, title: report.title}}
   token={token}
 />
-
-
       </div>
     </div>
   );
