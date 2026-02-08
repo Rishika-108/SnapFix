@@ -66,7 +66,7 @@ const IssueCard = ({ report }) => {
       {/* Header */}
       <IssueHeader
         title={title}
-        date={new Date(date).toLocaleDateString()}
+        date={new Date(report.createdAt).toLocaleDateString("en-GB")}
         expanded={expanded}
         setExpanded={setExpanded}
       />

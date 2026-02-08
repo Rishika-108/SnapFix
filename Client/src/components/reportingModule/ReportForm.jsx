@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import ImageUpload from "./ImageUpload";
 import LocationPicker from "./LocationPicker";
 import { CitizenAPI } from "../../api/api";
@@ -30,22 +30,44 @@ const ReportForm = () => {
     setReport((prev) => ({ ...prev, location }));
   };
 
-  const detectLocation = () => {
+const detectLocation = useCallback(() => {
+  console.log("📍 detectLocation called");
+
+  return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
+      reject("Geolocation not supported");
       return;
     }
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
+
+        console.log("✅ Location detected:", latitude, longitude);
+
         setReport((prev) => ({
           ...prev,
-          location: { lat: latitude, lng: longitude, name: "Current Location" },
+          location: {
+            lat: latitude,
+            lng: longitude,
+            name: "Current Location",
+          },
         }));
+
+        resolve({ latitude, longitude });
       },
-      (err) => alert("Unable to detect location. Please select manually.")
+      (err) => {
+        console.error("❌ Geolocation error:", err);
+        reject(err);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 20000,
+        maximumAge: 60000,
+      }
     );
-  };
+  });
+}, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

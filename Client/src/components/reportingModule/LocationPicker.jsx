@@ -1,94 +1,108 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+/* Leaflet marker fix */
 const markerIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
 
-const LocationMarker = ({ location, onLocationSelect }) => {
-  useMapEvents({
-    click(e) {
-      const { lat, lng } = e.latlng;
-      onLocationSelect({ lat, lng, name: "" });
-    },
-  });
-
-  return location?.lat && location?.lng ? (
-    <Marker position={[location.lat, location.lng]} icon={markerIcon} />
-  ) : null;
-};
-
 const LocationPicker = ({ location, detectLocation, onLocationSelect }) => {
   const [loading, setLoading] = useState(false);
-  const [mapCenter, setMapCenter] = useState([19.7515, 75.7139]);
-  const mapRef = useRef(null);
+  const [mapCenter, setMapCenter] = useState([19.7515, 75.7139]); // fallback
 
-  const hasCoords = location?.lat && location?.lng;
-
+  
   useEffect(() => {
-    let isMounted = true;
-
     const fetchLocation = async () => {
+      if (!detectLocation) return;
+
       try {
         setLoading(true);
 
-        // detectLocation may call setReport asynchronously
-        await detectLocation?.();
+        // 🔑 Expect detectLocation to RETURN coords
+        const loc = await detectLocation();
 
-        if (location?.lat && location?.lng && isMounted) {
-          setMapCenter([location.lat, location.lng]);
+        if (
+          loc &&
+          typeof loc.latitude === "number" &&
+          typeof loc.longitude === "number"
+        ) {
+          setMapCenter([loc.latitude, loc.longitude]);
         }
       } catch (err) {
-        console.warn("Location detection failed:", err);
+        console.warn("Auto location detection failed:", err);
       } finally {
-        if (isMounted) setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchLocation();
-    return () => { isMounted = false; };
-  }, []); // run only once
+  }, [detectLocation]);
 
-  useEffect(() => {
-    if (mapRef.current && hasCoords) {
-      mapRef.current.setView([location.lat, location.lng], 13);
+  /* Map click handler */
+  const LocationMarker = () => {
+    useMapEvents({
+      click(e) {
+        const { lat, lng } = e.latlng;
+
+        onLocationSelect({
+          lat,
+          lng,
+          name: "Pinned Location",
+        });
+
+        setMapCenter([lat, lng]);
+      },
+    });
+
+    if (
+      typeof location?.lat !== "number" ||
+      typeof location?.lng !== "number"
+    ) {
+      return null;
     }
-  }, [location, hasCoords]);
+
+    return (
+      <Marker
+        position={[location.lat, location.lng]}
+        icon={markerIcon}
+      />
+    );
+  };
 
   return (
     <div className="space-y-2 text-center">
-      <label className="block text-gray-300 mb-2">Location</label>
+      <label className="block text-gray-700 mb-2">Location</label>
 
       {loading ? (
         <p className="text-gray-400">Detecting your location...</p>
       ) : (
-        <div className="h-64 rounded-lg overflow-hidden border border-white/20">
+        <div className="h-64 rounded-lg overflow-hidden border border-gray-300">
           <MapContainer
             center={mapCenter}
             zoom={13}
             style={{ height: "100%", width: "100%" }}
-            whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="&copy; OpenStreetMap contributors"
             />
-            <LocationMarker location={location} onLocationSelect={onLocationSelect} />
+            <LocationMarker />
           </MapContainer>
         </div>
       )}
 
-      {hasCoords ? (
-        <p className="text-gray-400 text-sm mt-1">
-          Lat: {location.lat.toFixed(4)} | Lon: {location.lng.toFixed(4)} 
-        </p>
-      ) : (
-        <p className="text-gray-400 text-sm mt-1">📍 No location selected</p>
-      )}
+      {typeof location?.lat === "number" &&
+        typeof location?.lng === "number" && (
+          <p className="text-gray-500 text-sm mt-1">
+            Lat: {location.lat.toFixed(4)} | Lon:{" "}
+            {location.lng.toFixed(4)}
+          </p>
+        )}
 
       <p className="text-xs text-gray-500">
         Tip: Tap anywhere on the map to pin your issue location.

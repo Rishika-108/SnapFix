@@ -31,13 +31,10 @@ const getReportsByLocation = async (req, res) => {
             count: nearByReports.length,
             reports: nearByReports,
         })
-    } catch (error) {
+    } catch (error) { 
         console.log(error.message)
         res.status(500).json({ success: false, message: "Could not fetch location" })
     }
-
-
-
 }
 
 // Worker can view his own profile - Maybe we will need to change it in future for admin's pov - that

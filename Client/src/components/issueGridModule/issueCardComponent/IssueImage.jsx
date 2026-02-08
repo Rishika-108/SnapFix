@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MapPin, Tag } from "lucide-react";
 import IssueStatusBadge from "./IssueStatusBadge";
+import IssueLocation from "./IssueLocation";
 
 const IssueImage = ({ title, image, location, status, category }) => {
   const [showImage, setShowImage] = useState(false);
@@ -39,14 +40,23 @@ const IssueImage = ({ title, image, location, status, category }) => {
 
       {/* Location & Category (Bottom Left) */}
       <div className="absolute bottom-3 left-3 flex flex-wrap items-center gap-2">
-        {location && (
+        {/* {location && (
           <div className="bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs sm:text-sm flex items-center gap-1">
             <MapPin size={14} className="text-red-400" />
             <span className="truncate max-w-[120px] sm:max-w-[180px]">
               {location.city || location.name || "Unknown Location"}
             </span>
           </div>
+        )} */}
+        {location && location.coordinates && (
+          <div className="bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs sm:text-sm flex items-center gap-1">
+            <MapPin size={14} className="text-red-400" />
+            <span className="truncate max-w-[120px] sm:max-w-[180px]">
+              <IssueLocation coordinates={location.coordinates} />
+            </span>
+          </div>
         )}
+
 
         {category && (
           <div className="bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs sm:text-sm flex items-center gap-1">

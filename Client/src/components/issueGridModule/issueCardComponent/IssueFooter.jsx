@@ -5,7 +5,10 @@ import { CitizenAPI } from "../../../api/api";
 const IssueFooter = ({ report, user }) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(report.upvotes || 0);
-  const googleMapsLink = report.mapPreview;
+  const googleMapsLink = report.location?.coordinates
+  ? `https://www.google.com/maps?q=${report.location.coordinates[1]},${report.location.coordinates[0]}`
+  : null;
+
 
   const handleLike = async () => {
     try {
@@ -52,7 +55,7 @@ const IssueFooter = ({ report, user }) => {
           className="flex items-center gap-1 text-blue-500 hover:text-purple-500 font-medium transition-all"
         >
           <ExternalLink size={15} />
-          <span className="hidden sm:inline">View in Maps</span>
+          <span>View in Maps</span>
         </a>
       )}
     </div>
