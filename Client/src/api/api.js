@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Base URL (backend)
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = "https://snapfix-fl1e.onrender.com/api";
 
 //  Axios instance
 const api = axios.create({
