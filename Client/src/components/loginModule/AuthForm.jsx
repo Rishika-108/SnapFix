@@ -1,6 +1,8 @@
 import React from "react";
+import LocationPicker from "../reportingModule/LocationPicker";
 
-const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading }) => (
+const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading, location,
+  setLocation, detectLocation}) => (
   <form
     onSubmit={(e) => {
       e.preventDefault();
@@ -90,6 +92,12 @@ const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading }) => 
           className="w-full border border-white/30 bg-white/10 placeholder-gray-300 px-3 py-2 rounded-lg mb-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
           required
         />
+        <LocationPicker
+          location={location}
+          detectLocation={detectLocation}
+          onLocationSelect={setLocation}
+        />
+
       </>
     )}
 
@@ -97,15 +105,14 @@ const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading }) => 
     <button
       type="submit"
       disabled={loading}
-      className={`w-full py-2.5 rounded-lg font-semibold text-white bg-linear-to-r from-indigo-500 to-purple-500 hover:from-purple-500 hover:to-indigo-500 shadow-md transition-all transform hover:scale-105 text-sm ${
-        loading ? "opacity-60 cursor-not-allowed" : ""
-      }`}
+      className={`w-full py-2.5 rounded-lg font-semibold text-white bg-linear-to-r from-indigo-500 to-purple-500 hover:from-purple-500 hover:to-indigo-500 shadow-md transition-all transform hover:scale-105 text-sm ${loading ? "opacity-60 cursor-not-allowed" : ""
+        }`}
     >
       {loading
         ? "Processing..."
         : authMode === "login"
-        ? "Login"
-        : "Register"}
+          ? "Login"
+          : "Register"}
     </button>
   </form>
 );

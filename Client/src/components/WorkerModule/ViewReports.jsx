@@ -4,12 +4,15 @@ import { formatDistanceToNow } from "date-fns";
 import { WorkerAPI } from "../../api/api";
 import GigworkerNavbar from "../generalComponents/Navbars/GigworkerNavbar";
 import PlaceBid from "./PlaceBid";
+import IssueLocation from "../issueGridModule/issueCardComponent/IssueLocation";
 
 const ViewReports = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showBidModal, setShowBidModal] = useState(null); // report._id for modal
   const [user, setUser] = useState(null);
+  const [bidPlaced, setBidPlaced] = useState(new Set());
+
 
   // Get logged-in user from localStorage
   useEffect(() => {
@@ -73,10 +76,19 @@ const ViewReports = () => {
                     <h3 className="text-lg font-semibold text-white">
                       {report.title || "Untitled Report"}
                     </h3>
-                    <p className="text-gray-400 text-sm">
+                    {/* <p className="text-gray-400 text-sm">
                       <MapPin className="inline mr-1 text-indigo-400" size={16} />
                       {report.locationName || "Location not specified"}
+                    </p> */}
+                    <p className="text-gray-400 text-sm flex items-center gap-1">
+                      <MapPin className="text-indigo-400" size={16} />
+                      {report.location?.coordinates ? (
+                        <IssueLocation coordinates={report.location.coordinates} />
+                      ) : (
+                        "Location not specified"
+                      )}
                     </p>
+
                     <p className="text-gray-400 text-sm">
                       Submitted{" "}
                       <span className="text-indigo-300">
@@ -113,13 +125,12 @@ const ViewReports = () => {
                   <p className="text-sm mb-3">
                     Status:{" "}
                     <span
-                      className={`font-semibold ${
-                        report.status === "resolved"
-                          ? "text-green-400"
-                          : report.status === "in_progress"
+                      className={`font-semibold ${report.status === "resolved"
+                        ? "text-green-400"
+                        : report.status === "in_progress"
                           ? "text-yellow-400"
                           : "text-gray-300"
-                      }`}
+                        }`}
                     >
                       {report.status || "Pending"}
                     </span>
@@ -142,11 +153,18 @@ const ViewReports = () => {
                     {/* Place Bid Button */}
                     {user?.role === "gigworker" && (
                       <button
+                        disabled={report.hasBid}
                         onClick={() => setShowBidModal(report._id)}
-                        className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm shadow-md transition-all"
+                        className={`px-4 py-1.5 rounded-lg text-sm shadow-md transition-all
+                       ${report.hasBid
+                            ? "bg-gray-600 cursor-not-allowed"
+                            : "bg-indigo-600 hover:bg-indigo-500"
+                          }`}
                       >
-                        Place Bid
+                        {report.hasBid ? "Bid Placed" : "Place Bid"}
                       </button>
+
+
                     )}
                   </div>
                 </div>
@@ -160,6 +178,9 @@ const ViewReports = () => {
               reportId={showBidModal}
               gigId={user._id}
               onClose={() => setShowBidModal(null)}
+              onBidPlaced={(reportId) =>
+                setBidPlaced((prev) => new Set(prev).add(reportId))
+              }
             />
           )}
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ThoughtProcess from "../../assets/ThoughtProcess.svg";
 import BlueEnterance from "../../assets/authbg.jpg"; // background image
@@ -21,6 +21,8 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
     role: "citizen",
   });
   const [loading, setLoading] = useState(false);
+  const [location, setLocation] = useState(null);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +60,27 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
 
         alert(`✅ Logged in successfully as ${formData.role}!`);
       } else {
-        // Registration logic...
+        if (formData.role === "gigworker" && !location) {
+          alert("Please select your work location");
+          return;
+        }
+
+        let response;
+
+        if (formData.role === "citizen") {
+          response = await AuthAPI.registerCitizen(formData);
+        } else {
+          response = await AuthAPI.registerWorker({
+            ...formData,
+            latitude: location.lat,
+            longitude: location.lng,
+          });
+        }
+
+        const { data } = response;
+        if (!data.success) throw new Error(data.message);
+
+        alert("✅ Registered successfully!");
       }
 
       if (formData.role === "citizen") navigate("/citizen/feed");
@@ -72,31 +94,36 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
       setLoading(false);
     }
   };
+ const detectLocation = useCallback(() => {
+  console.log("📍 detectLocation called");
 
-  useEffect(() => {
-    if (authMode === "register" && formData.role === "gigworker") {
-      if (!navigator.geolocation) {
-        alert("Geolocation is not supported by your browser.");
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) =>
-          setFormData((prev) => ({
-            ...prev,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          })),
-        (error) => {
-          console.error("Error getting location:", error);
-          alert(
-            "Unable to get your location. Please enable location services or try again."
-          );
-        },
-        { enableHighAccuracy: true }
-      );
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("Geolocation not supported"));
+      return;
     }
-  }, [authMode, formData.role]);
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+
+        console.log("✅ Location detected:", latitude, longitude);
+
+        // ✅ ONLY return data — no state updates here
+        resolve({ latitude, longitude });
+      },
+      (err) => {
+        console.error("❌ Geolocation error:", err);
+        reject(err);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 20000,
+        maximumAge: 60000,
+      }
+    );
+  });
+}, []);
 
   return (
     <>
@@ -138,6 +165,9 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
               handleChange={handleChange}
               handleAuth={handleAuth}
               loading={loading}
+              location={location}
+              setLocation={setLocation}
+              detectLocation={detectLocation}
             />
             <AuthSocials />
           </div>

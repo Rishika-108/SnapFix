@@ -10,7 +10,7 @@ const workerSchema = new mongoose.Schema({
     approvedStatus: {type: String, enum:['Pending','Verified', 'Rejected']},
     location : {
         type: {type: String, enum:['Point'], default: 'Point'},
-        coordinates: {type: [Number], required: true}
+        coordinates: {type: [Number], required: false}
     },
     completedTasks: [{type: mongoose.Schema.Types.ObjectId, ref: "Task"}],
     walletBalance: {type: Number, default: 0},

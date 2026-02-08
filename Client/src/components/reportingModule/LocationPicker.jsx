@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -11,11 +11,11 @@ const markerIcon = new L.Icon({
   iconAnchor: [12, 41],
 });
 
-const LocationPicker = ({ location, detectLocation, onLocationSelect }) => {
+const LocationPicker = memo(({ location, detectLocation, onLocationSelect }) => {
   const [loading, setLoading] = useState(false);
   const [mapCenter, setMapCenter] = useState([19.7515, 75.7139]); // fallback
 
-  
+
   useEffect(() => {
     const fetchLocation = async () => {
       if (!detectLocation) return;
@@ -32,6 +32,11 @@ const LocationPicker = ({ location, detectLocation, onLocationSelect }) => {
           typeof loc.longitude === "number"
         ) {
           setMapCenter([loc.latitude, loc.longitude]);
+          onLocationSelect({
+            lat: loc.latitude,
+            lng: loc.longitude,
+            name: "Current Location",
+          });
         }
       } catch (err) {
         console.warn("Auto location detection failed:", err);
@@ -109,6 +114,6 @@ const LocationPicker = ({ location, detectLocation, onLocationSelect }) => {
       </p>
     </div>
   );
-};
+});
 
 export default LocationPicker;

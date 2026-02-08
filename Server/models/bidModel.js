@@ -9,5 +9,10 @@ const bidSchema = new mongoose.Schema({
     status:{type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending'},
 }, {timestamps: true})
 
+bidSchema.index(
+  { reportId: 1, gigWorkerId: 1 },
+  { unique: true }
+);
+
 const Bid = mongoose.models.Bid || mongoose.model('Bid', bidSchema)
 export default Bid 
