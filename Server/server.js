@@ -17,9 +17,17 @@ connectDB()
 connectCloudinary();
 
 
-const PORT = 3000
+const PORT = process.env.PORT || 3000
+
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+]
 app.use(express.json({ limit: "20mb" })); 
-app.use(cors())
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+}))
  
 app.use('/api/auth', authRouter)
 app.use('/api/worker', workerRouter)

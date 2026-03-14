@@ -7,8 +7,8 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "test": "nodemon run server",
-    "dev": "nodemon run server"
+    "test": "echo \"No tests configured yet\"",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

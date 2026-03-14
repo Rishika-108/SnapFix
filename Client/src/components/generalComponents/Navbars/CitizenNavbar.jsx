@@ -2,12 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiMenu } from "react-icons/fi";
 import userAvatar from "../../../assets/user-avatar.png";
+import { useAuth } from "./Navbar";
 
 const CitizenNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { handleLogout: contextLogout } = useAuth();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -22,7 +24,7 @@ const CitizenNavbar = () => {
 
   // Handle Logout
   const handleLogout = () => {
-    localStorage.clear();
+    contextLogout();
     setDropdownOpen(false);
     navigate("/");
   };

@@ -7,5 +7,5 @@ const adminRouter = express.Router();
 adminRouter.get("/all-reports", authMiddleware,viewAllReports)
 adminRouter.get("/bids/:id", authMiddleware,viewReportWithBid)
 adminRouter.put('/approve-bid/:id',authMiddleware,approveBid )
-adminRouter.post('/release-payment/:id', /*authMiddleware,*/ paymentRelease)
+adminRouter.post('/release-payment/:id', authMiddleware, paymentRelease)
 export default adminRouter

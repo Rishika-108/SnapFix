@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CitizenAPI } from "../../api/api";
 import IssueGrid from "../issueGridModule/IssueGrid";
-import CitizenNavbar from "../generalComponents/Navbars/CitizenNavbar";
 import AppBG from "../../assets/B-g.jpg"; // <-- background image
 
 const ReportFeed = () => {
@@ -10,6 +9,13 @@ const ReportFeed = () => {
 
   useEffect(() => {
     const fetchReports = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.warn("⚠️ No auth token found, skipping report fetch.");
+        setReports([]);
+        setLoading(false);
+        return;
+      }
       try {
         const response = await CitizenAPI.getNearbyReports();
         const { data } = response;
@@ -43,7 +49,6 @@ const ReportFeed = () => {
 
       {/* Page Content */}
       <div className="relative z-10 w-full">
-        <CitizenNavbar />
         <div className="pt-24 px-4 md:px-8 transition-all">
           <div className="max-w-7xl mx-auto min-w-full">
             <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">

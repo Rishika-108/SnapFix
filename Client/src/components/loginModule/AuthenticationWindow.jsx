@@ -29,16 +29,19 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
 
   const handleAuth = async () => {
     setLoading(true);
+    console.log("🔐 handleAuth called:", { authMode, role: formData.role, email: formData.email });
     try {
       let response;
 
       if (authMode === "login") {
         if (formData.role === "citizen") {
+          console.log("📤 Sending login-citizen request...");
           response = await AuthAPI.loginCitizen({
             email: formData.email,
             password: formData.password,
           });
         } else {
+          console.log("📤 Sending login-worker request...");
           response = await AuthAPI.loginWorker({
             email: formData.email,
             password: formData.password,
@@ -46,6 +49,7 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
         }
 
         const { data } = response;
+        console.log("📥 Login response:", data);
         if (!data.success) throw new Error(data.message);
 
         localStorage.setItem("token", data.token);
@@ -58,7 +62,34 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
 
         alert(`✅ Logged in successfully as ${formData.role}!`);
       } else {
-        // Registration logic...
+        // Registration
+        if (formData.role === "citizen") {
+          console.log("📤 Sending register-citizen request...");
+          response = await AuthAPI.registerCitizen({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          });
+        } else {
+          console.log("📤 Sending register-worker request...");
+          response = await AuthAPI.registerWorker({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            phone: formData.phone,
+            skills: formData.skills ? formData.skills.split(",").map(s => s.trim()) : [],
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+          });
+        }
+
+        const { data } = response;
+        console.log("📥 Register response:", data);
+        if (!data.success) throw new Error(data.message);
+
+        alert(`✅ Registered successfully as ${formData.role}! Please login now.`);
+        setAuthMode("login");
+        return; // Don't navigate — let them login first
       }
 
       if (formData.role === "citizen") navigate("/citizen/feed");
@@ -66,8 +97,9 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
 
       setShowLoginModal(false);
     } catch (err) {
-      console.error("Auth Error:", err.message);
-      alert(err.message || "Something went wrong!");
+      const errorMsg = err.response?.data?.message || err.message || "Something went wrong!";
+      console.error("❌ Auth Error:", errorMsg, err);
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }

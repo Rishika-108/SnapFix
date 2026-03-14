@@ -1,4 +1,3 @@
-import Navbar from "../components/generalComponents/Navbars/Navbar";
 import Hero1 from "../components/homeComponents/Hero1";
 import About from "../components/homeComponents/About";
 import FeatureHighlights from "../components/homeComponents/FeatureHighlights";
@@ -15,7 +14,6 @@ const HomePage = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <Navbar />
       <Hero1 />
       <FeatureHighlights />
       <About />

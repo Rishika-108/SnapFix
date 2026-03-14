@@ -39,7 +39,7 @@ const loginCitizen = async(req, res)=> {
         })
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({sucess: false, message: 'Could not login the user'})
+        res.status(500).json({success: false, message: 'Could not login the user'})
     }
 }
 
@@ -104,10 +104,12 @@ const loginAdmin = async (req,res) => {
             return res.status(400).json({success: false, message: "Invalid credentials"})
 
         let admin = await Admin.findOne({email: process.env.ADMIN_EMAIL})
-        if(!admin) 
-            await Admin.create({
-            email: process.env.ADMIN_EMAIL, password: process.env.ADMIN_PASSWORD, role: "Local"
-        })
+        if(!admin) {
+            const hashedAdminPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 8)
+            admin = await Admin.create({
+                email: process.env.ADMIN_EMAIL, password: hashedAdminPassword, role: "Local"
+            })
+        }
         
         const token = jwt.sign({id: admin._id, email, role: "Local"}, process.env.JWT_SECRET, {expiresIn:"1d"})
         res.status(200).json({success: true, message: "Logged In Successfully", token, role: admin.role})
