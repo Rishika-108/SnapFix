@@ -28,11 +28,11 @@ export default function Profile() {
   const cqiToNextLevel = nextLevelCQI ? nextLevelCQI - userData.cqi : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8">
+    <div className="min-h-screen bg-[#F8FAFC] py-8">
       <div className="max-w-6xl mx-auto px-4">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6"
+          className="flex items-center gap-2 text-gray-500 hover:text-[#3EA8FF] transition-colors mb-6 font-medium"
         >
           <ChevronLeft className="w-5 h-5" />
           Back to Home

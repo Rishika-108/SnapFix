@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { FiMenu } from "react-icons/fi";
 import { useAuth } from "../../../context/AuthContext";
 import defaultAvatar from "../../../assets/user-avatar.png";
+import NotificationDropdown from "../NotificationDropdown";
+import GoogleTranslation from "../GoogleTranslation";
 
 const CitizenNavbar = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,6 +20,7 @@ const CitizenNavbar = ({ user }) => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
@@ -40,22 +43,27 @@ const CitizenNavbar = ({ user }) => {
 
           {/* Desktop links */}
           <div className="hidden md:flex md:space-x-6">
-            <Link to="/citizen/new-report" className="text-gray-700 hover:text-blue-700 px-2 py-1 rounded-md">
+            <Link to="/citizen/new-report" className="text-gray-700 hover:text-[#3EA8FF] px-2 py-1 rounded-md font-medium transition-colors">
               Report Issue
             </Link>
-            <Link to="/citizen/feed" className="text-gray-700 hover:text-blue-700 px-2 py-1 rounded-md">
+            <Link to="/citizen/feed" className="text-gray-700 hover:text-[#3EA8FF] px-2 py-1 rounded-md font-medium transition-colors">
               Reports Feed
             </Link>
-            <Link to="/citizen/my-reports" className="text-gray-700 hover:text-blue-700 px-2 py-1 rounded-md">
+            <Link to="/citizen/my-reports" className="text-gray-700 hover:text-[#3EA8FF] px-2 py-1 rounded-md font-medium transition-colors">
               My Reports
             </Link>
-            <Link to="/learn" className="text-gray-700 hover:text-blue-700 px-2 py-1 rounded-md">
+            <Link to="/learn" className="text-gray-700 hover:text-[#3EA8FF] px-2 py-1 rounded-md font-medium transition-colors">
               Learn
             </Link>
           </div>
 
           {/* Right section */}
-          <div className="flex items-center space-x-3">
+          <div className="hidden md:flex md:space-x-4 items-center">
+            {/* Notification Bell */}
+            <NotificationDropdown />
+
+            {/* Google Translate Widget */}
+            <GoogleTranslation />
 
             {/* User avatar */}
             <div className="relative">
@@ -112,7 +120,7 @@ const CitizenNavbar = ({ user }) => {
               <li>
                 <Link
                   to="/citizen/new-report"
-                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-100"
+                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-[#3EA8FF] hover:bg-[#3EA8FF]/10 transition-all font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
                   Report Issue
@@ -121,7 +129,7 @@ const CitizenNavbar = ({ user }) => {
               <li>
                 <Link
                   to="/citizen/feed"
-                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-100"
+                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-[#3EA8FF] hover:bg-[#3EA8FF]/10 transition-all font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
                   Reports Feed
@@ -130,16 +138,16 @@ const CitizenNavbar = ({ user }) => {
               <li>
                 <Link
                   to="/citizen/my-reports"
-                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-100"
+                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-[#3EA8FF] hover:bg-[#3EA8FF]/10 transition-all font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
-                  My Reports
+                   My Reports
                 </Link>
               </li>
               <li>
                 <Link
                   to="/learn"
-                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-100"
+                  className="block px-3 py-2 rounded-md text-gray-700 hover:text-[#3EA8FF] hover:bg-[#3EA8FF]/10 transition-all font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
                   Learn

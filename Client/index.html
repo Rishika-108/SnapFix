@@ -5,9 +5,51 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SnapFix</title>
+    <style>
+      /* Aggressively Hide Google Translate Top Bar */
+      body { top: 0 !important; }
+      .goog-te-banner-frame { display: none !important; }
+      .goog-te-banner { display: none !important; }
+      .skiptranslate { display: none !important; }
+      .goog-te-gadget-icon { display: none !important; }
+      
+      /* Restore important UI parts that Google might hide */
+      #google_translate_element .skiptranslate {
+        display: block !important;
+      }
+
+      /* Target the dropdown specifically to make it look sleek */
+      #google_translate_element select {
+        padding: 6px 12px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+        outline: none;
+        background: #f8fafc;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      #google_translate_element select:hover {
+        border-color: #3EA8FF;
+        background: white;
+      }
+      
+      .goog-logo-link { display: none !important; }
+      .goog-te-gadget { 
+        color: transparent !important; 
+        font-size: 0 !important;
+      }
+      .goog-te-gadget .goog-te-combo {
+        margin: 0 !important;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

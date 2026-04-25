@@ -17,11 +17,7 @@ const Hero = () => {
 
           {/* Main Headline */}
           <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
-            Empowering{" "}
-            <span className="bg-clip-text text-transparent bg-linear-to-r from-[#3EA8FF] to-[#0E72C2]">
-              Citizens, Workers
-            </span>{" "}
-            & Governments
+            Empowering Citizens, Workers & Governments
           </h1>
 
           {/* Subtext */}
@@ -45,6 +41,7 @@ const Hero = () => {
               Join as a Problem Solver
             </button>
           </div>
+
         </div>
 
         {/* Right Illustration */}

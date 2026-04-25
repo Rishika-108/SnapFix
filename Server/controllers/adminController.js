@@ -3,6 +3,7 @@ import Worker from "../models/gigWorkerModel.js"
 import Report from "../models/reportModel.js"
 import Task from "../models/taskAssignmentModel.js"
 import mongoose from "mongoose";
+import { createNotification } from "./notificationController.js";
 
 
 // Lists out all the report for the admin to view
@@ -125,12 +126,24 @@ const approveBid = async (req, res) => {
       { new: true }
     );
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Bid approved and task assigned successfully",
       bid,
       task,
     });
+
+    // NOTIFICATIONS (Fire and forget, don't await if you want faster response, but here we await for simplicity)
+    // 1. Notify Worker
+    await createNotification(bid.gigWorkerId, "Worker", "Bid Approved", `Your bid for the report "${report.title}" has been approved! You can start working now.`);
+    
+    // 2. Notify Citizen
+    if (report.createdBy) {
+        await createNotification(report.createdBy, "User", "Work Started", `An expert has been assigned to fix your reported issue: "${report.title}".`);
+    }
+
+    return;
+
 
   } catch (error) {
     console.error(error);
@@ -142,10 +155,14 @@ const approveBid = async (req, res) => {
 // The gigworker walletBalance will be updated with his bid amount 
 const paymentRelease = async (req, res) => {
    try {
-    //   const userId = req.user?._id
-    // if (!userId) {
-    //         return res.status(401).json({ success: false, message: "You are not authorised to view reports" })
-    //     }
+    const adminId = req.user?._id;
+    if (!adminId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    if (!['Local', 'State', 'Central', 'admin'].includes(req.role)) {
+      return res.status(403).json({ success: false, message: "Access Denied" });
+    }
     const {id} = req.params // Task ID
     
     const task = await Task.findById(id).populate("reportId gigWorkerId")
@@ -194,12 +211,24 @@ const paymentRelease = async (req, res) => {
     task.paymentStatus = "Released";
     await task.save();
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: `Payment of ₹${bidAmount} released to ${worker.name}`,
       updatedWallet: worker.walletBalance,
       task,
     });
+
+    // NOTIFICATIONS
+    // 1. Notify Worker
+    await createNotification(task.gigWorkerId._id, "Worker", "Payment Released", `Payment of ₹${bidAmount} for the task "${task.reportId.title}" has been released to your wallet.`);
+
+    // 2. Notify Citizen
+    if (task.reportId.createdBy) {
+        await createNotification(task.reportId.createdBy, "User", "Issue Closed", `The issue "${task.reportId.title}" has been officially resolved and payment has been released to the worker. Thank you for your contribution!`);
+    }
+
+    return;
+
    } catch (error) {
      console.log(error.message)
      res.status(500).json({success: false, message: "Could not stimulate payment release"})

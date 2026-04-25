@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FiMenu } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import userAvatar from "../../assets/user-avatar.png";
@@ -9,6 +9,7 @@ const GovernmentSidebar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   /* ================= Scroll Lock ================= */
   useEffect(() => {
@@ -132,16 +133,23 @@ const GovernmentSidebar = () => {
               { label: "Dashboard", to: "/government/dashboard" },
               { label: "Reports", to: "/government/reports" },
               { label: "Fund Release", to: "/government/funds" },
-            ].map((item) => (
-              <Link
-                key={item.label}
-                to={item.to}
-                onClick={() => setSidebarOpen(false)}
-                className="block px-4 py-2 rounded-md text-gray-300 hover:bg-blue-600/20 transition"
-              >
-                {item.label}
-              </Link>
-            ))}
+            ].map((item) => {
+              const isActive = location.pathname === item.to;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`block px-4 py-2.5 rounded-xl transition-all duration-200 ${
+                    isActive 
+                      ? "bg-blue-600/30 text-[#3EA8FF] font-semibold border-l-4 border-[#3EA8FF]" 
+                      : "text-gray-400 hover:bg-blue-600/10 hover:text-gray-200"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
 
           {/* ===== Footer ===== */}

@@ -117,6 +117,26 @@ export const api = {
       throw err.response?.data || { success: false, message: "Could not fetch dashboard summary" };
     }
   },
+
+  getNotifications: async () => {
+    try {
+      const res = await apiInstance.get("/notifications");
+      return res.data;
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
+      throw err.response?.data || { success: false, message: "Could not fetch notifications" };
+    }
+  },
+
+  markAsRead: async (id) => {
+    try {
+      const res = await apiInstance.put(`/notifications/read/${id}`);
+      return res.data;
+    } catch (err) {
+      console.error("Failed to mark notification as read:", err);
+      throw err.response?.data || { success: false, message: "Could not mark notification as read" };
+    }
+  },
 };
 
 export default api;

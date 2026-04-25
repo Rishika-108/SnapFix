@@ -16,6 +16,8 @@ const reportSchema = new mongoose.Schema({
     assignedGigWorker: { type: mongoose.Schema.Types.ObjectId, ref: "Worker" },
     adminApprovalStatus: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
     paymentReleased: { type: Boolean, default: false },
+    priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Low' },
+    aiConfidence: { type: Number, default: 0 },
 }, { timestamps: true })
 
 reportSchema.index({ createdBy: 1 })

@@ -151,12 +151,12 @@ export default function Module() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-8">
+    <div className="min-h-screen bg-[#F8FAFC] py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-6">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
+            className="flex items-center gap-2 text-gray-500 hover:text-[#3EA8FF] transition-colors mb-4 font-medium"
           >
             <ChevronLeft className="w-5 h-5" />
             Back to Home
@@ -289,7 +289,7 @@ export default function Module() {
               disabled={
                 isFinalQuiz && !quizSubmitted && Object.keys(selectedAnswers).length !== slide.questions.length
               }
-              className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:shadow-lg"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transform hover:scale-105 transition-all duration-300 shadow-md disabled:opacity-40 disabled:cursor-not-allowed bg-linear-to-r from-[#3EA8FF] to-[#0E72C2] text-white"
             >
               {isFinalQuiz && !quizSubmitted
                 ? 'Submit Quiz'

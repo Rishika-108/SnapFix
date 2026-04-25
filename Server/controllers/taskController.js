@@ -2,6 +2,7 @@ import Report from "../models/reportModel.js"
 import Task from "../models/taskAssignmentModel.js"
 import { v2 as cloudinary } from 'cloudinary'
 import fs from "fs";
+import { createNotification } from "./notificationController.js";
 
 // Upload your proof for the work you have done - Made for gigWorker
 const uploadProof = async (req, res) => {
@@ -91,6 +92,16 @@ const uploadProof = async (req, res) => {
       task,
     });
 
+    // NOTIFICATION
+    // Notify Citizen to verify
+    const populatedTask = await Task.findById(id).populate("reportId");
+    if (populatedTask.reportId && populatedTask.reportId.createdBy) {
+        await createNotification(populatedTask.reportId.createdBy, "User", "Proof Submitted", `The worker has submitted proof for your report "${populatedTask.reportId.title}". Please verify the work.`);
+    }
+
+    return;
+
+
   } catch (error) {
     console.error("uploadProof error:", error.message);
     res.status(500).json({
@@ -131,7 +142,12 @@ const verifyByCitizen = async (req, res) => {
             });
             completedTask.reportId.status = "Resolved";
 
-            return res.status(200).json({ success: true, message: "Task Accepted by the citizen", task: completedTask })
+            res.status(200).json({ success: true, message: "Task Accepted by the citizen", task: completedTask })
+            
+            // NOTIFICATION
+            await createNotification(completedTask.gigWorkerId, "Worker", "Task Verified", `Great news! The citizen has verified and accepted your work for "${completedTask.reportId.title}".`);
+            
+            return;
         } else {
             completedTask.verifiedByCitizen = false
             completedTask.verifiedAt = new Date()
@@ -143,8 +159,14 @@ const verifyByCitizen = async (req, res) => {
             });
             completedTask.reportId.status = "Rejected";
 
-            return res.status(200).json({ success: true, message: "Task Rejected by the citizen", task: completedTask })
+            res.status(200).json({ success: true, message: "Task Rejected by the citizen", task: completedTask })
+
+            // NOTIFICATION
+            await createNotification(completedTask.gigWorkerId, "Worker", "Task Rejected", `The citizen has rejected your work for "${completedTask.reportId.title}". Please check the feedback and try again.`);
+
+            return;
         }
+
 
 
     } catch (error) {

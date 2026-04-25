@@ -46,19 +46,14 @@ const Reports = () => {
         <Topbar />
 
         <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8 md:py-8">
-          {loading ? (
-            <p className="text-center text-gray-400">
-              Loading reports...
-            </p>
-          ) : reports.length === 0 ? (
-            <p className="text-center text-gray-400">
-              No reports available.
-            </p>
-          ) : (
-            <div className="max-w-7xl mx-auto">
-              <IssueGrid reports={reports} />
-            </div>
-          )}
+          <div className="max-w-7xl mx-auto">
+            <header className="mb-8">
+              <h1 className="text-2xl md:text-3xl font-bold text-white">City-wide Reports</h1>
+              <p className="text-gray-400 mt-1">Review and manage all reported civic issues across the municipality.</p>
+            </header>
+            
+            <IssueGrid reports={reports} loading={loading} />
+          </div>
         </main>
 
         <Footer />

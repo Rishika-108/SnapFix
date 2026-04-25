@@ -2,6 +2,8 @@ import { v2 as cloudinary } from 'cloudinary'
 import Report from "../models/reportModel.js";
 import User from "../models/userModel.js";
 import fs from "fs";
+import axios from "axios";
+import { createNotification } from "./notificationController.js";
 
 //create a new report
 const createReport = async (req, res) => {
@@ -25,12 +27,78 @@ const createReport = async (req, res) => {
 }, 500);
 
         const userId = req.user?._id
+
+        // --- AI ENGINE INTEGRATION ---
+        let aiResult = null;
+        try {
+            const aiResponse = await axios.post(`${process.env.AI_SERVER_URL}/predict_url`, {
+                image_url: cloudinaryResult.secure_url,
+                latitude: parseFloat(latitude),
+                longitude: parseFloat(longitude),
+                description: description || ""
+            });
+            aiResult = aiResponse.data;
+        } catch (aiError) {
+            console.error("AI Engine Error:", aiError.message);
+            // Fallback: Proceed without AI if server is down, but log it.
+        }
+
+        // Handle "Not a civic issue"
+        if (aiResult && aiResult.status === "Rejected - Not a civic issue") {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Our AI system flagged this image as a non-civic issue. Please upload a relevant photo of a civic problem.",
+                aiDetail: aiResult
+            });
+        }
+
+        // Handle duplicates (Optional: if we want to auto-upvote instead of creating new)
+        // Handle duplicates - Check Mongo for same category within 50 meters
+        const finalCategory = aiResult ? aiResult.category : category;
+        const duplicateReport = await Report.findOne({
+            category: finalCategory,
+            location: {
+                $near: {
+                    $geometry: { type: "Point", coordinates: [parseFloat(longitude), parseFloat(latitude)] },
+                    $maxDistance: 50 // 50 meters
+                }
+            }
+        });
+
+        if (duplicateReport) {
+            // Auto-upvote the existing report instead of creating a new one
+            const alreadyUpvoted = duplicateReport.upvotedUsers.some(
+                (uid) => uid.toString() === userId?.toString()
+            );
+
+            if (!alreadyUpvoted && userId) {
+                duplicateReport.upvotedUsers.push(userId);
+                duplicateReport.upvotes = duplicateReport.upvotedUsers.length;
+                await duplicateReport.save();
+                
+                await createNotification(userId, "User", "Duplicate Issue Detected", `A similar issue in the category "${finalCategory}" was already reported nearby. We've automatically added your upvote to the existing report to increase its priority!`);
+            }
+
+            return res.status(200).json({ 
+                success: true, 
+                message: "A similar issue is already reported. Your upvote has been added to it.",
+                report: duplicateReport,
+                isDuplicate: true
+            });
+        }
+
         const report = await Report.create({
-            title, description, imageUrl: cloudinaryResult.secure_url, category, createdBy: userId || null,
+            title, 
+            description, 
+            imageUrl: cloudinaryResult.secure_url, 
+            category: aiResult ? aiResult.category : category, 
+            createdBy: userId || null,
             location: {
                 type: 'Point',
                 coordinates: [parseFloat(longitude), parseFloat(latitude)]
-            }
+            },
+            priority: aiResult ? aiResult.priority : 'Low',
+            aiConfidence: aiResult ? aiResult.confidence : 0
         })
 
         if (userId) {
@@ -39,6 +107,7 @@ const createReport = async (req, res) => {
                 { $push: { reports: report._id } },
                 { new: true }
             );
+            await createNotification(userId, "User", "Report Created", `Your report "${title}" has been successfully submitted and is pending admin approval.`);
         }
 
         res.status(201).json({
@@ -83,6 +152,10 @@ const upvoteAReport = async (req, res) => {
                 { $addToSet: { upvotedReports: report._id } },
                 { new: true }
             )
+            // Notify report creator that someone upvoted their report
+            if (report.createdBy && report.createdBy.toString() !== userId.toString()) {
+                await createNotification(report.createdBy, "User", "New Upvote", `Your report "${report.title}" received a new upvote!`);
+            }
         }
         report.upvotes = report.upvotedUsers.length;
         await report.save();

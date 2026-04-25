@@ -83,8 +83,18 @@ const IssueCard = ({ report }) => {
       {/* Description */}
       <div className="px-4 py-3 text-gray-700 text-sm sm:text-base">
         <p className="leading-relaxed break-words">
-          {description || "No description provided."}
+          {description?.length > 150 && !expanded
+            ? `${description.substring(0, 150)}...`
+            : description || "No description provided."}
         </p>
+        {description?.length > 150 && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-indigo-500 text-xs font-semibold mt-1 hover:text-indigo-700"
+          >
+            {expanded ? "Read Less" : "Read More"}
+          </button>
+        )}
       </div>
 
       {/* Footer */}

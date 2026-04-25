@@ -68,6 +68,11 @@ export const WorkerAPI = {
 
   getTaskDetail: (taskId) => api.get(`/task/${taskId}`),
 };
+// ======================== NOTIFICATION ROUTES ========================
+export const NotificationAPI = {
+  getNotifications: () => api.get("/notifications"),
+  markAsRead: (id) => api.put(`/notifications/read/${id}`),
+};
 // ======================== HELPERS ========================
 export const saveAuthData = (token, user) => {
   localStorage.setItem("token", token);

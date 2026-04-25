@@ -9,6 +9,7 @@ import userRouter from './routes/userRoute.js'
 import adminRouter from './routes/adminRoute.js'
 import bidRouter from './routes/bidRoute.js'
 import taskRouter from './routes/taskRoute.js'
+import notificationRouter from './routes/notificationRoute.js'
 import connectCloudinary from './config/cloudinary.js'
 
 dotenv.config()
@@ -28,6 +29,7 @@ app.use('/api/admin', adminRouter)
 app.use('/api/report', reportRouter)
 app.use('/api/bid', bidRouter)
 app.use('/api/task', taskRouter)
+app.use('/api/notifications', notificationRouter)
 
 app.get('/', (req, res)=> res.send("Backend is running"))
 app.listen(PORT, ()=>console.log(`Server is running on ${PORT}`)) 

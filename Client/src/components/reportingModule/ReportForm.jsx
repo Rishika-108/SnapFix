@@ -126,7 +126,7 @@ const detectLocation = useCallback(() => {
   return (
     <>
       <CitizenNavbar />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex justify-center items-center pt-24 pb-10 px-4">
+      <div className="min-h-screen bg-[#F8FAFC] flex justify-center items-center pt-24 pb-10 px-4">
         <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-lg border border-gray-100">
           <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center">
             Report an Issue
@@ -145,7 +145,7 @@ const detectLocation = useCallback(() => {
             <input
               type="text"
               name="title"
-              placeholder="Title"
+              placeholder="What's the issue?"
               value={report.title}
               onChange={handleInputChange}
               className="w-full border border-gray-300 bg-white placeholder-gray-400 px-4 py-3 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -154,7 +154,7 @@ const detectLocation = useCallback(() => {
 
             <textarea
               name="description"
-              placeholder="Description"
+              placeholder="Describe the problem in detail..."
               rows="3"
               value={report.description}
               onChange={handleInputChange}
@@ -188,7 +188,7 @@ const detectLocation = useCallback(() => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 shadow-md transition-all transform hover:scale-105 ${
+              className={`w-full py-3 rounded-xl font-semibold text-white bg-linear-to-r from-[#3EA8FF] to-[#0E72C2] hover:scale-105 shadow-md transition-all transform ${
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >

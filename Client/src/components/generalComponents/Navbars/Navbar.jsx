@@ -93,9 +93,9 @@ const GuestNavbar = () => {
           <button
             type="button"
             onClick={() => setShowLoginModal(true)}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2"
+            className="text-white bg-linear-to-r from-[#3EA8FF] to-[#0E72C2] hover:scale-105 transform transition-all duration-300 font-semibold rounded-xl text-sm px-5 py-2 shadow-md"
           >
-            Login
+            Get Started
           </button>
         </div>
       </div>

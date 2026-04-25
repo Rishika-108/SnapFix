@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiMenu } from "react-icons/fi";
 import defaultAvatar from "../../../assets/user-avatar.png";
 import { useAuth } from "../../../context/AuthContext";
+import NotificationDropdown from "../NotificationDropdown";
+import GoogleTranslation from "../GoogleTranslation";
 
 const GigworkerNavbar = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,6 +20,7 @@ const GigworkerNavbar = ({ user }) => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
@@ -40,7 +43,13 @@ const GigworkerNavbar = ({ user }) => {
         </Link>
 
         {/* Right side buttons */}
-        <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+        <div className="flex items-center md:order-2 space-x-3 md:space-x-4 rtl:space-x-reverse">
+          {/* Notification Bell */}
+          <NotificationDropdown />
+
+          {/* Google Translate Widget */}
+          <GoogleTranslation />
+
           {/* User avatar */}
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}

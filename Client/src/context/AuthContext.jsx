@@ -77,6 +77,14 @@ export const AuthProvider = ({ children }) => {
     navigate("/");
   };
 
+  const [language, setLanguage] = useState(localStorage.getItem("lang") || "en");
+
+  const toggleLanguage = () => {
+    const newLang = language === "en" ? "hi" : "en";
+    setLanguage(newLang);
+    localStorage.setItem("lang", newLang);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -84,6 +92,8 @@ export const AuthProvider = ({ children }) => {
         user: auth.user,
         token: auth.token,
         isAuthenticated: auth.isAuthenticated,
+        language,
+        toggleLanguage,
         login,
         logout,
       }}

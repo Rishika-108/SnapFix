@@ -52,42 +52,28 @@ const MyReports = () => {
             View and manage all the issues you’ve reported or upvoted so far.
           </p>
 
-          {/* Loading / Error / Empty States */}
-          {loading ? (
-            <div className="text-center text-gray-500 mt-10">
-              <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 border-t-4 border-indigo-400 mx-auto mb-3"></div>
-              <p className="text-sm">Loading your reports...</p>
-            </div>
-          ) : errorMessage ? (
-            <div className="text-center text-gray-500 mt-10 text-sm">
-              {errorMessage}
-            </div>
-          ) : userReports.length === 0 && upvotedReports.length === 0 ? (
-            <div className="text-center text-gray-500 mt-10 text-sm">
-              You haven’t submitted or upvoted any reports yet.
-            </div>
-          ) : (
-            <>
-              {/* User Reports */}
-              {userReports.length > 0 && (
-                <div className="bg-white/90 rounded-2xl sm:rounded-3xl shadow-lg border border-gray-100 p-4 sm:p-6 backdrop-blur-sm">
-                  <IssueGrid reports={userReports} />
-                </div>
-              )}
+          {/* Main Grid Section */}
+          <div className="space-y-10">
+            {/* My Submissions */}
+            <section>
+              <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-700 flex items-center gap-2">
+                <span className="w-2 h-8 bg-blue-500 rounded-full"></span>
+                My Submissions
+              </h2>
+              <IssueGrid reports={userReports} loading={loading} />
+            </section>
 
-              {/* Upvoted Reports */}
-              {upvotedReports.length > 0 && (
-                <>
-                  <h2 className="text-xl sm:text-2xl font-semibold mt-8 sm:mt-10 mb-3 sm:mb-4 text-gray-700">
-                    Upvoted Reports
-                  </h2>
-                  <div className="bg-white/90 rounded-2xl sm:rounded-3xl shadow-lg border border-gray-100 p-4 sm:p-6 backdrop-blur-sm">
-                    <IssueGrid reports={upvotedReports} />
-                  </div>
-                </>
-              )}
-            </>
-          )}
+            {/* Upvoted by me */}
+            {(upvotedReports.length > 0 || loading) && (
+              <section>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-700 flex items-center gap-2">
+                  <span className="w-2 h-8 bg-purple-500 rounded-full"></span>
+                  Upvoted Issues
+                </h2>
+                <IssueGrid reports={upvotedReports} loading={loading} />
+              </section>
+            )}
+          </div>
         </div>
       </div>
     </div>
