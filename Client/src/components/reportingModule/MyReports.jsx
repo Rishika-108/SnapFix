@@ -60,7 +60,7 @@ const MyReports = () => {
             <section>
               <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-700 flex items-center gap-2">
                 <span className="w-2 h-8 bg-blue-500 rounded-full"></span>
-                {t('My Submissions')}
+                {t('My Complaints')}
               </h2>
               <IssueGrid reports={userReports} loading={loading} />
             </section>

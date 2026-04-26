@@ -113,21 +113,23 @@ const CitizenNavbar = ({ user }) => {
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Mobile menu button */}
+          {/* Mobile menu button */}
+          <div className="flex items-center md:hidden">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              <FiMenu className="w-6 h-6" />
+              <FiMenu className="w-6 h-6 text-gray-800" />
             </button>
           </div>
         </div>
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden mt-1">
-            <ul className="space-y-1 px-2 pb-3">
+          <div className="md:hidden mt-1 bg-white shadow-md border-t border-gray-100">
+            <ul className="space-y-1 px-4 py-3">
               <li>
                 <Link
                   to="/citizen/new-report"
@@ -163,6 +165,43 @@ const CitizenNavbar = ({ user }) => {
                 >
                   {t('learn')}
                 </Link>
+              </li>
+
+              {/* Mobile Navbar Elements */}
+              <li className="pt-4 mt-2 border-t border-gray-200 flex flex-col space-y-4">
+                <div className="flex items-center justify-between px-3">
+                  <NotificationDropdown />
+                  <button
+                    onClick={toggleLanguage}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-[#3EA8FF] hover:bg-blue-50 transition-all group"
+                  >
+                    <Globe size={18} className="text-gray-500 group-hover:text-[#3EA8FF]" />
+                    <span className="text-sm font-semibold text-gray-700 uppercase">
+                      {language === "en" ? "HI" : "EN"}
+                    </span>
+                  </button>
+                </div>
+                <div className="flex items-center gap-3 px-3 py-2">
+                  <img
+                    className="w-8 h-8 rounded-full"
+                    src={user?.avatar || defaultAvatar}
+                    alt={user?.name || "User avatar"}
+                  />
+                  <span className="text-sm font-medium text-gray-900">{user?.name || t('profile')}</span>
+                </div>
+                <Link
+                  to="/profile"
+                  className="block px-3 text-sm text-gray-700 hover:text-[#3EA8FF] font-medium"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {t('profile')}
+                </Link>
+                <button
+                  onClick={logout}
+                  className="block w-full text-left px-3 text-sm text-red-600 font-medium"
+                >
+                  {t('logout')}
+                </button>
               </li>
             </ul>
           </div>

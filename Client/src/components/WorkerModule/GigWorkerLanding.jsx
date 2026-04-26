@@ -1,4 +1,7 @@
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import  WorkerAPI  from "../../api/api";
+// existing imports remain unchanged
+
 import { FaBriefcase, FaBolt, FaGlobe } from "react-icons/fa";
 
 const features = [

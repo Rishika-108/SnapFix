@@ -126,12 +126,17 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
         },
         (err) => {
           console.error("❌ Geolocation error:", err);
-          reject(err);
+          let errorMsg = "Could not detect location.";
+          if (err.code === 1) errorMsg = "Permission denied. Please enable location access in your browser.";
+          else if (err.code === 2) errorMsg = "Position unavailable. Please try pinning manually on the map.";
+          else if (err.code === 3) errorMsg = "Location request timed out. Please try again or pin manually.";
+          
+          reject(errorMsg);
         },
         {
-          enableHighAccuracy: false,
-          timeout: 20000,
-          maximumAge: 60000,
+          enableHighAccuracy: true,
+          timeout: 30000,
+          maximumAge: 0,
         }
       );
     });

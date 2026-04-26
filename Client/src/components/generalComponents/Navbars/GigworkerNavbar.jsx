@@ -44,54 +44,59 @@ const GigworkerNavbar = ({ user }) => {
 
         {/* Right side buttons */}
         <div className="flex items-center md:order-2 space-x-3 md:space-x-4 rtl:space-x-reverse">
-          {/* Notification Bell */}
-          <NotificationDropdown />
+          {/* Desktop Only Right Side Elements */}
+          <div className="hidden md:flex items-center space-x-4">
+            {/* Notification Bell */}
+            <NotificationDropdown />
 
-          {/* Custom Language Toggle */}
-          <button
-            onClick={toggleLanguage}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-[#3EA8FF] hover:bg-blue-50 transition-all group"
-            title="Switch Language"
-          >
-            <Globe size={18} className="text-gray-500 group-hover:text-[#3EA8FF]" />
-            <span className="text-sm font-semibold text-gray-700 uppercase dark:text-white">
-              {language === "en" ? "HI" : "EN"}
-            </span>
-          </button>
-
-          {/* User avatar */}
-          <button
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            type="button"
-            className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-            aria-expanded={dropdownOpen}
-          >
-            <span className="sr-only">Open user menu</span>
-            <img
-              className="w-8 h-8 rounded-full"
-              src={user?.avatar || defaultAvatar}
-              alt={user?.name || "user photo"}
-            />
-          </button>
-
-          {/* Dropdown menu */}
-          {dropdownOpen && (
-            <div
-              ref={dropdownRef}
-              className="z-50 absolute top-14 right-4 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-md dark:bg-gray-700 dark:divide-gray-600"
+            {/* Custom Language Toggle */}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-[#3EA8FF] hover:bg-blue-50 transition-all group"
+              title="Switch Language"
             >
-              <ul className="py-2">
-                <li>
-                  <button
-                    onClick={logout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                  >
-                    {t('logout')}
-                  </button>
-                </li>
-              </ul>
+              <Globe size={18} className="text-gray-500 group-hover:text-[#3EA8FF]" />
+              <span className="text-sm font-semibold text-gray-700 uppercase dark:text-white">
+                {language === "en" ? "HI" : "EN"}
+              </span>
+            </button>
+
+            {/* User avatar */}
+            <div className="relative">
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                type="button"
+                className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                aria-expanded={dropdownOpen}
+              >
+                <span className="sr-only">Open user menu</span>
+                <img
+                  className="w-8 h-8 rounded-full"
+                  src={user?.avatar || defaultAvatar}
+                  alt={user?.name || "user photo"}
+                />
+              </button>
+
+              {/* Dropdown menu */}
+              {dropdownOpen && (
+                <div
+                  ref={dropdownRef}
+                  className="z-50 absolute top-14 right-4 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-md dark:bg-gray-700 dark:divide-gray-600"
+                >
+                  <ul className="py-2">
+                    <li>
+                      <button
+                        onClick={logout}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                      >
+                        {t('logout')}
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           {/* Mobile menu toggle */}
           <button
@@ -141,6 +146,36 @@ const GigworkerNavbar = ({ user }) => {
               >
                 {t('myReports')}
               </Link>
+            </li>
+
+            {/* Mobile Navbar Elements */}
+            <li className="md:hidden pt-4 mt-2 border-t border-gray-200 dark:border-gray-700 flex flex-col space-y-4">
+              <div className="flex items-center justify-between px-3">
+                <NotificationDropdown />
+                <button
+                  onClick={toggleLanguage}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-[#3EA8FF] hover:bg-blue-50 dark:hover:bg-gray-700 transition-all group"
+                >
+                  <Globe size={18} className="text-gray-500 dark:text-gray-400 group-hover:text-[#3EA8FF]" />
+                  <span className="text-sm font-semibold text-gray-700 dark:text-white uppercase">
+                    {language === "en" ? "HI" : "EN"}
+                  </span>
+                </button>
+              </div>
+              <div className="flex items-center gap-3 px-3 py-2">
+                <img
+                  className="w-8 h-8 rounded-full"
+                  src={user?.avatar || defaultAvatar}
+                  alt={user?.name || "User avatar"}
+                />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">{user?.name || t('profile')}</span>
+              </div>
+              <button
+                onClick={logout}
+                className="block w-full text-left px-3 text-sm text-red-600 dark:text-red-500 font-medium"
+              >
+                {t('logout')}
+              </button>
             </li>
           </ul>
         </div>
