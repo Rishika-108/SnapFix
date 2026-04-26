@@ -22,6 +22,7 @@ const PORT = process.env.PORT ||3000
 app.use(express.json({ limit: "20mb" })); 
 const allowedOrigins = [
   'https://snapfix-lets-report.onrender.com',
+  'https://snapfix-my-gov.onrender.com',
   'http://localhost:5173', // Local Client
   'http://localhost:5174', // Local Admin
 ];
