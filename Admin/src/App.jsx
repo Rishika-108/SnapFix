@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
 import AuthenticationWindow from "./components/loginModule/AuthenticationWindow"
-import HomePage from "./page/HomePage";
+import HomePage from "./page/Homepage";
 import Dashboard from "./page/Dashboard";
 import Reports from "./page/Reports";
 import FundRelease from "./page/FundRelease"
