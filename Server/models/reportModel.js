@@ -18,6 +18,10 @@ const reportSchema = new mongoose.Schema({
     paymentReleased: { type: Boolean, default: false },
     priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Low' },
     aiConfidence: { type: Number, default: 0 },
+    localizedContent: {
+        en: { title: String, description: String },
+        hi: { title: String, description: String }
+    },
 }, { timestamps: true })
 
 reportSchema.index({ createdBy: 1 })

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL ="https://snapfix-fl1e.onrender.com/api";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const apiInstance = axios.create({
   baseURL: BASE_URL,
@@ -105,6 +105,16 @@ export const api = {
     } catch (err) {
       console.error("Failed to release payment:", err);
       throw err.response?.data || { success: false, message: "Could not release payment" };
+    }
+  },
+
+  getCompletedTasks: async () => {
+    try {
+      const res = await apiInstance.get("/admin/completed-tasks");
+      return res.data;
+    } catch (err) {
+      console.error("Failed to fetch completed tasks:", err);
+      throw err.response?.data || { success: false, message: "Could not fetch completed tasks" };
     }
   },
 

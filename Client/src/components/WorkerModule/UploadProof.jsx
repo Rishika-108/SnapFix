@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Loader2, Upload } from "lucide-react";
 import  WorkerAPI  from "../../api/api";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const UploadProof = ({ taskId, onCancel, onSuccess }) => {
   const [proofImage, setProofImage] = useState(null);
@@ -8,11 +9,12 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [uploading, setUploading] = useState(false);
+  const { t } = useTranslation();
 
   // ✅ Optional: auto-fill current coordinates
   const handleAutoLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation not supported in your browser.");
+      alert(t("Geolocation not supported in your browser."));
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -20,7 +22,7 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
         setLatitude(pos.coords.latitude.toString());
         setLongitude(pos.coords.longitude.toString());
       },
-      () => alert("Failed to retrieve location.")
+      () => alert(t("Failed to retrieve location."))
     );
   };
 
@@ -29,7 +31,7 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
     e.preventDefault();
 
     if (!proofImage || !latitude || !longitude) {
-      alert("Please fill all fields and upload an image.");
+      alert(t("Please fill all fields and upload an image."));
       return;
     }
 
@@ -45,15 +47,15 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
       const { data } = response;
 
       if (data.success) {
-        alert("✅ Proof uploaded successfully!");
+        alert(t("✅ Proof uploaded successfully!"));
         if (onSuccess) onSuccess(data.task);
         if (onCancel) onCancel();
       } else {
-        alert("⚠️ " + (data.message || "Upload failed."));
+        alert("⚠️ " + t(data.message || "Upload failed."));
       }
     } catch (error) {
       console.error("❌ Upload error:", error.message);
-      alert("Failed to upload proof. Please try again.");
+      alert(t("Failed to upload proof. Please try again."));
     } finally {
       setUploading(false);
     }
@@ -73,10 +75,10 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
         )}
 
         <h2 className="text-3xl font-bold mb-4 text-center bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">
-          Upload Proof of Work
+          {t('Upload Proof of Work')}
         </h2>
         <p className="text-sm text-gray-300 mb-6 text-center">
-          Upload an image of your completed work, add remarks, and confirm your location.
+          {t('Upload an image of your completed work, add remarks, and confirm your location.')}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -92,7 +94,7 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
           {/* 📝 Remarks */}
           <textarea
             rows="3"
-            placeholder="Add remarks about your work..."
+            placeholder={t("Add remarks about your work...")}
             value={remarks}
             onChange={(e) => setRemarks(e.target.value)}
             className="w-full border border-white/30 bg-white/0 placeholder-gray-300 px-4 py-3 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none transition-all duration-300"
@@ -102,7 +104,7 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
           <div className="grid grid-cols-2 gap-3">
             <input
               type="text"
-              placeholder="Latitude"
+              placeholder={t("Latitude")}
               value={latitude}
               onChange={(e) => setLatitude(e.target.value)}
               className="border border-white/30 bg-white/0 placeholder-gray-300 px-4 py-3 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300"
@@ -110,7 +112,7 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
             />
             <input
               type="text"
-              placeholder="Longitude"
+              placeholder={t("Longitude")}
               value={longitude}
               onChange={(e) => setLongitude(e.target.value)}
               className="border border-white/30 bg-white/0 placeholder-gray-300 px-4 py-3 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300"
@@ -123,7 +125,7 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
             onClick={handleAutoLocation}
             className="w-full text-sm text-indigo-300 hover:text-indigo-200 underline mb-2"
           >
-            Use current location
+            {t('Use current location')}
           </button>
 
           {/* 🔘 Action Buttons */}
@@ -137,11 +139,11 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
             >
               {uploading ? (
                 <span className="flex justify-center items-center gap-2">
-                  <Loader2 className="animate-spin" size={18} /> Uploading...
+                  <Loader2 className="animate-spin" size={18} /> {t('Uploading...')}
                 </span>
               ) : (
                 <span className="flex justify-center items-center gap-2">
-                  <Upload size={18} /> Submit Proof
+                  <Upload size={18} /> {t('Submit Proof')}
                 </span>
               )}
             </button>
@@ -152,7 +154,7 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
                 onClick={onCancel}
                 className="px-5 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 transition-all font-medium text-white shadow-md"
               >
-                Cancel
+                {t('Cancel')}
               </button>
             )}
           </div>

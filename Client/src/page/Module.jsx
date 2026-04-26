@@ -4,11 +4,13 @@ import { ChevronLeft, ChevronRight, CheckCircle, Home, AlertCircle } from 'lucid
 import { getModuleById } from '../mockData/modules';
 import { getUserData, updateModuleProgress, completeModule, recordQuizTaken, hasQuizBeenTaken, getQuizPoints } from '../mockData/gamification';
 import ProgressBar from '../components/eduModule/ProgressBar';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function Module() {
   const { id } = useParams();
   const navigate = useNavigate();
   const module = getModuleById(id);
+  const { t } = useTranslation();
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
@@ -175,25 +177,25 @@ export default function Module() {
           {slide.type === 'intro' && (
             <div className="flex-1 flex flex-col items-center justify-center text-center">
               <span className="text-8xl mb-6">{slide.image}</span>
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">{slide.title}</h2>
-              <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">{slide.content}</p>
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">{t(slide.title)}</h2>
+              <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">{t(slide.content)}</p>
             </div>
           )}
 
           {slide.type === 'content' && (
             <div className="flex-1">
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">{slide.title}</h2>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">{slide.content}</p>
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">{t(slide.title)}</h2>
+              <p className="text-lg text-gray-600 mb-6 leading-relaxed">{t(slide.content)}</p>
 
               <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6">
-                <h3 className="font-semibold text-gray-800 mb-4">Key Points:</h3>
+                <h3 className="font-semibold text-gray-800 mb-4">{t('Key Points:')}</h3>
                 <ul className="space-y-3">
                   {slide.facts.map((fact, idx) => (
                     <li key={idx} className="flex items-start gap-3">
                       <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium flex-shrink-0 mt-0.5">
                         {idx + 1}
                       </span>
-                      <span className="text-gray-700">{fact}</span>
+                      <span className="text-gray-700">{t(fact)}</span>
                     </li>
                   ))}
                 </ul>
@@ -204,13 +206,13 @@ export default function Module() {
           {slide.type === 'final-quiz' && (
             <div className="flex-1">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">{slide.title}</h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">{t(slide.title)}</h2>
                 {quizAlreadyTaken && (
                   <div className="flex items-start gap-3 bg-amber-50 border-2 border-amber-200 rounded-lg p-4">
                     <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold text-amber-800">Quiz Already Taken</p>
-                      <p className="text-sm text-amber-700">You've already completed this quiz. You can review your answers but cannot retake it.</p>
+                      <p className="font-semibold text-amber-800">{t('Quiz Already Taken')}</p>
+                      <p className="text-sm text-amber-700">{t("You've already completed this quiz. You can review your answers but cannot retake it.")}</p>
                     </div>
                   </div>
                 )}
@@ -219,7 +221,7 @@ export default function Module() {
               <div className="space-y-6">
                 {slide.questions.map((question, qIdx) => (
                   <div key={qIdx} className="bg-gray-50 rounded-xl p-5">
-                    <p className="font-semibold text-gray-800 mb-4">{qIdx + 1}. {question.question}</p>
+                    <p className="font-semibold text-gray-800 mb-4">{qIdx + 1}. {t(question.question)}</p>
 
                     <div className="space-y-2">
                       {question.options.map((option, oIdx) => (
@@ -239,7 +241,7 @@ export default function Module() {
                               : 'bg-white border-2 border-gray-200 hover:border-blue-300'
                           } ${(quizSubmitted || quizAlreadyTaken) && 'cursor-not-allowed'}`}
                         >
-                          <span className="font-medium text-gray-800">{option}</span>
+                          <span className="font-medium text-gray-800">{t(option)}</span>
                         </button>
                       ))}
                     </div>
@@ -249,9 +251,9 @@ export default function Module() {
                         selectedAnswers[qIdx] === question.correct ? 'bg-green-50' : 'bg-blue-50'
                       }`}>
                         <p className="font-semibold text-gray-800 mb-2">
-                          {selectedAnswers[qIdx] === question.correct ? '✓ Correct!' : 'Explanation:'}
+                          {selectedAnswers[qIdx] === question.correct ? t('✓ Correct!') : t('Explanation:')}
                         </p>
-                        <p className="text-gray-700">{question.explanation}</p>
+                        <p className="text-gray-700">{t(question.explanation)}</p>
                       </div>
                     )}
                   </div>
@@ -279,7 +281,7 @@ export default function Module() {
               className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-gray-100 text-gray-700 hover:bg-gray-200"
             >
               <ChevronLeft className="w-5 h-5" />
-              Previous
+              {t('Previous')}
             </button>
 
             <button
@@ -292,10 +294,10 @@ export default function Module() {
               className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transform hover:scale-105 transition-all duration-300 shadow-md disabled:opacity-40 disabled:cursor-not-allowed bg-linear-to-r from-[#3EA8FF] to-[#0E72C2] text-white"
             >
               {isFinalQuiz && !quizSubmitted
-                ? 'Submit Quiz'
+                ? t('Submit Quiz')
                 : isLastSlide
-                ? 'Complete Module'
-                : 'Next'}
+                ? t('Complete Module')
+                : t('Next')}
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>

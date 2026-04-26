@@ -1,6 +1,8 @@
 import React from "react";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const FeatureHighlights = () => {
+  const { t } = useTranslation();
   const features = [
     {
       id: 1,
@@ -30,7 +32,7 @@ const FeatureHighlights = () => {
 
       <div className="container mx-auto px-6 relative z-10">
         <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-16 text-[#0E2439]">
-          Why <span className="text-[#3EA8FF]">SnapFix?</span>
+          {t('Why')} <span className="text-[#3EA8FF]">SnapFix?</span>
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -43,9 +45,9 @@ const FeatureHighlights = () => {
                 {icon}
               </div>
               <h3 className="text-2xl font-semibold mb-3 text-[#0E2439] group-hover:text-[#0E72C2] transition-colors">
-                {title}
+                {t(title)}
               </h3>
-              <p className="text-gray-700 text-md">{description}</p>
+              <p className="text-gray-700 text-md">{t(description)}</p>
             </div>
           ))}
         </div>

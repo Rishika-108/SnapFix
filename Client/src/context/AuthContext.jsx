@@ -85,6 +85,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("lang", newLang);
   };
 
+
   return (
     <AuthContext.Provider
       value={{

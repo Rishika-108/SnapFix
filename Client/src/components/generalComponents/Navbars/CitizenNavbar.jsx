@@ -2,15 +2,17 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiMenu } from "react-icons/fi";
 import { useAuth } from "../../../context/AuthContext";
+import { useTranslation } from "../../../hooks/useTranslation";
 import defaultAvatar from "../../../assets/user-avatar.png";
 import NotificationDropdown from "../NotificationDropdown";
-import GoogleTranslation from "../GoogleTranslation";
+import { Globe } from "lucide-react";
 
 const CitizenNavbar = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const { logout } = useAuth();
+  const { logout, toggleLanguage } = useAuth();
+  const { t, language } = useTranslation();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -44,16 +46,16 @@ const CitizenNavbar = ({ user }) => {
           {/* Desktop links */}
           <div className="hidden md:flex md:space-x-6">
             <Link to="/citizen/new-report" className="text-gray-700 hover:text-[#3EA8FF] px-2 py-1 rounded-md font-medium transition-colors">
-              Report Issue
+              {t('reportIssue')}
             </Link>
             <Link to="/citizen/feed" className="text-gray-700 hover:text-[#3EA8FF] px-2 py-1 rounded-md font-medium transition-colors">
-              Reports Feed
+              {t('reportsFeed')}
             </Link>
             <Link to="/citizen/my-reports" className="text-gray-700 hover:text-[#3EA8FF] px-2 py-1 rounded-md font-medium transition-colors">
-              My Reports
+              {t('myReports')}
             </Link>
             <Link to="/learn" className="text-gray-700 hover:text-[#3EA8FF] px-2 py-1 rounded-md font-medium transition-colors">
-              Learn
+              {t('learn')}
             </Link>
           </div>
 
@@ -62,8 +64,17 @@ const CitizenNavbar = ({ user }) => {
             {/* Notification Bell */}
             <NotificationDropdown />
 
-            {/* Google Translate Widget */}
-            <GoogleTranslation />
+            {/* Custom Language Toggle */}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-[#3EA8FF] hover:bg-blue-50 transition-all group"
+              title="Switch Language"
+            >
+              <Globe size={18} className="text-gray-500 group-hover:text-[#3EA8FF]" />
+              <span className="text-sm font-semibold text-gray-700 uppercase">
+                {language === "en" ? "HI" : "EN"}
+              </span>
+            </button>
 
             {/* User avatar */}
             <div className="relative">
@@ -90,13 +101,13 @@ const CitizenNavbar = ({ user }) => {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => setDropdownOpen(false)}
                     >
-                      Profile
+                      {t('profile')}
                     </Link>
                     <button
                       onClick={logout}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      Logout
+                      {t('logout')}
                     </button>
                   </div>
                 </div>
@@ -123,7 +134,7 @@ const CitizenNavbar = ({ user }) => {
                   className="block px-3 py-2 rounded-md text-gray-700 hover:text-[#3EA8FF] hover:bg-[#3EA8FF]/10 transition-all font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
-                  Report Issue
+                  {t('reportIssue')}
                 </Link>
               </li>
               <li>
@@ -132,7 +143,7 @@ const CitizenNavbar = ({ user }) => {
                   className="block px-3 py-2 rounded-md text-gray-700 hover:text-[#3EA8FF] hover:bg-[#3EA8FF]/10 transition-all font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
-                  Reports Feed
+                  {t('reportsFeed')}
                 </Link>
               </li>
               <li>
@@ -141,7 +152,7 @@ const CitizenNavbar = ({ user }) => {
                   className="block px-3 py-2 rounded-md text-gray-700 hover:text-[#3EA8FF] hover:bg-[#3EA8FF]/10 transition-all font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
-                   My Reports
+                   {t('myReports')}
                 </Link>
               </li>
               <li>
@@ -150,7 +161,7 @@ const CitizenNavbar = ({ user }) => {
                   className="block px-3 py-2 rounded-md text-gray-700 hover:text-[#3EA8FF] hover:bg-[#3EA8FF]/10 transition-all font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
-                  Learn
+                  {t('learn')}
                 </Link>
               </li>
             </ul>

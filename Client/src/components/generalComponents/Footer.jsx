@@ -1,5 +1,6 @@
 import React from "react";
 import { FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const socialLinks = [
   { Icon: FiGithub, href: "https://github.com/", label: "GitHub" },
@@ -8,6 +9,7 @@ const socialLinks = [
 ];
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="relative bg-linear-to-b from-gray-900 via-gray-950 to-black text-gray-300 overflow-hidden border-t border-gray-800">
       {/* Subtle Floating Glow */}
@@ -20,14 +22,14 @@ const Footer = () => {
             SnapFix
           </h2>
           <p className="text-xs text-gray-400 max-w-md leading-snug">
-            Report. Resolve. Evolve.<br />
-            A space that helps you report, resolve, and make the change.
+            {t('Report. Resolve. Evolve.')}<br />
+            {t('A space that helps you report, resolve, and make the change.')}
           </p>
         </div>
 
         {/* Social Section */}
         <div className="flex flex-col items-start md:items-end">
-          <h3 className="text-xs font-semibold mb-1 text-white">Connect With Us</h3>
+          <h3 className="text-xs font-semibold mb-1 text-white">{t('Connect With Us')}</h3>
           <div className="flex items-center gap-2">
             {socialLinks.map(({ Icon, href, label }, idx) => (
               <a
@@ -51,7 +53,7 @@ const Footer = () => {
           © {new Date().getFullYear()} <span className="font-semibold text-indigo-400">SnapFix</span>
         </span>
         <span className="hidden md:inline">·</span>
-        <span>Built with <span className="text-red-500">❤️</span> during Hackathon Hours</span>
+        <span>{t('Built with')} <span className="text-red-500">❤️</span> {t('during Hackathon Hours')}</span>
       </div>
     </footer>
   );

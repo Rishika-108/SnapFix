@@ -43,32 +43,7 @@ MODELS = {
     "text_model": text_model
 }
 
-# ---------------- DB file ----------------
-REPORTS_FILE = "reports_db.json"
-if not os.path.exists(REPORTS_FILE):
-    with open(REPORTS_FILE, "w", encoding="utf-8") as f:
-        json.dump([], f)
-
-def read_reports():
-    with open(REPORTS_FILE, "r", encoding="utf-8") as f:
-        content = f.read().strip()
-        return json.loads(content) if content else []
-
-def save_reports(data):
-    with open(REPORTS_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-
 # ---------------- Helpers ----------------
-def haversine_meters(lat1, lon1, lat2, lon2):
-    R = 6371000.0
-    phi1 = math.radians(lat1)
-    phi2 = math.radians(lat2)
-    dphi = math.radians(lat2 - lat1)
-    dlambda = math.radians(lon2 - lon1)
-    a = math.sin(dphi/2.0)**2 + math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2.0)**2
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-    return R * c
-
 def cosine_similarity(a, b):
     a = np.array(a)
     b = np.array(b)
@@ -160,24 +135,6 @@ def detect_category(image_bytes, description=None, conf_threshold=0.2):
         return "Unknown", round(confidence, 3)
     return category, round(confidence, 3)
 
-# ---------------- Duplicate detection ----------------
-def check_duplicate(lat, lon, category, radius_m=10.0):
-    reports = read_reports()
-    for rep in reports:
-        coords = rep.get("coordinates", None)
-        if not coords or len(coords) < 2:
-            continue
-        rlat, rlon = coords[0], coords[1]
-        try:
-            dist = haversine_meters(float(lat), float(lon), float(rlat), float(rlon))
-        except Exception:
-            continue
-        if str(rep.get("category", "")).lower() == str(category).lower() and dist <= radius_m:
-            rep["upvotes"] = rep.get("upvotes", 0) + 1
-            save_reports(reports)
-            return True, rep.get("report_id"), rep.get("upvotes", 0)
-    return False, None, 0
-
 # ---------------- Priority scoring ----------------
 SEVERITY = {
     "garbage dump": 0.9,
@@ -202,26 +159,16 @@ def calculate_priority(category, confidence, upvotes):
     return "Low", score
 
 # ---------------- Format report ----------------
-def format_report(lat, lon, category, confidence, duplicate, duplicate_id, upvotes, image_url):
-    report_id = f"RPT-{str(uuid.uuid4().int)[:8]}"
-    priority, pscore = calculate_priority(category, confidence, upvotes)
+def format_report(lat, lon, category, confidence, image_url):
+    priority, pscore = calculate_priority(category, confidence, 0)
     out = {
-        "report_id": report_id,
         "category": category.title() if isinstance(category, str) else category,
         "confidence": confidence,
         "priority": priority,
         "priority_score": pscore,
         "coordinates": [round(float(lat), 6), round(float(lon), 6)],
-        "status": "Upvoted Existing Report" if duplicate else "New Report Submitted",
-        "upvotes": upvotes,
-        "is_duplicate": bool(duplicate),
-        "duplicate_of": duplicate_id if duplicate else None,
         "image_url": image_url
     }
-    if (not duplicate) and isinstance(category, str) and str(category).lower() != "unknown":
-        records = read_reports()
-        records.append(out)
-        save_reports(records)
     return out
 
 # ---------------- Full pipeline ----------------
@@ -258,11 +205,8 @@ def process_image_url(image_url, lat, lon, description):
     # categorize
     category, confidence = detect_category(image_bytes, description=description)
 
-    # duplicate detection
-    is_dup, dup_id, upvotes = check_duplicate(lat, lon, category, radius_m=10.0)
-
     # format and return
-    return format_report(lat, lon, category, confidence, is_dup, dup_id, upvotes, image_url)
+    return format_report(lat, lon, category, confidence, image_url)
 
 # ---------------- Routes ----------------
 @app.get("/")

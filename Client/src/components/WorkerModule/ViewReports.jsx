@@ -5,6 +5,7 @@ import { WorkerAPI } from "../../api/api";
 import GigworkerNavbar from "../generalComponents/Navbars/GigworkerNavbar";
 import PlaceBid from "./PlaceBid";
 import IssueLocation from "../issueGridModule/issueCardComponent/IssueLocation";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const ViewReports = () => {
   const [reports, setReports] = useState([]);
@@ -12,6 +13,7 @@ const ViewReports = () => {
   const [showBidModal, setShowBidModal] = useState(null); // report._id for modal
   const [user, setUser] = useState(null);
   const [bidPlaced, setBidPlaced] = useState(new Set());
+  const { t } = useTranslation();
 
 
   // Get logged-in user from localStorage
@@ -52,20 +54,20 @@ const ViewReports = () => {
       <GigworkerNavbar />
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-6">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 w-full max-w-6xl shadow-2xl">
-          <h1 className="text-3xl font-bold mb-6 text-center">Nearby Reports</h1>
+          <h1 className="text-3xl font-bold mb-6 text-center">{t('Nearby Reports')}</h1>
           <p className="text-sm text-gray-300 mb-8 text-center">
-            View issues reported near your location and place bids to work on them.
+            {t('View issues reported near your location and place bids to work on them.')}
           </p>
 
           {loading ? (
             <div className="flex justify-center items-center py-10">
               <Loader2 className="animate-spin text-indigo-400" size={28} />
-              <span className="ml-3 text-gray-300">Loading nearby reports...</span>
+              <span className="ml-3 text-gray-300">{t('Loading nearby reports...')}</span>
             </div>
           ) : reports.length === 0 ? (
             <div className="text-center text-gray-400 mt-10">
               <AlertCircle className="mx-auto mb-3 text-gray-500" size={32} />
-              <p>No nearby reports found in your area.</p>
+              <p>{t('No nearby reports found in your area.')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -77,19 +79,19 @@ const ViewReports = () => {
                   {/* Header */}
                   <div className="mb-3">
                     <h3 className="text-lg font-semibold text-white">
-                      {report.title || "Untitled Report"}
+                      {t(report.title || "Untitled Report")}
                     </h3>
                     <p className="text-gray-400 text-sm flex items-center gap-1">
                       <MapPin className="text-indigo-400" size={16} />
                       {report.location?.coordinates ? (
                         <IssueLocation coordinates={report.location.coordinates} />
                       ) : (
-                        "Location not specified"
+                        t("Location not specified")
                       )}
                     </p>
 
                     <p className="text-gray-400 text-sm">
-                      Submitted{" "}
+                      {t('Submitted')}{" "}
                       <span className="text-indigo-300">
                         {formatDistanceToNow(new Date(report.createdAt || Date.now()), {
                           addSuffix: true,
@@ -109,20 +111,20 @@ const ViewReports = () => {
 
                   {/* Description */}
                   <p className="text-gray-300 text-sm mb-4 line-clamp-3">
-                    {report.description || "No description provided."}
+                    {t(report.description || "No description provided.")}
                   </p>
 
                   {/* Reported By */}
                   <p className="text-xs text-gray-400 mb-4">
-                    Reported by:{" "}
+                    {t('Reported by')}:{" "}
                     <span className="text-indigo-400 font-medium">
-                      {report.createdBy?.name || "Anonymous"}
+                      {t(report.createdBy?.name || "Anonymous")}
                     </span>
                   </p>
 
                   {/* Status */}
                   <p className="text-sm mb-3">
-                    Status:{" "}
+                    {t('Status')}:{" "}
                     <span
                       className={`font-semibold ${report.status === "resolved"
                         ? "text-green-400"
@@ -131,14 +133,14 @@ const ViewReports = () => {
                           : "text-gray-300"
                         }`}
                     >
-                      {report.status || "Pending"}
+                      {t(report.status || "Pending")}
                     </span>
                   </p>
 
                   {/* Category */}
                   {report.category && (
                     <p className="text-sm text-gray-300 mb-4">
-                      Category: <span className="text-indigo-400">{report.category}</span>
+                      {t('Category')}: <span className="text-indigo-400">{t(report.category)}</span>
                     </p>
                   )}
 
@@ -160,7 +162,7 @@ const ViewReports = () => {
                             : "bg-indigo-600 hover:bg-indigo-500"
                           }`}
                       >
-                        {bidPlaced.has(report._id) ? "Bid Placed" : "Place Bid"}
+                        {bidPlaced.has(report._id) ? t("Bid Placed") : t("Place Bid")}
                       </button>
 
 

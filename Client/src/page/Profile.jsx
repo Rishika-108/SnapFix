@@ -5,6 +5,7 @@ import BadgeCard from '../components/eduModule/BadgeCard';
 import ProgressBar from '../components/eduModule/ProgressBar';
 import { getUserData, calculateLevel, getUnlockedBadges, getNextBadge, BADGES } from '../mockData/gamification';
 import { MODULES } from '../mockData/modules';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export default function Profile() {
   const [level, setLevel] = useState(null);
   const [unlockedBadges, setUnlockedBadges] = useState([]);
   const [nextBadge, setNextBadge] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const data = getUserData();
@@ -35,7 +37,7 @@ export default function Profile() {
           className="flex items-center gap-2 text-gray-500 hover:text-[#3EA8FF] transition-colors mb-6 font-medium"
         >
           <ChevronLeft className="w-5 h-5" />
-          Back to Home
+          {t('Back to Home')}
         </button>
 
         <div className="bg-white rounded-3xl shadow-xl p-8 mb-8">
@@ -44,16 +46,16 @@ export default function Profile() {
               <span className="text-4xl">👤</span>
             </div>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">Civic Learner</h1>
-              <p className="text-lg text-gray-600 mb-3">{level?.name} - Level {level?.level}</p>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('Civic Learner')}</h1>
+              <p className="text-lg text-gray-600 mb-3">{t(level?.name)} - {t('Level')} {level?.level}</p>
               <div className="flex items-center gap-4">
                 <div className="bg-blue-50 px-4 py-2 rounded-xl">
-                  <span className="text-sm text-gray-600">Total CQI:</span>
+                  <span className="text-sm text-gray-600">{t('Total CQI')}:</span>
                   <span className="text-xl font-bold text-blue-600 ml-2">{userData.cqi}</span>
                 </div>
                 <div className="bg-orange-50 px-4 py-2 rounded-xl">
-                  <span className="text-sm text-gray-600">Streak:</span>
-                  <span className="text-xl font-bold text-orange-600 ml-2">{userData.streak} days</span>
+                  <span className="text-sm text-gray-600">{t('Streak')}:</span>
+                  <span className="text-xl font-bold text-orange-600 ml-2">{userData.streak} {t('days')}</span>
                 </div>
               </div>
             </div>
@@ -65,10 +67,10 @@ export default function Profile() {
                 <div className="bg-blue-200 p-2 rounded-lg">
                   <TrendingUp className="w-6 h-6 text-blue-600" />
                 </div>
-                <h3 className="font-semibold text-gray-800">Level Progress</h3>
+                <h3 className="font-semibold text-gray-800">{t('Level Progress')}</h3>
               </div>
               <p className="text-sm text-gray-600 mb-2">
-                {cqiToNextLevel > 0 ? `${cqiToNextLevel} CQI to next level` : 'Max level reached!'}
+                {cqiToNextLevel > 0 ? `${cqiToNextLevel} ${t('CQI to next level')}` : t('Max level reached!')}
               </p>
               {cqiToNextLevel > 0 && (
                 <ProgressBar progress={(userData.cqi / nextLevelCQI) * 100} color="blue" />
@@ -80,7 +82,7 @@ export default function Profile() {
                 <div className="bg-purple-200 p-2 rounded-lg">
                   <Award className="w-6 h-6 text-purple-600" />
                 </div>
-                <h3 className="font-semibold text-gray-800">Badges Earned</h3>
+                <h3 className="font-semibold text-gray-800">{t('Badges Earned')}</h3>
               </div>
               <p className="text-3xl font-bold text-purple-600">
                 {unlockedBadges.length} / {Object.keys(BADGES).length}
@@ -92,10 +94,10 @@ export default function Profile() {
                 <div className="bg-green-200 p-2 rounded-lg">
                   <Target className="w-6 h-6 text-green-600" />
                 </div>
-                <h3 className="font-semibold text-gray-800">Completion</h3>
+                <h3 className="font-semibold text-gray-800">{t('Completion')}</h3>
               </div>
               <p className="text-sm text-gray-600 mb-2">
-                {userData.completedModules.length} / {MODULES.length} modules
+                {userData.completedModules.length} / {MODULES.length} {t('modules')}
               </p>
               <ProgressBar progress={completionRate} color="green" />
             </div>
@@ -104,19 +106,19 @@ export default function Profile() {
 
         {nextBadge && (
           <div className="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl p-6 mb-8 shadow-lg">
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Next Badge Milestone</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">{t('Next Badge Milestone')}</h3>
             <div className="flex items-center gap-4">
               <span className="text-4xl">{nextBadge.icon}</span>
               <div className="flex-1">
-                <p className="font-semibold text-gray-800">{nextBadge.name}</p>
-                <p className="text-sm text-gray-600 mb-2">{nextBadge.description}</p>
+                <p className="font-semibold text-gray-800">{t(nextBadge.name)}</p>
+                <p className="text-sm text-gray-600 mb-2">{t(nextBadge.description)}</p>
                 <div className="flex items-center gap-3">
                   <ProgressBar
                     progress={(userData.cqi / nextBadge.requiredCQI) * 100}
                     color="blue"
                   />
                   <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
-                    {nextBadge.requiredCQI - userData.cqi} CQI needed
+                    {nextBadge.requiredCQI - userData.cqi} {t('CQI needed')}
                   </span>
                 </div>
               </div>
@@ -125,7 +127,7 @@ export default function Profile() {
         )}
 
         <div className="bg-white rounded-3xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Badges</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('Your Badges')}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {Object.values(BADGES).map(badge => (
               <BadgeCard
@@ -138,7 +140,7 @@ export default function Profile() {
         </div>
 
         <div className="bg-white rounded-3xl shadow-xl p-8 mt-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Module Progress</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('Module Progress')}</h2>
           <div className="space-y-4">
             {MODULES.map(module => {
               const isCompleted = userData.completedModules.includes(module.id);
@@ -149,10 +151,10 @@ export default function Profile() {
                   <span className="text-3xl">{module.icon}</span>
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-gray-800">{module.title}</h3>
+                      <h3 className="font-semibold text-gray-800">{t(module.title)}</h3>
                       {isCompleted && (
                         <span className="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">
-                          Completed
+                          {t('Completed')}
                         </span>
                       )}
                     </div>

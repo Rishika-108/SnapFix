@@ -4,10 +4,12 @@ import { Trophy, Flame, TrendingUp } from 'lucide-react';
 import ModuleCard from '../components/eduModule/ModuleCard';
 import { MODULES } from '../mockData/modules';
 import { getUserData, calculateLevel, initializeUserData } from '../mockData/gamification';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function Learn() {
   const [userData, setUserData] = useState(null);
   const [level, setLevel] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const data = initializeUserData();
@@ -26,9 +28,11 @@ export default function Learn() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            Welcome back, Citizen! 👋
+            {t('Welcome back, Citizen! 👋')}
           </h2>
-          <p className="text-gray-600">Continue your journey to becoming a civic champion</p>
+          <p className="text-gray-600">
+            {t('Continue your journey to becoming a civic champion')}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -38,11 +42,15 @@ export default function Learn() {
                 <Trophy className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Total CQI</p>
+                <p className="text-sm text-gray-600">
+                    {t('Total CQI')}
+                </p>
                 <p className="text-3xl font-bold text-gray-800">{userData.cqi}</p>
               </div>
             </div>
-            <p className="text-xs text-gray-500 mt-2">Civic Quotient Index</p>
+            <p className="text-xs text-gray-500 mt-2">
+                {t('Civic Quotient Index')}
+            </p>
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-lg">
@@ -51,11 +59,11 @@ export default function Learn() {
                 <Flame className="w-6 h-6 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Learning Streak</p>
+                <p className="text-sm text-gray-600">{t('Learning Streak')}</p>
                 <p className="text-3xl font-bold text-gray-800">{userData.streak}</p>
               </div>
             </div>
-            <p className="text-xs text-gray-500 mt-2">Days in a row</p>
+            <p className="text-xs text-gray-500 mt-2">{t('Days in a row')}</p>
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-lg">
@@ -64,30 +72,40 @@ export default function Learn() {
                 <TrendingUp className="w-6 h-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Current Level</p>
-                <p className="text-xl font-bold text-gray-800">{level?.name}</p>
+                <p className="text-sm text-gray-600">
+                    {t('Current Level')}
+                </p>
+                <p className="text-xl font-bold text-gray-800">
+                    {t(level?.name)}
+                </p>
               </div>
             </div>
-            <p className="text-xs text-gray-500 mt-2">Level {level?.level}</p>
+            <p className="text-xs text-gray-500 mt-2">
+                {t('Level')} {level?.level}
+            </p>
           </div>
         </div>
 
         {inProgressModule && (
           <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl p-6 mb-8 shadow-xl text-white">
-            <h3 className="text-lg font-semibold mb-2">Continue Learning</h3>
-            <p className="text-blue-100 mb-4">Pick up where you left off</p>
+            <h3 className="text-lg font-semibold mb-2">{t('Continue Learning')}</h3>
+            <p className="text-blue-100 mb-4">{t('Pick up where you left off')}</p>
             <Link
               to={`/module/${inProgressModule.id}`}
               className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl font-medium hover:shadow-lg transition-all"
             >
-              Resume: {inProgressModule.title}
+              {t('Resume')}: {t(inProgressModule.title)}
             </Link>
           </div>
         )}
 
         <div className="mb-4">
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">Available Modules</h3>
-          <p className="text-gray-600">Explore topics and earn CQI points</p>
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">
+            {t('Available Modules')}
+          </h3>
+          <p className="text-gray-600">
+            {t('Explore topics and earn CQI points')}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">

@@ -9,6 +9,13 @@ const createBid = async (req, res) => {
         const { bidAmount, resourceNote, duration } = req.body
 
         if (!userId) return res.status(400).json({ success: false, message: 'User not logged In' })
+
+        // Check if report exists
+        const report = await mongoose.model('Report').findById(id);
+        if (!report) {
+            return res.status(404).json({ success: false, message: "Report not found" });
+        }
+
         const existingBid = await Bid.findOne({ reportId : id, gigWorkerId: userId });
         if (existingBid) {
             return res.status(400).json({

@@ -109,16 +109,27 @@ const loginWorker = async (req, res) => {
 const loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body
-        if (email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD)
+        if (email !== process.env.ADMIN_EMAIL)
             return res.status(400).json({ success: false, message: "Invalid credentials" })
 
         let admin = await Admin.findOne({ email: process.env.ADMIN_EMAIL })
-        if (!admin)
-            await Admin.create({
-                email: process.env.ADMIN_EMAIL, password: process.env.ADMIN_PASSWORD, role: "Local"
+        
+        if (!admin) {
+            // Initial setup: Hash the environment password and save
+            const hashedAdminPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+            admin = await Admin.create({
+                email: process.env.ADMIN_EMAIL, 
+                password: hashedAdminPassword, 
+                role: "Local"
             })
+        }
 
-        const token = jwt.sign({ id: admin._id, email, role: "Local" }, process.env.JWT_SECRET, { expiresIn: "1d" })
+        const isMatch = await bcrypt.compare(password, admin.password);
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: "Invalid credentials" })
+        }
+
+        const token = jwt.sign({ id: admin._id, email, role: admin.role }, process.env.JWT_SECRET, { expiresIn: "1d" })
         res.status(200).json({ success: true, message: "Logged In Successfully", token, role: admin.role })
     } catch (error) {
         console.log(error.message)

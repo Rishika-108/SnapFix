@@ -6,12 +6,41 @@ import IssueMapPreview from "./IssueMapPreview";
 import RateAfterCompletion from "../RateAfterCompletion";
 import { CitizenAPI } from "../../../api/api";
 
+import { useTranslation } from "../../../hooks/useTranslation";
+
 const IssueCard = ({ report }) => {
+  const { language, translateContent } = useTranslation();
+  const [displayTitle, setDisplayTitle] = useState(report?.title || "");
+  const [displayDescription, setDisplayDescription] = useState(report?.description || "");
+
+  useEffect(() => {
+    const performTranslation = async () => {
+        if (!report) return;
+        
+        if (language === 'en') {
+            setDisplayTitle(report.title);
+            setDisplayDescription(report.description);
+        } else {
+            // Check if DB already has it, otherwise use the live API
+            if (report.localizedContent?.[language]?.title) {
+                setDisplayTitle(report.localizedContent[language].title);
+                setDisplayDescription(report.localizedContent[language].description);
+            } else {
+                const [tTitle, tDesc] = await Promise.all([
+                    translateContent(report.title),
+                    translateContent(report.description)
+                ]);
+                setDisplayTitle(tTitle);
+                setDisplayDescription(tDesc);
+            }
+        }
+    };
+    performTranslation();
+  }, [language, report, translateContent]);
+
   if (!report) return null;
 
   const {
-    title,
-    description,
     image,
     imageUrl,
     mapPreview,
@@ -27,19 +56,19 @@ const IssueCard = ({ report }) => {
     report.task?.verifiedByCitizen || false
   );
   useEffect(() => {
-  if (modalOpen) {
-    document.documentElement.style.overflow = "hidden"; // <html>
-    document.body.style.overflow = "hidden";
-  } else {
-    document.documentElement.style.overflow = "";
-    document.body.style.overflow = "";
-  }
+    if (modalOpen) {
+      document.documentElement.style.overflow = "hidden"; // <html>
+      document.body.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    }
 
-  return () => {
-    document.documentElement.style.overflow = "";
-    document.body.style.overflow = "";
-  };
-}, [modalOpen]);
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, [modalOpen]);
 
 
   const displayImage = image || imageUrl;
@@ -62,10 +91,10 @@ const IssueCard = ({ report }) => {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-300 w-full max-w-md mx-auto mb-6 overflow-hidden relative">
-      
+
       {/* Header */}
       <IssueHeader
-        title={title}
+        title={displayTitle}
         date={new Date(report.createdAt).toLocaleDateString("en-GB")}
         expanded={expanded}
         setExpanded={setExpanded}
@@ -73,7 +102,7 @@ const IssueCard = ({ report }) => {
 
       {/* Image */}
       <IssueImage
-        title={title}
+        title={displayTitle}
         image={displayImage}
         location={location}
         status={status}
@@ -83,11 +112,11 @@ const IssueCard = ({ report }) => {
       {/* Description */}
       <div className="px-4 py-3 text-gray-700 text-sm sm:text-base">
         <p className="leading-relaxed break-words">
-          {description?.length > 150 && !expanded
-            ? `${description.substring(0, 150)}...`
-            : description || "No description provided."}
+          {displayDescription?.length > 150 && !expanded
+            ? `${displayDescription.substring(0, 150)}...`
+            : displayDescription || "No description provided."}
         </p>
-        {description?.length > 150 && (
+        {displayDescription?.length > 150 && (
           <button
             onClick={() => setExpanded(!expanded)}
             className="text-indigo-500 text-xs font-semibold mt-1 hover:text-indigo-700"
@@ -126,23 +155,23 @@ const IssueCard = ({ report }) => {
       {/* Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm overflow-y-auto">
-          <div className= "min-h-screen flex justify-center items-start px-3 py-6">
-             <div className="bg-white rounded-xl shadow-xl p-4 sm:p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto relative">
-            
-            <button
-              onClick={() => setModalOpen(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl leading-none"
-            >
-              &times;
-            </button>
+          <div className="min-h-screen flex justify-center items-start px-3 py-6">
+            <div className="bg-white rounded-xl shadow-xl p-4 sm:p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto relative">
 
-            <RateAfterCompletion
-              issueImage={report.imageUrl}
-              resolvedImage={report.task?.proof?.imageUrl}
-              onVerify={handleVerify}
-            />
+              <button
+                onClick={() => setModalOpen(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl leading-none"
+              >
+                &times;
+              </button>
+
+              <RateAfterCompletion
+                issueImage={report.imageUrl}
+                resolvedImage={report.task?.proof?.imageUrl}
+                onVerify={handleVerify}
+              />
+            </div>
           </div>
-        </div>
         </div>
       )}
     </div>

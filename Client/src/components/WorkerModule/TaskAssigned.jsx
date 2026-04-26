@@ -4,6 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import GigworkerNavbar from "../generalComponents/Navbars/GigworkerNavbar";
 import { useAuth } from "../../context/AuthContext";
 import { WorkerAPI } from "../../api/api";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const TaskAssigned = () => {
   const [tasks, setTasks] = useState([]);
@@ -12,6 +13,7 @@ const TaskAssigned = () => {
   const [proofImage, setProofImage] = useState(null);
   const [remarks, setRemarks] = useState("");
   const [uploading, setUploading] = useState(false);
+  const { t } = useTranslation();
 
   const { user } = useAuth();
   useEffect(() => {
@@ -49,7 +51,7 @@ const TaskAssigned = () => {
   const handleProofSubmit = async (e) => {
     e.preventDefault();
     if (!selectedTask || !proofImage) {
-      alert("Please select a proof image and fill all fields.");
+      alert(t("Please select a proof image and fill all fields."));
       return;
     }
 
@@ -65,7 +67,7 @@ const TaskAssigned = () => {
       const { data } = response;
 
       if (data.success) {
-        alert("✅ Proof uploaded successfully!");
+        alert(t("✅ Proof uploaded successfully!"));
         setTasks((prev) =>
           prev.map((t) => (t._id === selectedTask._id ? data.task : t))
         );
@@ -73,11 +75,11 @@ const TaskAssigned = () => {
         setProofImage(null);
         setRemarks("");
       } else {
-        alert("⚠️ Failed to upload proof: " + data.message);
+        alert(t("⚠️ Failed to upload proof: ") + t(data.message));
       }
     } catch (error) {
       console.error("❌ Error uploading proof:", error.message);
-      alert("Upload failed. Please try again.");
+      alert(t("Upload failed. Please try again."));
     } finally {
       setUploading(false);
     }
@@ -88,20 +90,20 @@ const TaskAssigned = () => {
       <GigworkerNavbar />
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-6">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 w-full max-w-6xl shadow-2xl">
-          <h1 className="text-3xl font-bold mb-6 text-center">Assigned Tasks</h1>
+          <h1 className="text-3xl font-bold mb-6 text-center">{t('Assigned Tasks')}</h1>
           <p className="text-sm text-gray-300 mb-8 text-center">
-            View all reports assigned to you and upload completion proof.
+            {t('View all reports assigned to you and upload completion proof.')}
           </p>
 
           {loading ? (
             <div className="flex justify-center items-center py-10">
               <Loader2 className="animate-spin text-indigo-400" size={28} />
-              <span className="ml-3 text-gray-300">Loading your assigned tasks...</span>
+              <span className="ml-3 text-gray-300">{t('Loading your assigned tasks...')}</span>
             </div>
           ) : tasks.length === 0 ? (
             <div className="text-center text-gray-400 mt-10">
               <ClipboardList className="mx-auto mb-3 text-gray-500" size={32} />
-              <p>No tasks assigned yet.</p>
+              <p>{t('No tasks assigned yet.')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -113,20 +115,20 @@ const TaskAssigned = () => {
                   {/* 🧾 Task Info */}
                   <div className="mb-3">
                     <h3 className="text-lg font-semibold text-white">
-                      {task.reportId?.title || "Untitled Report"}
+                      {t(task.reportId?.title || "Untitled Report")}
                     </h3>
                     <p className="text-gray-400 text-sm flex items-center">
                       <MapPin className="text-indigo-400 mr-1" size={16} />
-                      {task.reportId?.locationName || "Location not specified"}
+                      {t(task.reportId?.locationName || "Location not specified")}
                     </p>
                   </div>
 
                   <p className="text-gray-300 text-sm mb-3 line-clamp-3">
-                    {task.reportId?.description || "No description provided."}
+                    {t(task.reportId?.description || "No description provided.")}
                   </p>
 
                   <p className="text-sm text-gray-400 mb-2">
-                    Assigned{" "}
+                    {t('Assigned')}{" "}
                     <span className="text-indigo-300">
                       {formatDistanceToNow(new Date(task.createdAt || Date.now()), { addSuffix: true })}
                     </span>
@@ -134,7 +136,7 @@ const TaskAssigned = () => {
 
                   {/* ⚙️ Task Status */}
                   <p className="text-sm mb-4">
-                    Status:{" "}
+                    {t('Status')}:{" "}
                     <span
                       className={`font-semibold ${
                         task.status === "Completed"
@@ -144,7 +146,7 @@ const TaskAssigned = () => {
                           : "text-gray-300"
                       }`}
                     >
-                      {task.status}
+                      {t(task.status)}
                     </span>
                   </p>
 
@@ -155,7 +157,7 @@ const TaskAssigned = () => {
                       className="w-full py-2 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-purple-500 hover:to-indigo-500 shadow-lg transition-all transform hover:scale-105"
                     >
                       <Upload className="inline mr-2" size={18} />
-                      Upload Proof
+                      {t('Upload Proof')}
                     </button>
                   )}
                 </div>
@@ -175,7 +177,7 @@ const TaskAssigned = () => {
                 </button>
 
                 <h2 className="text-2xl font-bold mb-4 text-center bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">
-                  Upload Proof
+                  {t('Upload Proof')}
                 </h2>
 
                 <form onSubmit={handleProofSubmit} className="space-y-5">
@@ -189,7 +191,7 @@ const TaskAssigned = () => {
 
                   <textarea
                     rows="3"
-                    placeholder="Add remarks..."
+                    placeholder={t("Add remarks...")}
                     value={remarks}
                     onChange={(e) => setRemarks(e.target.value)}
                     className="w-full border border-white/30 bg-white/0 placeholder-gray-300 px-4 py-3 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none transition-all duration-300"
@@ -202,7 +204,7 @@ const TaskAssigned = () => {
                       uploading ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
-                    {uploading ? "Uploading..." : "Submit Proof"}
+                    {uploading ? t("Uploading...") : t("Submit Proof")}
                   </button>
                 </form>
               </div>

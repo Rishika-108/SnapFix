@@ -2,8 +2,10 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Trophy } from 'lucide-react';
 import ProgressBar from './ProgressBar';
 import { getUserData } from '../../mockData/gamification';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export default function ModuleCard({ module }) {
+  const { t } = useTranslation();
   const userData = getUserData();
   const isCompleted = userData.completedModules.includes(module.id);
   const progress = userData.moduleProgress[module.id]?.progress || 0;
@@ -27,13 +29,13 @@ export default function ModuleCard({ module }) {
       </div>
 
       <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">{module.title}</h3>
-        <p className="text-sm text-gray-600 mb-4">{module.description}</p>
+        <h3 className="text-xl font-bold text-gray-800 mb-2">{t(module.title)}</h3>
+        <p className="text-sm text-gray-600 mb-4">{t(module.description)}</p>
 
         <div className="space-y-3 mb-4">
           <div>
             <div className="flex justify-between items-center mb-1">
-              <span className="text-xs font-medium text-gray-600">Progress</span>
+              <span className="text-xs font-medium text-gray-600">{t('Progress')}</span>
               <span className="text-xs font-bold text-gray-700">{progress}%</span>
             </div>
             <ProgressBar progress={progress} color={colorMap[module.color]} />
@@ -41,7 +43,7 @@ export default function ModuleCard({ module }) {
 
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-1">
-              <span className="font-medium text-gray-600">Reward:</span>
+              <span className="font-medium text-gray-600">{t('Reward')}:</span>
               <span className="font-bold text-blue-600">+{module.cqiReward} CQI</span>
             </div>
           </div>
@@ -51,7 +53,7 @@ export default function ModuleCard({ module }) {
           to={`/module/${module.id}`}
           className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl font-medium hover:shadow-lg transition-all group"
         >
-          {isCompleted ? 'Review Module' : progress > 0 ? 'Continue Learning' : 'Start Module'}
+          {isCompleted ? t('Review Module') : progress > 0 ? t('Continue Learning') : t('Start Module')}
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>

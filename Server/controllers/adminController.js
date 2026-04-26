@@ -2,6 +2,7 @@ import Bid from "../models/bidModel.js"
 import Worker from "../models/gigWorkerModel.js"
 import Report from "../models/reportModel.js"
 import Task from "../models/taskAssignmentModel.js"
+import Payment from "../models/paymentModel.js"
 import mongoose from "mongoose";
 import { createNotification } from "./notificationController.js";
 
@@ -13,7 +14,7 @@ const viewAllReports = async (req, res) => {
         if (!userId) {
             return res.status(401).json({ success: false, message: "You are not authorised to view reports" })
         }
-        if (!['Local', 'State', 'Central'].includes(req.role)) {
+        if (!['Local', 'State', 'Central', 'admin'].includes(req.role)) {
             return res.status(403).json({ success: false, message: "Access Denied" });
         }
         const allReports = await Report.find({})
@@ -31,7 +32,7 @@ const viewReportWithBid = async (req, res) => {
         if (!userId) {
             return res.status(401).json({ success: false, message: "You are not authorised to view reports" })
         }
-        if (!['Local', 'State', 'Central'].includes(req.role)) {
+        if (!['Local', 'State', 'Central', 'admin'].includes(req.role)) {
             return res.status(403).json({ success: false, message: "Access Denied" });
         }
         const { id } = req.params // Obtains Report ID
@@ -70,7 +71,7 @@ const approveBid = async (req, res) => {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    if (!['Local', 'State', 'Central'].includes(req.role)) {
+    if (!['Local', 'State', 'Central', 'admin'].includes(req.role)) {
       return res.status(403).json({ success: false, message: "Access Denied" });
     }
 
@@ -114,7 +115,7 @@ const approveBid = async (req, res) => {
     });
 
     // Update report
-    await Report.findByIdAndUpdate(
+    const report = await Report.findByIdAndUpdate(
       bid.reportId,
       {
         $set: {
@@ -133,7 +134,7 @@ const approveBid = async (req, res) => {
       task,
     });
 
-    // NOTIFICATIONS (Fire and forget, don't await if you want faster response, but here we await for simplicity)
+    // NOTIFICATIONS
     // 1. Notify Worker
     await createNotification(bid.gigWorkerId, "Worker", "Bid Approved", `Your bid for the report "${report.title}" has been approved! You can start working now.`);
     
@@ -169,23 +170,24 @@ const paymentRelease = async (req, res) => {
     if(!task) {
         return res.status(404).json({success: false, message: "Task Not Found"})
     }
+    
+    // Safety check: Ensure task is actually ready for payment
     if (!task.verifiedByCitizen || task.status !== "Completed") {
       return res.status(400).json({
         success: false,
-        message: "Payment cannot be released until the task is verified and completed.",
+        message: "Payment cannot be released until the task is verified by the citizen and status is 'Completed'.",
       });
     }
 
-    if (!task.reportId || !task.gigWorkerId) {
-  return res.status(400).json({ success: false, message: "Task references missing or invalid" });
-}
-
-
     if (task.paymentStatus === "Released") {
-      return res.status(400).json({ success: false, message: "Payment already released." });
+      return res.status(400).json({ success: false, message: "Payment has already been released for this task." });
     }
 
-    // Find the corresponding bid to get bidAmount
+    if (!task.reportId || !task.gigWorkerId) {
+      return res.status(400).json({ success: false, message: "Task data is incomplete (missing report or worker link)." });
+    }
+
+    // Find the corresponding approved bid to get the exact amount
     const bid = await Bid.findOne({
       reportId: task.reportId._id,
       gigWorkerId: task.gigWorkerId._id,
@@ -193,47 +195,113 @@ const paymentRelease = async (req, res) => {
     });
 
     if (!bid) {
-      return res.status(404).json({ success: false, message: "Approved bid not found for this task" });
+      return res.status(404).json({ success: false, message: "No approved bid found. Cannot determine payment amount." });
     }
 
     const bidAmount = bid.bidAmount || 0;
 
-    // Update the worker's wallet balance
+    // 1. Update the worker's wallet balance
     const worker = await Worker.findById(task.gigWorkerId._id);
     if (!worker) {
-      return res.status(404).json({ success: false, message: "Worker not found" });
+      return res.status(404).json({ success: false, message: "Gig worker not found." });
     }
 
-    worker.walletBalance += bidAmount;
+    // Atomic update of wallet balance
+    worker.walletBalance = (worker.walletBalance || 0) + bidAmount;
     await worker.save();
 
-    // Update the task payment status
+    // 2. Create a Payment Record for auditing
+    const transactionId = `TXN-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const payment = new Payment({
+      taskId: task._id,
+      gigWorkerId: worker._id,
+      amount: bidAmount,
+      status: "Released",
+      releasedBy: adminId,
+      transactionId: transactionId,
+      releasedAt: new Date()
+    });
+    await payment.save();
+
+    // 3. Update the task status
     task.paymentStatus = "Released";
     await task.save();
 
-    res.status(200).json({
-      success: true,
-      message: `Payment of ₹${bidAmount} released to ${worker.name}`,
-      updatedWallet: worker.walletBalance,
-      task,
-    });
+    // 4. Send Notifications
+    // Notify Worker
+    await createNotification(
+      task.gigWorkerId._id, 
+      "Worker", 
+      "Payment Received", 
+      `Payment of ₹${bidAmount} for "${task.reportId.title}" has been added to your wallet. Ref: ${transactionId}`
+    );
 
-    // NOTIFICATIONS
-    // 1. Notify Worker
-    await createNotification(task.gigWorkerId._id, "Worker", "Payment Released", `Payment of ₹${bidAmount} for the task "${task.reportId.title}" has been released to your wallet.`);
-
-    // 2. Notify Citizen
+    // Notify Citizen (Issue is officially closed)
     if (task.reportId.createdBy) {
-        await createNotification(task.reportId.createdBy, "User", "Issue Closed", `The issue "${task.reportId.title}" has been officially resolved and payment has been released to the worker. Thank you for your contribution!`);
+        await createNotification(
+          task.reportId.createdBy, 
+          "User", 
+          "Payment Released", 
+          `The issue "${task.reportId.title}" is officially resolved. Payment has been released to the worker.`
+        );
     }
 
-    return;
+    return res.status(200).json({
+      success: true,
+      message: `Payment of ₹${bidAmount} successfully released.`,
+      transactionId,
+      newWalletBalance: worker.walletBalance
+    });
 
    } catch (error) {
-     console.log(error.message)
-     res.status(500).json({success: false, message: "Could not stimulate payment release"})
+     console.error("Payment Release Error:", error.message);
+     res.status(500).json({success: false, message: "Internal server error during payment stimulation."})
    }
 }
 
- 
-export { viewAllReports, viewReportWithBid, approveBid, paymentRelease}
+// Get all tasks that are completed and verified but payment is pending
+const getCompletedTasks = async (req, res) => {
+  try {
+    const adminId = req.user?._id;
+    if (!adminId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    if (!['Local', 'State', 'Central', 'admin'].includes(req.role)) {
+      return res.status(403).json({ success: false, message: "Access Denied" });
+    }
+
+    const tasks = await Task.find({
+      status: "Completed",
+      verifiedByCitizen: true,
+      paymentStatus: "Pending"
+    })
+    .populate("reportId")
+    .populate("gigWorkerId", "name rating email");
+
+    // We also need the bid amount for each task
+    const tasksWithAmounts = await Promise.all(tasks.map(async (task) => {
+      const bid = await Bid.findOne({
+        reportId: task.reportId?._id,
+        gigWorkerId: task.gigWorkerId?._id,
+        status: "Approved"
+      });
+      
+      return {
+        ...task.toObject(),
+        bidAmount: bid ? bid.bidAmount : 0,
+        duration: bid ? bid.duration : "N/A"
+      };
+    }));
+
+    res.status(200).json({
+      success: true,
+      tasks: tasksWithAmounts
+    });
+  } catch (error) {
+    console.error("Error fetching completed tasks:", error.message);
+    res.status(500).json({ success: false, message: "Could not fetch completed tasks" });
+  }
+};
+
+export { viewAllReports, viewReportWithBid, approveBid, paymentRelease, getCompletedTasks}

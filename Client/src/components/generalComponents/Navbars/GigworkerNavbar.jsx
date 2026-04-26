@@ -3,14 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiMenu } from "react-icons/fi";
 import defaultAvatar from "../../../assets/user-avatar.png";
 import { useAuth } from "../../../context/AuthContext";
+import { useTranslation } from "../../../hooks/useTranslation";
 import NotificationDropdown from "../NotificationDropdown";
-import GoogleTranslation from "../GoogleTranslation";
+import { Globe } from "lucide-react";
 
 const GigworkerNavbar = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { logout, toggleLanguage } = useAuth();
+  const { t, language } = useTranslation();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -23,9 +26,6 @@ const GigworkerNavbar = ({ user }) => {
 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const { logout } = useAuth();
-
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 fixed top-0 left-0 w-full z-50 shadow-sm">
@@ -47,8 +47,17 @@ const GigworkerNavbar = ({ user }) => {
           {/* Notification Bell */}
           <NotificationDropdown />
 
-          {/* Google Translate Widget */}
-          <GoogleTranslation />
+          {/* Custom Language Toggle */}
+          <button
+            onClick={toggleLanguage}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-[#3EA8FF] hover:bg-blue-50 transition-all group"
+            title="Switch Language"
+          >
+            <Globe size={18} className="text-gray-500 group-hover:text-[#3EA8FF]" />
+            <span className="text-sm font-semibold text-gray-700 uppercase dark:text-white">
+              {language === "en" ? "HI" : "EN"}
+            </span>
+          </button>
 
           {/* User avatar */}
           <button
@@ -77,7 +86,7 @@ const GigworkerNavbar = ({ user }) => {
                     onClick={logout}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   >
-                    Logout
+                    {t('logout')}
                   </button>
                 </li>
               </ul>
@@ -118,7 +127,7 @@ const GigworkerNavbar = ({ user }) => {
                 md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white 
                 md:dark:hover:bg-transparent dark:border-gray-700"
               >
-                View Issues in Your Area
+                {t('nearbyIssues')}
               </Link>
             </li>
             <li>
@@ -130,7 +139,7 @@ const GigworkerNavbar = ({ user }) => {
                 md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white 
                 md:dark:hover:bg-transparent dark:border-gray-700"
               >
-                My Tasks
+                {t('myReports')}
               </Link>
             </li>
           </ul>

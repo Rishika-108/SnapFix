@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import  WorkerAPI  from "../../api/api";
 import { User, Mail, MapPin, Loader2, Briefcase, Clock } from "lucide-react";
+import { useTranslation } from "../../hooks/useTranslation";
 
 // This module is not integrated yet, but will be considered in future scope to give an overview of 
 // worker profile.
 const ViewProfile = () => {
   const [worker, setWorker] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   // ✅ Fetch worker profile
   useEffect(() => {
@@ -33,14 +35,14 @@ const ViewProfile = () => {
   if (loading)
     return (
       <div className="flex justify-center items-center h-64 text-gray-400">
-        <Loader2 className="animate-spin mr-2" /> Loading profile...
+        <Loader2 className="animate-spin mr-2" /> {t('Loading profile...')}
       </div>
     );
 
   if (!worker)
     return (
       <div className="text-center text-gray-400 p-6">
-        Could not load profile details.
+        {t('Could not load profile details.')}
       </div>
     );
 
@@ -51,7 +53,7 @@ const ViewProfile = () => {
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white p-6">
       <div className="bg-gray-900/60 border border-white/20 backdrop-blur-xl rounded-3xl shadow-2xl w-full max-w-3xl p-8">
         <h1 className="text-4xl font-bold mb-6 text-center bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">
-          My Profile
+          {t('My Profile')}
         </h1>
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
@@ -62,19 +64,19 @@ const ViewProfile = () => {
             </div>
             <div>
               <h2 className="text-2xl font-semibold flex items-center gap-2">
-                <User size={20} /> {name || "Unnamed Worker"}
+                <User size={20} /> {t(name || "Unnamed Worker")}
               </h2>
               <p className="flex items-center gap-2 text-gray-300 mt-1">
-                <Mail size={18} /> {email || "No email"}
+                <Mail size={18} /> {email || t("No email")}
               </p>
               <p className="flex items-center gap-2 text-gray-300 mt-1">
                 <MapPin size={18} />{" "}
                 {location?.coordinates
-                  ? `Lat: ${location.coordinates[1]}, Lon: ${location.coordinates[0]}`
-                  : "Location not set"}
+                  ? `${t('Lat')}: ${location.coordinates[1]}, ${t('Lon')}: ${location.coordinates[0]}`
+                  : t("Location not set")}
               </p>
               <p className="flex items-center gap-2 text-gray-400 mt-1">
-                <Clock size={18} /> Joined{" "}
+                <Clock size={18} /> {t('Joined')}{" "}
                 {new Date(createdAt).toLocaleDateString()}
               </p>
             </div>
@@ -83,29 +85,35 @@ const ViewProfile = () => {
           {/* 🧩 Stats Card */}
           <div className="flex-1 bg-gray-800/50 rounded-2xl p-6 border border-white/10">
             <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Briefcase size={20} /> Worker Details
+              <Briefcase size={20} /> {t('Worker Details')}
             </h3>
 
             <ul className="space-y-3 text-gray-300">
               <li>
-                <span className="font-medium text-indigo-400">Role:</span>{" "}
-                {worker.role || "Gig Worker"}
+                <span className="font-medium text-indigo-400">{t('Role')}:</span>{" "}
+                {t(worker.role || "Gig Worker")}
               </li>
               <li>
-                <span className="font-medium text-indigo-400">Skills:</span>{" "}
-                {skills?.length ? skills.join(", ") : "No skills added"}
+                <span className="font-medium text-indigo-400">{t('Skills')}:</span>{" "}
+                {skills?.length ? skills.map(s => t(s)).join(", ") : t("No skills added")}
               </li>
               <li>
                 <span className="font-medium text-indigo-400">
-                  Total Bids Made:
+                  {t('Total Bids Made')}:
                 </span>{" "}
                 {worker.bidCount || 0}
               </li>
               <li>
                 <span className="font-medium text-indigo-400">
-                  Tasks Completed:
+                  {t('Tasks Completed')}:
                 </span>{" "}
                 {worker.tasksCompleted || 0}
+              </li>
+              <li>
+                <span className="font-medium text-green-400">
+                  {t('Wallet Balance')}:
+                </span>{" "}
+                ₹{worker.walletBalance || 0}
               </li>
             </ul>
           </div>
@@ -115,15 +123,15 @@ const ViewProfile = () => {
         <div className="mt-8 flex justify-center gap-4">
           <button
             className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium shadow-md transition-all"
-            onClick={() => alert("Edit Profile coming soon...")}
+            onClick={() => alert(t("Edit Profile coming soon..."))}
           >
-            Edit Profile
+            {t('Edit Profile')}
           </button>
           <button
             className="px-5 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white font-medium shadow-md transition-all"
-            onClick={() => alert("Logout coming soon...")}
+            onClick={() => alert(t("Logout coming soon..."))}
           >
-            Logout
+            {t('Logout')}
           </button>
         </div>
       </div>

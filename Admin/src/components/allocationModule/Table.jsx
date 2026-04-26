@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiClock, FiCheckCircle, FiDatabase, FiDollarSign } from "react-icons/fi";
+import { FiClock, FiCheckCircle, FiDatabase, FiDollarSign, FiLoader } from "react-icons/fi";
+import api from "../../api/api";
 
-const Table = ({ completedTasks }) => {
+const Table = ({ completedTasks, onRefresh }) => {
   const [selected, setSelected] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const allSelected = selected.length === completedTasks.length && completedTasks.length > 0;
+  const [loading, setLoading] = useState(false);
+  const [allocating, setAllocating] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+  const allSelected = selected.length === completedTasks.length && completedTasks.length > 0;
 
   const toggleSelect = (id) => {
     setSelected((prev) =>
@@ -22,13 +20,35 @@ const Table = ({ completedTasks }) => {
     if (allSelected) {
       setSelected([]);
     } else {
-      setSelected(completedTasks.map((t) => t.id));
+      setSelected(completedTasks.map((t) => t._id));
+    }
+  };
+
+  const handleAllocate = async () => {
+    if (selected.length === 0) return;
+    
+    setAllocating(true);
+    try {
+      let successCount = 0;
+      for (const taskId of selected) {
+        const res = await api.releasePayment(taskId);
+        if (res.success) successCount++;
+      }
+      
+      alert(`Successfully released funds for ${successCount} projects.`);
+      setSelected([]);
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      console.error("Allocation failed:", err);
+      alert("Fund allocation failed. Please try again.");
+    } finally {
+      setAllocating(false);
     }
   };
 
   const totalAmount = completedTasks
-    .filter((t) => selected.includes(t.id))
-    .reduce((acc, curr) => acc + curr.bidAmount, 0);
+    .filter((t) => selected.includes(t._id))
+    .reduce((acc, curr) => acc + (curr.bidAmount || 0), 0);
 
   return (
     <div className="min-h-screen bg-linear-to-b from-[#0B1725] via-[#0E2439] to-[#142E4D] text-gray-200 px-6 py-12 font-inter selection:bg-[#2196F3]/20 selection:text-white">
@@ -61,7 +81,7 @@ const Table = ({ completedTasks }) => {
           {
             label: "Total Fund Value",
             value: `₹ ${completedTasks
-              .reduce((acc, t) => acc + t.bidAmount, 0)
+              .reduce((acc, t) => acc + (t.bidAmount || 0), 0)
               .toLocaleString()}`,
             icon: <FiDollarSign />,
             color: "text-[#4DA3FF]",
@@ -83,7 +103,7 @@ const Table = ({ completedTasks }) => {
       </motion.div>
 
       {/* ===== SELECT ALL ===== */}
-      {!loading && completedTasks.length > 0 && (
+      {completedTasks.length > 0 && (
         <div className="max-w-6xl mx-auto mb-4 flex items-center justify-end pr-2">
           <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
             <input
@@ -100,20 +120,13 @@ const Table = ({ completedTasks }) => {
       {/* ===== TASK CARDS ===== */}
       <div className="space-y-6 max-w-6xl mx-auto pb-24">
         <AnimatePresence>
-          {loading ? (
-            [...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="animate-pulse h-28 bg-[#0E2439]/50 border border-white/5 rounded-2xl"
-              ></div>
-            ))
-          ) : completedTasks.length > 0 ? (
+          {completedTasks.length > 0 ? (
             completedTasks.map((task) => {
-              const isSelected = selected.includes(task.id);
+              const isSelected = selected.includes(task._id);
 
               return (
                 <motion.div
-                  key={task.id}
+                  key={task._id}
                   layout
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -132,33 +145,33 @@ const Table = ({ completedTasks }) => {
                     <input
                       type="checkbox"
                       checked={isSelected}
-                      onChange={() => toggleSelect(task.id)}
+                      onChange={() => toggleSelect(task._id)}
                       className="mt-2 accent-[#3EA8FF] w-5 h-5 rounded cursor-pointer hover:scale-110 transition-transform"
-                      aria-label={`Select ${task.title}`}
+                      aria-label={`Select ${task.reportId?.title}`}
                     />
 
                     <div className="flex-1">
                       <div className="flex flex-wrap justify-between items-center gap-3">
                         <span className="text-sm text-gray-400">
-                          <span className="text-gray-100 font-medium">{task.rating}</span>★
+                          <span className="text-gray-100 font-medium">{task.gigWorkerId?.rating || 0}</span>★
                         </span>
                         <span className="text-green-400 font-semibold text-sm">
-                          ₹ {task.bidAmount.toLocaleString()}
+                          ₹ {(task.bidAmount || 0).toLocaleString()}
                         </span>
-                        <span className="italic text-gray-300 text-sm">{task.gigName}</span>
+                        <span className="italic text-gray-300 text-sm">{task.gigWorkerId?.name}</span>
                       </div>
 
                       <h2 className="mt-3 text-lg font-semibold text-gray-100 group-hover:text-[#3EA8FF] transition-colors">
-                        {task.title}
+                        {task.reportId?.title || "Untitled Project"}
                       </h2>
                       <p className="mt-1 text-gray-400 text-sm leading-relaxed">
-                        {task.description}
+                        {task.reportId?.description}
                       </p>
 
                       <div className="mt-3 flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide">
                         <FiClock className="text-[#3EA8FF]" />
                         Duration:{" "}
-                        <span className="text-gray-300 ml-1">{task.duration}</span>
+                        <span className="text-gray-300 ml-1">{task.duration || "N/A"}</span>
                       </div>
                     </div>
                   </div>
@@ -207,13 +220,15 @@ const Table = ({ completedTasks }) => {
             className="fixed bottom-6 right-6 z-50"
           >
             <button
-              onClick={() => console.log("Allocating funds for:", selected)}
-              className="px-6 py-3.5 rounded-full bg-linear-to-r from-[#1B5BFF] to-[#2490F9]
+              onClick={handleAllocate}
+              disabled={allocating}
+              className="flex items-center gap-2 px-6 py-3.5 rounded-full bg-linear-to-r from-[#1B5BFF] to-[#2490F9]
                          border border-[#1B75D0]/50 text-sm font-semibold text-gray-100
                          shadow-[0_0_15px_rgba(37,112,255,0.25)] hover:shadow-[0_0_25px_rgba(37,112,255,0.35)]
-                         hover:scale-[1.04] transition-all duration-200"
+                         hover:scale-[1.04] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Allocate ₹ {totalAmount.toLocaleString()} ({selected.length})
+              {allocating ? <FiLoader className="animate-spin" /> : <FiDollarSign />}
+              {allocating ? "Processing..." : `Allocate ₹ ${totalAmount.toLocaleString()} (${selected.length})`}
             </button>
           </motion.div>
         )}

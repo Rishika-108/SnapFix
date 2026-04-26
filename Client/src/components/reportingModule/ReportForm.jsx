@@ -3,8 +3,10 @@ import ImageUpload from "./ImageUpload";
 import LocationPicker from "./LocationPicker";
 import { CitizenAPI } from "../../api/api";
 import CitizenNavbar from "../generalComponents/Navbars/CitizenNavbar";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const ReportForm = () => {
+  const { t } = useTranslation();
   const [report, setReport] = useState({
     title: "",
     description: "",
@@ -129,10 +131,10 @@ const detectLocation = useCallback(() => {
       <div className="min-h-screen bg-[#F8FAFC] flex justify-center items-center pt-24 pb-10 px-4">
         <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-lg border border-gray-100">
           <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center">
-            Report an Issue
+            {t('Report an Issue')}
           </h2>
           <p className="text-gray-600 text-sm mb-6 text-center">
-            Capture an image, describe the issue, and select or auto-detect your location.
+            {t('Capture an image, describe the issue, and select or auto-detect your location.')}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -145,7 +147,7 @@ const detectLocation = useCallback(() => {
             <input
               type="text"
               name="title"
-              placeholder="What's the issue?"
+              placeholder={t("What's the issue?")}
               value={report.title}
               onChange={handleInputChange}
               className="w-full border border-gray-300 bg-white placeholder-gray-400 px-4 py-3 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -154,7 +156,7 @@ const detectLocation = useCallback(() => {
 
             <textarea
               name="description"
-              placeholder="Describe the problem in detail..."
+              placeholder={t("Describe the problem in detail...")}
               rows="3"
               value={report.description}
               onChange={handleInputChange}
@@ -170,11 +172,11 @@ const detectLocation = useCallback(() => {
               className="w-full border border-gray-300 bg-white text-gray-700 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 cursor-pointer"
             >
               <option value="" disabled>
-                Select Category
+                {t('Select Category')}
               </option>
               {categories.map((cat, index) => (
                 <option key={index} value={cat}>
-                  {cat}
+                  {t(cat)}
                 </option>
               ))}
             </select>
@@ -192,7 +194,7 @@ const detectLocation = useCallback(() => {
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {loading ? "Submitting..." : "Submit Report"}
+              {loading ? t("Submitting...") : t("Submit Report")}
             </button>
           </form>
         </div>

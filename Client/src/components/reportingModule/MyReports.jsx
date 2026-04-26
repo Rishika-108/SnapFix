@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { CitizenAPI } from "../../api/api";
 import IssueGrid from "../../components/issueGridModule/IssueGrid";
 import CitizenNavbar from "../../components/generalComponents/Navbars/CitizenNavbar";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const MyReports = () => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [userReports, setUserReports] = useState([]);
   const [upvotedReports, setUpvotedReports] = useState([]);
@@ -46,10 +48,10 @@ const MyReports = () => {
 
           {/* Page Title */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-center text-gray-800">
-            My Reports
+            {t('My Reports')}
           </h1>
           <p className="text-xs sm:text-sm text-gray-600 mb-6 sm:mb-8 text-center">
-            View and manage all the issues you’ve reported or upvoted so far.
+            {t('View and manage all the issues you’ve reported or upvoted so far.')}
           </p>
 
           {/* Main Grid Section */}
@@ -58,7 +60,7 @@ const MyReports = () => {
             <section>
               <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-700 flex items-center gap-2">
                 <span className="w-2 h-8 bg-blue-500 rounded-full"></span>
-                My Submissions
+                {t('My Submissions')}
               </h2>
               <IssueGrid reports={userReports} loading={loading} />
             </section>
@@ -68,7 +70,7 @@ const MyReports = () => {
               <section>
                 <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-700 flex items-center gap-2">
                   <span className="w-2 h-8 bg-purple-500 rounded-full"></span>
-                  Upvoted Issues
+                  {t('Upvoted Issues')}
                 </h2>
                 <IssueGrid reports={upvotedReports} loading={loading} />
               </section>

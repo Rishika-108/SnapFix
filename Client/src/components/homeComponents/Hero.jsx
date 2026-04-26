@@ -1,8 +1,11 @@
 import React from "react";
 import Lottie from "lottie-react";
 import memoryFlowAnimation from "../../assets/memoryFlow.json";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const Hero = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="relative overflow-hidden bg-linear-to-b from-white to-[#E5F0FB] py-28 px-6">
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative z-20">
@@ -12,18 +15,17 @@ const Hero = () => {
           
           {/* Emotional Hook */}
           <p className="text-sm md:text-base uppercase tracking-widest text-[#3EA8FF] font-semibold">
-            Because local problems deserve faster solutions
+            {t('heroHook')}
           </p>
 
           {/* Main Headline */}
           <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
-            Empowering Citizens, Workers & Governments
+            {t('heroTitle')}
           </h1>
 
           {/* Subtext */}
           <p className="text-gray-700 text-lg md:text-xl">
-            A unified platform where users report issues, gig workers resolve them,
-            and governments manage and reward efficiently.
+            {t('heroSub')}
           </p>
 
           {/* Call to Actions */}
@@ -31,14 +33,14 @@ const Hero = () => {
             <button
               className="bg-linear-to-r from-[#3EA8FF] to-[#0E72C2] text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:scale-105 transform transition-all duration-300"
             >
-              Report an Issue Nearby
+              {t('reportHeroBtn')}
             </button>
 
             <button
               type="button" 
               className="border border-[#3EA8FF] text-[#3EA8FF] px-6 py-3 rounded-xl font-semibold hover:bg-[#D6E8FB] transition transform hover:scale-105"
             >
-              Join as a Problem Solver
+              {t('joinWorkerBtn')}
             </button>
           </div>
 

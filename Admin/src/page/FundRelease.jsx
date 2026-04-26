@@ -1,64 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 // ===== Layout Components =====
 import GovernmentSidebar from "../components/generalComponents/GovernmentSidebar";
 import Topbar from "../components/adminModule/Topbar";
 import Footer from "../components/generalComponents/Footer";
 import Table from "../components/allocationModule/Table";
+import api from "../api/api";
+import { Loader2 } from "lucide-react";
 
 const FundRelease = () => {
-  const completedTasks = [
-    {
-      id: 1,
-      rating: 4.8,
-      bidAmount: 120000,
-      gigName: "Public Works - Road Repair",
-      title: "District Highway Maintenance",
-      description:
-        "Completed resurfacing and drainage work for the 3.4 km district highway section under PMGSY Phase II. All safety markings applied.",
-      duration: "14 Days",
-    },
-    {
-      id: 2,
-      rating: 5.0,
-      bidAmount: 95000,
-      gigName: "IT Department - Data Entry",
-      title: "Citizen Database Digitization",
-      description:
-        "Digitized and verified over 20,000 citizen records for e-Governance integration. Accuracy validated by QA audit.",
-      duration: "10 Days",
-    },
-    {
-      id: 3,
-      rating: 4.6,
-      bidAmount: 78000,
-      gigName: "Health Department - Survey Work",
-      title: "Public Health Facility Audit",
-      description:
-        "Conducted field inspection and compiled health infrastructure data for 42 rural clinics under Ayushman Bharat.",
-      duration: "12 Days",
-    },
-    {
-      id: 4,
-      rating: 4.9,
-      bidAmount: 145000,
-      gigName: "Education Department - Infrastructure",
-      title: "School Roof Renovation Project",
-      description:
-        "Completed structural repairs and roof waterproofing for 5 government schools in Zone B.",
-      duration: "20 Days",
-    },
-    {
-      id: 5,
-      rating: 4.7,
-      bidAmount: 88000,
-      gigName: "Transport Department - Vehicle Tracking",
-      title: "GPS Installation and Testing",
-      description:
-        "Installed GPS units in 100 public buses and verified data integration with the state monitoring dashboard.",
-      duration: "9 Days",
-    },
-  ];
+  const [completedTasks, setCompletedTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchCompletedTasks = async () => {
+    try {
+      setLoading(true);
+      const data = await api.getCompletedTasks();
+      if (data.success) {
+        setCompletedTasks(data.tasks);
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError(err.message || "Failed to fetch completed tasks");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompletedTasks();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0B1725] text-white">
+        <Loader2 className="animate-spin mr-3" size={32} />
+        <span className="text-xl">Loading Projects for Fund Release...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-[#0B1725] via-[#0E2439] to-[#142E4D] text-gray-100">
@@ -73,7 +55,7 @@ const FundRelease = () => {
         <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8 md:py-8">
           {/* Horizontal scroll for table on mobile */}
           <div className="overflow-x-auto">
-            <Table completedTasks={completedTasks} />
+            <Table completedTasks={completedTasks} onRefresh={fetchCompletedTasks} />
           </div>
         </main>
 

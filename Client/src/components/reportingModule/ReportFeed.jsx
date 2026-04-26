@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { CitizenAPI } from "../../api/api";
 import IssueGrid from "../issueGridModule/IssueGrid";
 import CitizenNavbar from "../generalComponents/Navbars/CitizenNavbar";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const ReportFeed = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -45,10 +47,10 @@ const ReportFeed = () => {
 
             {/* Title */}
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 text-center">
-              Reports Feed
+              {t('reportsFeed')}
             </h1>
             <p className="text-xs sm:text-sm text-center text-gray-600 mb-6 sm:mb-8">
-              Explore all reported civic issues around you 📍
+               {t('nearbyIssues')} 📍
             </p>
 
             {/* Loading State */}
@@ -56,7 +58,7 @@ const ReportFeed = () => {
               <div className="flex flex-col items-center justify-center mt-16 text-gray-600">
                 <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-t-4 border-indigo-400 mb-3"></div>
                 <p className="text-sm sm:text-lg font-medium">
-                  Loading reports...
+                  {t('loading')}
                 </p>
               </div>
             ) : reports.length > 0 ? (
@@ -73,10 +75,10 @@ const ReportFeed = () => {
                   className="w-20 h-20 sm:w-32 sm:h-32 opacity-80 mb-4"
                 />
                 <p className="text-base sm:text-lg font-medium text-gray-800">
-                  No issues reported yet.
+                  {t('noIssues')}
                 </p>
                 <p className="text-xs sm:text-sm text-gray-500 text-center">
-                  Be the first to report a civic issue in your area.
+                  {t('Be the first to report a civic issue in your area.')}
                 </p>
               </div>
             )}
