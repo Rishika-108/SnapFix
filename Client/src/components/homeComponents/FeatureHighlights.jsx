@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 
-const FeatureHighlights = () => {
+const FeatureHighlights = ({ isDark }) => {
   const { t } = useTranslation();
   const features = [
     {
@@ -25,13 +25,15 @@ const FeatureHighlights = () => {
   ];
 
   return (
-    <section className="relative py-20 bg-linear-to-b from-white to-[#E5F0FB] overflow-hidden">
-      {/* Floating Accent Circles */}
-      <div className="absolute top-10 left-0 w-32 h-32 bg-[#3EA8FF]/20 rounded-full filter blur-3xl animate-float-slow"></div>
-      <div className="absolute bottom-16 right-0 w-24 h-24 bg-[#0E72C2]/20 rounded-full filter blur-2xl animate-float-slower"></div>
+    <section className={`relative py-20 overflow-hidden transition-all duration-500 ${
+      isDark ? "bg-transparent" : "bg-linear-to-b from-white to-[#E5F0FB]"
+    }`}>
+      {/* ... (accent circles) */}
 
       <div className="container mx-auto px-6 relative z-10">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-16 text-[#0E2439]">
+        <h2 className={`text-4xl md:text-5xl font-extrabold text-center mb-16 ${
+          isDark ? "text-white" : "text-[#0E2439]"
+        }`}>
           {t('Why')} <span className="text-[#3EA8FF]">SnapFix?</span>
         </h2>
 
@@ -39,15 +41,21 @@ const FeatureHighlights = () => {
           {features.map(({ id, title, description, icon }) => (
             <div
               key={id}
-              className="group bg-white rounded-3xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all flex flex-col items-center text-center p-8 border border-[#3EA8FF]/10"
+              className={`group rounded-3xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all flex flex-col items-center text-center p-8 border ${
+                isDark 
+                  ? "bg-white/5 backdrop-blur-md border-white/10" 
+                  : "bg-white border-[#3EA8FF]/10"
+              }`}
             >
               <div className="text-6xl mb-6 text-[#3EA8FF] transform transition-transform group-hover:rotate-12">
                 {icon}
               </div>
-              <h3 className="text-2xl font-semibold mb-3 text-[#0E2439] group-hover:text-[#0E72C2] transition-colors">
+              <h3 className={`text-2xl font-semibold mb-3 group-hover:text-[#3EA8FF] transition-colors ${
+                isDark ? "text-white" : "text-[#0E2439]"
+              }`}>
                 {t(title)}
               </h3>
-              <p className="text-gray-700 text-md">{t(description)}</p>
+              <p className={isDark ? "text-gray-300" : "text-gray-700"}>{t(description)}</p>
             </div>
           ))}
         </div>

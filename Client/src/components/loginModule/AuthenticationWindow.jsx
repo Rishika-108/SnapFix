@@ -7,22 +7,41 @@ import AuthToggle from "./AuthToggle";
 import AuthForm from "./AuthForm";
 import AuthSocials from "./AuthSocials";
 import { AuthAPI } from "../../api/api";
-import { useAuth } from "../generalComponents/Navbars/Navbar";
+import { useAuth } from "../../context/AuthContext";
 
 const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
   const navigate = useNavigate();
-  const { updateAuth } = useAuth();
+  const { login, loginRole } = useAuth();
 
   const [authMode, setAuthMode] = useState("login");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "citizen",
+    role: loginRole || "citizen",
   });
+
+  // Sync role if loginRole changes
+  useEffect(() => {
+    if (loginRole) {
+      setFormData(prev => ({ ...prev, role: loginRole }));
+    }
+  }, [loginRole]);
+
+  // Lock scroll when modal is open
+  useEffect(() => {
+    if (showLoginModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [showLoginModal]);
+
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState(null);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,13 +69,8 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
         const { data } = response;
         if (!data.success) throw new Error(data.message);
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user || data.worker));
-
-        updateAuth({
-          token: data.token,
-          user: data.user || data.worker,
-        });
+        // Use the global login function from AuthContext
+        login(data.token, data.user || data.worker);
 
         alert(`✅ Logged in successfully as ${formData.role}!`);
       } else {
@@ -94,51 +108,46 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
       setLoading(false);
     }
   };
- const detectLocation = useCallback(() => {
-  console.log("📍 detectLocation called");
 
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error("Geolocation not supported"));
-      return;
-    }
+  const detectLocation = useCallback(() => {
+    console.log("📍 detectLocation called");
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-
-        console.log("✅ Location detected:", latitude, longitude);
-
-        // ✅ ONLY return data — no state updates here
-        resolve({ latitude, longitude });
-      },
-      (err) => {
-        console.error("❌ Geolocation error:", err);
-        reject(err);
-      },
-      {
-        enableHighAccuracy: false,
-        timeout: 20000,
-        maximumAge: 60000,
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("Geolocation not supported"));
+        return;
       }
-    );
-  });
-}, []);
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          console.log("✅ Location detected:", latitude, longitude);
+          resolve({ latitude, longitude });
+        },
+        (err) => {
+          console.error("❌ Geolocation error:", err);
+          reject(err);
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 20000,
+          maximumAge: 60000,
+        }
+      );
+    });
+  }, []);
 
   return (
     <>
       {showLoginModal && (
         <div
           className="fixed inset-0 flex flex-col items-center justify-start z-50 p-2 overflow-y-auto pt-[8%]"
-          style={{
-            backgroundImage: `url(${BlueEnterance})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundAttachment: "fixed", // makes the image fixed
-          }}
         >
-          {/* Dark overlay */}
-          <div className="fixed inset-0 bg-[#0E2439]/70"></div>
+          {/* Translucent overlay */}
+          <div 
+            className="fixed inset-0 bg-white/30 backdrop-blur-md"
+            onClick={() => setShowLoginModal(false)}
+          ></div>
 
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 w-[90%] max-w-sm shadow-2xl relative animate-fadeInUp mb-10 z-10">
             {/* Close Button */}

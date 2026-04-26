@@ -17,7 +17,7 @@ const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading, locat
         onChange={handleChange}
         type="text"
         placeholder="Full Name"
-        className="w-full border border-white/30 bg-white/10 placeholder-gray-300 px-3 py-2 rounded-lg mb-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        className="w-full border border-black/10 bg-black/5 placeholder-gray-600 px-3 py-2 rounded-lg mb-3 text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
         required
       />
     )}
@@ -29,7 +29,7 @@ const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading, locat
       onChange={handleChange}
       type="email"
       placeholder="Email"
-      className="w-full border border-white/30 bg-white/10 placeholder-gray-300 px-3 py-2 rounded-lg mb-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      className="w-full border border-black/10 bg-black/5 placeholder-gray-600 px-3 py-2 rounded-lg mb-3 text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
       required
     />
 
@@ -40,7 +40,7 @@ const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading, locat
       onChange={handleChange}
       type="password"
       placeholder="Password"
-      className="w-full border border-white/30 bg-white/10 placeholder-gray-300 px-3 py-2 rounded-lg mb-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      className="w-full border border-black/10 bg-black/5 placeholder-gray-600 px-3 py-2 rounded-lg mb-3 text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
       required
     />
 
@@ -50,7 +50,7 @@ const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading, locat
         name="role"
         value={formData.role}
         onChange={handleChange}
-        className="w-full appearance-none border border-white/30 bg-white/10 text-gray-100 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition backdrop-blur-sm cursor-pointer pr-8"
+        className="w-full appearance-none border border-black/10 bg-black/5 text-black px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition backdrop-blur-sm cursor-pointer pr-8"
         required
       >
         <option value="citizen">Citizen</option>
@@ -80,7 +80,7 @@ const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading, locat
           onChange={handleChange}
           type="text"
           placeholder="Phone Number"
-          className="w-full border border-white/30 bg-white/10 placeholder-gray-300 px-3 py-2 rounded-lg mb-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full border border-black/10 bg-black/5 placeholder-gray-600 px-3 py-2 rounded-lg mb-3 text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
           required
         />
         <input
@@ -89,7 +89,7 @@ const AuthForm = ({ authMode, formData, handleChange, handleAuth, loading, locat
           onChange={handleChange}
           type="text"
           placeholder="Skills (comma separated)"
-          className="w-full border border-white/30 bg-white/10 placeholder-gray-300 px-3 py-2 rounded-lg mb-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full border border-black/10 bg-black/5 placeholder-gray-600 px-3 py-2 rounded-lg mb-3 text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
           required
         />
         <LocationPicker

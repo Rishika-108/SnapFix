@@ -85,6 +85,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("lang", newLang);
   };
 
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginRole, setLoginRole] = useState("citizen");
+
+  const openLoginModal = (role = "citizen") => {
+    setLoginRole(role);
+    setShowLoginModal(true);
+  };
 
   return (
     <AuthContext.Provider
@@ -97,6 +104,10 @@ export const AuthProvider = ({ children }) => {
         toggleLanguage,
         login,
         logout,
+        showLoginModal,
+        setShowLoginModal,
+        loginRole,
+        openLoginModal
       }}
     >
       {children}

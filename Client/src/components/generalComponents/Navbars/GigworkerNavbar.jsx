@@ -31,7 +31,7 @@ const GigworkerNavbar = ({ user }) => {
     <nav className="bg-white border-gray-200 dark:bg-gray-900 fixed top-0 left-0 w-full z-50 shadow-sm">
       <div className="max-w-7xl flex flex-wrap items-center justify-between mx-auto p-4">
         {/* Logo */}
-        <Link to="/gigworker" onClick={() => setMenuOpen(false)} className="flex items-center space-x-3 rtl:space-x-reverse">
+        <Link to="/" onClick={() => setMenuOpen(false)} className="flex items-center space-x-3 rtl:space-x-reverse">
           <img
             src="https://flowbite.com/docs/images/logo.svg"
             className="h-8"

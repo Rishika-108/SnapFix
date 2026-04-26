@@ -9,7 +9,7 @@ const AuthToggle = ({ authMode, setAuthMode }) => (
         className={`px-3 py-1 rounded-md text-sm transition ${
           authMode === mode
             ? "bg-indigo-600 text-white"
-            : "bg-white/10 text-gray-300 hover:bg-white/20"
+            : "bg-black/5 text-gray-700 hover:bg-black/10"
         }`}
       >
         {mode === "login" ? "Login" : "Register"}

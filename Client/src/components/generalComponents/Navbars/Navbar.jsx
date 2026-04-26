@@ -3,43 +3,10 @@ import AuthenticationWindow from "../../loginModule/AuthenticationWindow";
 import CitizenNavbar from "./CitizenNavbar";
 import GigworkerNavbar from "./GigworkerNavbar";
 
-//  Create Auth Context
-const AuthContext = createContext();
-export const useAuth = () => useContext(AuthContext);
+import { useAuth } from "../../../context/AuthContext";
 
 const Navbar = () => {
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [auth, setAuth] = useState(() => {
-    const token = localStorage.getItem("token");
-    const userStr = localStorage.getItem("user");
-    const user = userStr ? JSON.parse(userStr) : null;
-    return { token, user };
-  });
-
-  //  Sync auth state if localStorage changes (other tabs)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const token = localStorage.getItem("token");
-      const userStr = localStorage.getItem("user");
-      const user = userStr ? JSON.parse(userStr) : null;
-      setAuth({ token, user });
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
-  //  Update auth state manually after login/logout
-  const updateAuth = (newAuth) => {
-    setAuth(newAuth);
-  };
-
-  //  Handle logout
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setAuth({ token: null, user: null });
-  };
+  const { showLoginModal, setShowLoginModal, auth, logout, openLoginModal } = useAuth();
 
   //  Determine which navbar to show
   const renderNavbar = () => {
@@ -57,7 +24,7 @@ const Navbar = () => {
   };
 
   return (
-    <AuthContext.Provider value={{ auth, updateAuth, setShowLoginModal, handleLogout }}>
+    <>
       {renderNavbar()}
 
       {/* Login Modal */}
@@ -65,13 +32,13 @@ const Navbar = () => {
         showLoginModal={showLoginModal}
         setShowLoginModal={setShowLoginModal}
       />
-    </AuthContext.Provider>
+    </>
   );
 };
 
 //  Simple guest navbar if not logged in
 const GuestNavbar = () => {
-  const { setShowLoginModal } = useAuth();
+  const { openLoginModal } = useAuth();
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 fixed top-0 left-0 w-full z-50 shadow-sm">
@@ -92,7 +59,7 @@ const GuestNavbar = () => {
         <div className="flex space-x-3 rtl:space-x-reverse">
           <button
             type="button"
-            onClick={() => setShowLoginModal(true)}
+            onClick={() => openLoginModal("citizen")}
             className="text-white bg-linear-to-r from-[#3EA8FF] to-[#0E72C2] hover:scale-105 transform transition-all duration-300 font-semibold rounded-xl text-sm px-5 py-2 shadow-md"
           >
             Get Started
