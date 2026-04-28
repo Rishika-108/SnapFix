@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState, useCallback } from "react";
+import React, { memo, useEffect, useState, useCallback, useRef } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -11,20 +11,50 @@ const markerIcon = new L.Icon({
   iconAnchor: [12, 41],
 });
 
+/* Extracted outside LocationPicker to prevent re-mount on every render */
+const LocationMarker = ({ location, onClickRef, onSetMapCenter }) => {
+  useMapEvents({
+    click(e) {
+      const { lat, lng } = e.latlng;
+      onClickRef.current({ lat, lng, name: "Pinned Location" });
+      onSetMapCenter([lat, lng]);
+    },
+  });
+
+  if (typeof location?.lat !== "number" || typeof location?.lng !== "number") {
+    return null;
+  }
+  return <Marker position={[location.lat, location.lng]} icon={markerIcon} />;
+};
+
 const LocationPicker = memo(({ location, detectLocation, onLocationSelect }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [mapCenter, setMapCenter] = useState([19.7515, 75.7139]);
+  const hasAutoDetected = useRef(false);
+
+  // Keep a stable ref to onLocationSelect so it never triggers re-runs
+  const onLocationSelectRef = useRef(onLocationSelect);
+  useEffect(() => {
+    onLocationSelectRef.current = onLocationSelect;
+  }, [onLocationSelect]);
+
+  // Keep a stable ref to detectLocation
+  const detectLocationRef = useRef(detectLocation);
+  useEffect(() => {
+    detectLocationRef.current = detectLocation;
+  }, [detectLocation]);
 
   const fetchLocation = useCallback(async () => {
-    if (!detectLocation) return;
+    const detect = detectLocationRef.current;
+    if (!detect) return;
     try {
       setLoading(true);
       setError(null);
-      const loc = await detectLocation();
+      const loc = await detect();
       if (loc && typeof loc.latitude === "number" && typeof loc.longitude === "number") {
         setMapCenter([loc.latitude, loc.longitude]);
-        onLocationSelect({
+        onLocationSelectRef.current({
           lat: loc.latitude,
           lng: loc.longitude,
           name: "Current Location",
@@ -36,9 +66,12 @@ const LocationPicker = memo(({ location, detectLocation, onLocationSelect }) => 
     } finally {
       setLoading(false);
     }
-  }, [detectLocation, onLocationSelect]);
+  }, []); // stable — no external deps, uses refs
 
+  // Auto-detect location only once on mount
   useEffect(() => {
+    if (hasAutoDetected.current) return;
+    hasAutoDetected.current = true;
     fetchLocation();
   }, [fetchLocation]);
 
@@ -48,21 +81,6 @@ const LocationPicker = memo(({ location, detectLocation, onLocationSelect }) => 
       setMapCenter([location.lat, location.lng]);
     }
   }, [location?.lat, location?.lng]);
-
-  const LocationMarker = () => {
-    useMapEvents({
-      click(e) {
-        const { lat, lng } = e.latlng;
-        onLocationSelect({ lat, lng, name: "Pinned Location" });
-        setMapCenter([lat, lng]);
-      },
-    });
-
-    if (typeof location?.lat !== "number" || typeof location?.lng !== "number") {
-      return null;
-    }
-    return <Marker position={[location.lat, location.lng]} icon={markerIcon} />;
-  };
 
   return (
     <div className="space-y-3">
@@ -99,7 +117,11 @@ const LocationPicker = memo(({ location, detectLocation, onLocationSelect }) => 
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-          <LocationMarker />
+          <LocationMarker
+            location={location}
+            onClickRef={onLocationSelectRef}
+            onSetMapCenter={setMapCenter}
+          />
         </MapContainer>
 
         {loading && (

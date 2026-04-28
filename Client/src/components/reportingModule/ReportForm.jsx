@@ -28,9 +28,9 @@ const ReportForm = () => {
     setReport((prev) => ({ ...prev, image: file, previewImage: previewUrl }));
   };
 
-  const handleManualLocationSelect = (location) => {
+  const handleManualLocationSelect = useCallback((location) => {
     setReport((prev) => ({ ...prev, location }));
-  };
+  }, []);
 
 const detectLocation = useCallback(() => {
   console.log("📍 detectLocation called");
