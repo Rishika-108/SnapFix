@@ -19,13 +19,21 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const [auth, setAuth] = useState(() => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    return {
-      token,
-      user: user ? JSON.parse(user) : null,
-      isAuthenticated: !!token,
-    };
+    try {
+      const token = localStorage.getItem("token");
+      const userStr = localStorage.getItem("user");
+      const user = userStr ? JSON.parse(userStr) : null;
+      return {
+        token,
+        user,
+        isAuthenticated: !!token && !!user,
+      };
+    } catch (e) {
+      console.error("Failed to parse auth from localStorage:", e);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      return { token: null, user: null, isAuthenticated: false };
+    }
   });
 
   //  Sync auth if localStorage changes (multi-tab safety)

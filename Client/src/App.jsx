@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import GuestLayout from "./layout/GuestLayout";
 import CitizenLayout from "./layout/CitizenLayout";
@@ -51,6 +51,9 @@ function App() {
         />
         <Route path="/gigworker/profile" element={<ViewProfile />} />
       </Route>
+
+      {/* ================== CATCH-ALL ================== */}
+      <Route path="*" element={<Navigate to="/" replace />} />
 
     </Routes>
   );

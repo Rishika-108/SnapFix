@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState, useCallback, useRef } from "react";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -10,6 +10,18 @@ const markerIcon = new L.Icon({
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
+
+/* Programmatically re-center the map when center prop changes.
+   MapContainer's own `center` prop is immutable after mount. */
+const ChangeView = ({ center }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center) {
+      map.flyTo(center, map.getZoom());
+    }
+  }, [center, map]);
+  return null;
+};
 
 /* Extracted outside LocationPicker to prevent re-mount on every render */
 const LocationMarker = ({ location, onClickRef, onSetMapCenter }) => {
@@ -53,7 +65,8 @@ const LocationPicker = memo(({ location, detectLocation, onLocationSelect }) => 
       setError(null);
       const loc = await detect();
       if (loc && typeof loc.latitude === "number" && typeof loc.longitude === "number") {
-        setMapCenter([loc.latitude, loc.longitude]);
+        const newCenter = [loc.latitude, loc.longitude];
+        setMapCenter(newCenter);
         onLocationSelectRef.current({
           lat: loc.latitude,
           lng: loc.longitude,
@@ -77,7 +90,10 @@ const LocationPicker = memo(({ location, detectLocation, onLocationSelect }) => 
 
   // Update map center when location prop changes from outside
   useEffect(() => {
-    if (location?.lat && location?.lng) {
+    if (
+      typeof location?.lat === "number" &&
+      typeof location?.lng === "number"
+    ) {
       setMapCenter([location.lat, location.lng]);
     }
   }, [location?.lat, location?.lng]);
@@ -117,6 +133,7 @@ const LocationPicker = memo(({ location, detectLocation, onLocationSelect }) => 
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
+          <ChangeView center={mapCenter} />
           <LocationMarker
             location={location}
             onClickRef={onLocationSelectRef}
