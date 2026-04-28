@@ -59,7 +59,7 @@ const AdminNotificationDropdown = () => {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-3 w-80 bg-[#142E4D] border border-white/10 rounded-xl shadow-lg z-50 overflow-hidden animate-fadeIn">
+                <div className="absolute right-[-20px] sm:right-0 mt-3 w-[90vw] max-w-[320px] sm:w-80 bg-[#142E4D] border border-white/10 rounded-xl shadow-lg z-50 overflow-hidden animate-fadeIn">
                     <div className="p-3 border-b border-white/10 flex justify-between items-center bg-[#0E2439]/50">
                         <span className="font-semibold text-gray-200">Notifications</span>
                         <div className="flex gap-2">

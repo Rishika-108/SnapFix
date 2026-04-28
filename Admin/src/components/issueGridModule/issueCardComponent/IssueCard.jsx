@@ -24,6 +24,8 @@ const IssueCard = ({ report, user, token }) => {
     <div
       className="
         relative
+        flex flex-col
+        h-full
         bg-[#0E2439]/80 
         backdrop-blur-xl
         rounded-2xl 
@@ -33,13 +35,7 @@ const IssueCard = ({ report, user, token }) => {
         hover:border-[#3EA8FF]/40
         transition-all duration-300 ease-out 
         overflow-hidden 
-        mx-auto 
-        mb-8 
         w-full
-        max-w-[95%] 
-        sm:max-w-sm 
-        md:max-w-md 
-        lg:max-w-lg
         group
       "
     >
@@ -72,7 +68,7 @@ const IssueCard = ({ report, user, token }) => {
       </div>
 
       {/* Description */}
-      <div className="relative px-5 pt-3 pb-4 text-gray-200 text-sm sm:text-base z-10">
+      <div className="relative px-5 pt-3 pb-4 text-gray-200 text-sm sm:text-base z-10 flex-1">
         <p className="leading-relaxed wrap-break-word">
           {description || "No description provided."}
         </p>

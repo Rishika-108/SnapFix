@@ -63,7 +63,7 @@ const NotificationDropdown = () => {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-50 overflow-hidden">
+                <div className="absolute right-[-10px] sm:right-0 mt-2 w-[90vw] max-w-[320px] sm:w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-50 overflow-hidden">
                     <div className="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                         <span className="font-semibold text-gray-700">Notifications</span>
                         <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600">
