@@ -15,12 +15,13 @@ const IssueHeader = ({ title, date, expanded, setExpanded }) => {
       "
     >
       {/* Title + Date */}
-      <div className="truncate max-w-[80%] sm:max-w-none">
+      <div className="flex-1 min-w-0 pr-2">
         <h2
           className="
             text-gray-100 font-semibold 
             text-sm sm:text-base 
             tracking-tight leading-snug
+            truncate
           "
         >
           {title}

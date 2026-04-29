@@ -69,7 +69,7 @@ const IssueCard = ({ report, user, token }) => {
 
       {/* Description */}
       <div className="relative px-5 pt-3 pb-4 text-gray-200 text-sm sm:text-base z-10 flex-1">
-        <p className="leading-relaxed wrap-break-word">
+        <p className="leading-relaxed break-words line-clamp-3">
           {description || "No description provided."}
         </p>
       </div>

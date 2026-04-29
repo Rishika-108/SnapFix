@@ -42,7 +42,7 @@ const IssueFooter = ({ report, user }) => {
 
   return (
     <div
-      className="flex justify-between items-center mt-3 pt-3 border-t border-white/10 
+      className="flex flex-wrap justify-between items-center mt-3 pt-3 border-t border-white/10 gap-2
                  text-sm sm:text-base text-gray-300"
     >
       {/* ❤️ Like Button */}

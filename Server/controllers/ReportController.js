@@ -50,6 +50,7 @@ const createReport = async (req, res) => {
             const finalCategory = aiResult ? aiResult.category : category;
             const duplicateReport = await Report.findOne({
                 category: finalCategory,
+                status: { $in: ['Pending', 'In Progress'] },
                 location: {
                     $near: {
                         $geometry: { type: "Point", coordinates: [parseFloat(longitude), parseFloat(latitude)] },
