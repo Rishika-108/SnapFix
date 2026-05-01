@@ -18,6 +18,7 @@ const reportSchema = new mongoose.Schema({
     paymentReleased: { type: Boolean, default: false },
     priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Low' },
     aiConfidence: { type: Number, default: 0 },
+    embedding: { type: [Number], default: [] },
     localizedContent: {
         en: { title: String, description: String },
         hi: { title: String, description: String }
