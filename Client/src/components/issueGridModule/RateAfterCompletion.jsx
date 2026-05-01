@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 
 const RateAfterCompletion = ({ issueImage, resolvedImage, onVerify }) => {
   const [verified, setVerified] = useState(null);
@@ -7,7 +8,7 @@ const RateAfterCompletion = ({ issueImage, resolvedImage, onVerify }) => {
 
   const handleSubmitReview = () => {
     if (verified === null) {
-      alert("Please verify the task first");
+      toast.error("Please verify the task first");
       return;
     }
 

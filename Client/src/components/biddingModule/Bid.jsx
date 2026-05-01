@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import  WorkerAPI  from "../../api/api"; // ✅ Integrated API system
 
 const Bid = ({ reportId, gigId, existingBid = null, onSubmit, onCancel }) => {
@@ -21,7 +22,7 @@ const Bid = ({ reportId, gigId, existingBid = null, onSubmit, onCancel }) => {
     e.preventDefault();
 
     if (!reportId || !gigId) {
-      alert("Missing report or gig ID.");
+      toast.error("Missing report or gig ID.");
       return;
     }
 
@@ -37,24 +38,24 @@ const Bid = ({ reportId, gigId, existingBid = null, onSubmit, onCancel }) => {
       if (existingBid && onSubmit) {
         // ✅ Update existing bid (handled by parent)
         await onSubmit(bidData);
-        alert("✅ Bid updated successfully!");
+        toast.success("✅ Bid updated successfully!");
       } else {
         // ✅ Create new bid using API
         const response = await WorkerAPI.createBid(reportId, bidData);
         const { data } = response;
 
         if (data.success) {
-          alert("✅ Bid submitted successfully!");
+          toast.success("✅ Bid submitted successfully!");
           setAmount("");
           setDuration("");
           setNote("");
         } else {
-          alert("⚠️ Failed to submit bid: " + data.message);
+          toast.error("⚠️ Failed to submit bid: " + data.message);
         }
       }
     } catch (error) {
       console.error("❌ Error submitting bid:", error.message);
-      alert(error.message || "Failed to submit bid. Please try again.");
+      toast.error(error.message || "Failed to submit bid. Please try again.");
     } finally {
       setLoading(false);
     }

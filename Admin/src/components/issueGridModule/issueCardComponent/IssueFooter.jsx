@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Heart, ExternalLink } from "lucide-react";
+import { toast } from "react-hot-toast";
 // import { CitizenAPI } from "../../../api/api"; // ✅ Integration with API.js
 import BidSection from "../../biddingModule/BidSection";
 
@@ -13,7 +14,7 @@ const IssueFooter = ({ report, user }) => {
   const handleLike = async () => {
     try {
       if (!user) {
-        alert("Please log in to upvote reports.");
+        toast.error("Please log in to upvote reports.");
         return;
       }
 
@@ -32,7 +33,7 @@ const IssueFooter = ({ report, user }) => {
       console.log("✅ Upvote Response:", data.message);
     } catch (err) {
       console.error("❌ Error upvoting:", err.message);
-      alert(err.message || "Something went wrong while upvoting.");
+      toast.error(err.message || "Something went wrong while upvoting.");
 
       // Rollback UI if API fails
       setLiked((prev) => !prev);

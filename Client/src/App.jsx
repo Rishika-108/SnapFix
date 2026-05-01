@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import GuestLayout from "./layout/GuestLayout";
 import CitizenLayout from "./layout/CitizenLayout";
@@ -22,7 +23,9 @@ import ViewProfile from "./components/WorkerModule/ViewProfile";
 
 function App() {
   return (
-    <Routes>
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+      <Routes>
 
       {/* ================== GUEST ROUTES ================== */}
       <Route element={<GuestLayout />}>
@@ -55,7 +58,8 @@ function App() {
       {/* ================== CATCH-ALL ================== */}
       <Route path="*" element={<Navigate to="/" replace />} />
 
-    </Routes>
+      </Routes>
+    </>
   );
 }
 

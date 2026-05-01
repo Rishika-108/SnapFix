@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
+import { toast } from "react-hot-toast";
 import { getReportWithBids } from "../../api/bids.js";
 import { assignBid } from "../../api/bids.js";
 
@@ -50,7 +51,7 @@ const BidSection = ({ report, token }) => {
 
       await assignBid(bidId, token);
 
-      alert("✅ Bid assigned successfully");
+      toast.success("✅ Bid assigned successfully");
 
       // setBids((prev) => prev.filter((b) => b._id !== bidId));
       // setBidCount((prev) => prev - 1);
@@ -58,7 +59,7 @@ const BidSection = ({ report, token }) => {
       setShowAssignModal(false);
 
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to assign bid");
+      toast.error(err.response?.data?.message || "Failed to assign bid");
     } finally {
       setAssigningId(null);
     }

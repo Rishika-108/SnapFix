@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import AuthenticationWindow from "./components/loginModule/AuthenticationWindow"
 import HomePage from "./page/Homepage";
@@ -9,6 +10,7 @@ import FundRelease from "./page/FundRelease"
 function App() {
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       {/* <Navbar /> */}
       <Routes>
         <Route path="/" element={<HomePage />} />

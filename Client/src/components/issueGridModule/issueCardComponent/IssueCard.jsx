@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import IssueHeader from "./IssueHeader";
 import IssueImage from "./IssueImage";
 import IssueFooter from "./IssueFooter";
@@ -81,11 +82,11 @@ const IssueCard = ({ report }) => {
         review,
       });
 
-      alert("✅ Verification submitted successfully");
+      toast.success("✅ Verification submitted successfully");
       setTaskVerified(true);
       setModalOpen(false);
     } catch (err) {
-      alert("❌ Verification failed");
+      toast.error("❌ Verification failed");
     }
   };
 

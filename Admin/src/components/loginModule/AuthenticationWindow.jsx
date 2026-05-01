@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import ThoughtProcess from "../../assets/ThoughtProcess.svg";
 import BlueEnterance from "../../assets/B-g.jpg"; // <-- import background image
@@ -34,14 +35,14 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
         role: response.role,
       });
 
-      alert(`✅ Logged in successfully as ${response.role || formData.email}!`);
+      toast.success(`✅ Logged in successfully as ${response.role || formData.email}!`);
       setShowLoginModal(false);
 
       // Navigate to admin dashboard
       navigate("/government/dashboard");
     } catch (err) {
       console.error("Login Error:", err.message || err);
-      alert(err.message || "Something went wrong during login!");
+      toast.error(err.message || "Something went wrong during login!");
     } finally {
       setLoading(false);
     }

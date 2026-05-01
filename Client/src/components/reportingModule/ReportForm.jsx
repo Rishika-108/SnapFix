@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import { toast } from "react-hot-toast";
 import ImageUpload from "./ImageUpload";
 import LocationPicker from "./LocationPicker";
 import { CitizenAPI } from "../../api/api";
@@ -88,7 +89,7 @@ const detectLocation = useCallback(() => {
       const { data } = response;
 
       if (data.success) {
-        alert("✅ Report submitted successfully!");
+        toast.success("✅ Report submitted successfully!");
         setReport({
           title: "",
           description: "",
@@ -98,11 +99,11 @@ const detectLocation = useCallback(() => {
           location: { lat: null, lng: null, name: "" },
         });
       } else {
-        alert("⚠️ Failed to submit: " + data.message);
+        toast.error("⚠️ Failed to submit: " + data.message);
       }
     } catch (err) {
       console.error("Submit Error:", err);
-      alert("❌ Something went wrong while submitting your report.");
+      toast.error(err.response?.data?.message || "❌ Something went wrong while submitting your report.");
     } finally {
       setLoading(false);
     }

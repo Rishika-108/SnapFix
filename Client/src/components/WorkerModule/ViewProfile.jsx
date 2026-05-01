@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import  WorkerAPI  from "../../api/api";
 import { User, Mail, MapPin, Loader2, Briefcase, Clock } from "lucide-react";
 import { useTranslation } from "../../hooks/useTranslation";
@@ -123,13 +124,13 @@ const ViewProfile = () => {
         <div className="mt-8 flex justify-center gap-4">
           <button
             className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium shadow-md transition-all"
-            onClick={() => alert(t("Edit Profile coming soon..."))}
+            onClick={() => toast.error(t("Edit Profile coming soon..."))}
           >
             {t('Edit Profile')}
           </button>
           <button
             className="px-5 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white font-medium shadow-md transition-all"
-            onClick={() => alert(t("Logout coming soon..."))}
+            onClick={() => toast.error(t("Logout coming soon..."))}
           >
             {t('Logout')}
           </button>

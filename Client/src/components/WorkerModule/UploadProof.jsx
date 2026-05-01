@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Loader2, Upload } from "lucide-react";
+import { toast } from "react-hot-toast";
 import  WorkerAPI  from "../../api/api";
 import { useTranslation } from "../../hooks/useTranslation";
 
@@ -14,7 +15,7 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
   // ✅ Optional: auto-fill current coordinates
   const handleAutoLocation = () => {
     if (!navigator.geolocation) {
-      alert(t("Geolocation not supported in your browser."));
+      toast.error(t("Geolocation not supported in your browser."));
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -22,7 +23,7 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
         setLatitude(pos.coords.latitude.toString());
         setLongitude(pos.coords.longitude.toString());
       },
-      () => alert(t("Failed to retrieve location."))
+      () => toast.error(t("Failed to retrieve location."))
     );
   };
 
@@ -31,7 +32,7 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
     e.preventDefault();
 
     if (!proofImage || !latitude || !longitude) {
-      alert(t("Please fill all fields and upload an image."));
+      toast.error(t("Please fill all fields and upload an image."));
       return;
     }
 
@@ -47,15 +48,15 @@ const UploadProof = ({ taskId, onCancel, onSuccess }) => {
       const { data } = response;
 
       if (data.success) {
-        alert(t("✅ Proof uploaded successfully!"));
+        toast.success(t("✅ Proof uploaded successfully!"));
         if (onSuccess) onSuccess(data.task);
         if (onCancel) onCancel();
       } else {
-        alert("⚠️ " + t(data.message || "Upload failed."));
+        toast.error("⚠️ " + t(data.message || "Upload failed."));
       }
     } catch (error) {
       console.error("❌ Upload error:", error.message);
-      alert(t("Failed to upload proof. Please try again."));
+      toast.error(t("Failed to upload proof. Please try again."));
     } finally {
       setUploading(false);
     }

@@ -9,6 +9,8 @@ import AuthSocials from "./AuthSocials";
 import { AuthAPI } from "../../api/api";
 import { useAuth } from "../../context/AuthContext";
 
+import { toast } from "react-hot-toast";
+
 const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
   const navigate = useNavigate();
   const { login, loginRole } = useAuth();
@@ -72,10 +74,10 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
         // Use the global login function from AuthContext
         login(data.token, data.user || data.worker);
 
-        alert(`✅ Logged in successfully as ${formData.role}!`);
+        toast.success(`✅ Logged in successfully as ${formData.role}!`);
       } else {
         if (formData.role === "gigworker" && !location) {
-          alert("Please select your work location");
+          toast.error("Please select your work location");
           return;
         }
 
@@ -94,7 +96,7 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
         const { data } = response;
         if (!data.success) throw new Error(data.message);
 
-        alert("✅ Registered successfully!");
+        toast.success("✅ Registered successfully!");
       }
 
       if (formData.role === "citizen") navigate("/citizen/feed");
@@ -103,7 +105,7 @@ const AuthenticationWindow = ({ showLoginModal, setShowLoginModal }) => {
       setShowLoginModal(false);
     } catch (err) {
       console.error("Auth Error:", err.message);
-      alert(err.message || "Something went wrong!");
+      toast.error(err.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }

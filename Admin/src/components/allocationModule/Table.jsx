@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiClock, FiCheckCircle, FiDatabase, FiDollarSign, FiLoader } from "react-icons/fi";
 import api from "../../api/api";
@@ -35,12 +36,12 @@ const Table = ({ completedTasks, onRefresh }) => {
         if (res.success) successCount++;
       }
       
-      alert(`Successfully released funds for ${successCount} projects.`);
+      toast.success(`Successfully released funds for ${successCount} projects.`);
       setSelected([]);
       if (onRefresh) onRefresh();
     } catch (err) {
       console.error("Allocation failed:", err);
-      alert("Fund allocation failed. Please try again.");
+      toast.error("Fund allocation failed. Please try again.");
     } finally {
       setAllocating(false);
     }

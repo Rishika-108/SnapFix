@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { Loader2, MapPin, ClipboardList, Upload, FileText } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import GigworkerNavbar from "../generalComponents/Navbars/GigworkerNavbar";
@@ -51,7 +52,7 @@ const TaskAssigned = () => {
   const handleProofSubmit = async (e) => {
     e.preventDefault();
     if (!selectedTask || !proofImage) {
-      alert(t("Please select a proof image and fill all fields."));
+      toast.error(t("Please select a proof image and fill all fields."));
       return;
     }
 
@@ -67,7 +68,7 @@ const TaskAssigned = () => {
       const { data } = response;
 
       if (data.success) {
-        alert(t("✅ Proof uploaded successfully!"));
+        toast.success(t("✅ Proof uploaded successfully!"));
         setTasks((prev) =>
           prev.map((t) => (t._id === selectedTask._id ? data.task : t))
         );
@@ -75,11 +76,11 @@ const TaskAssigned = () => {
         setProofImage(null);
         setRemarks("");
       } else {
-        alert(t("⚠️ Failed to upload proof: ") + t(data.message));
+        toast.error(t("⚠️ Failed to upload proof: ") + t(data.message));
       }
     } catch (error) {
       console.error("❌ Error uploading proof:", error.message);
-      alert(t("Upload failed. Please try again."));
+      toast.error(t("Upload failed. Please try again."));
     } finally {
       setUploading(false);
     }
