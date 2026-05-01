@@ -20,10 +20,12 @@ CLIP_MODEL_NAME = "openai/clip-vit-base-patch32"
 
 # Define prompts for zero-shot classification to detect "civic issues"
 LABELS = [
-    "a photo showing a civic issue like a pothole, garbage, broken infrastructure, or urban damage",
-    "a photo of a clean street or regular urban scene without any issues",
-    "a photo of a person, pet, or indoor scene",
-    "a generic photo of nature, trees, or sky"
+    "a photo showing a clear civic issue like a pothole, garbage pile, broken road, or urban damage",
+    "a photo of a book, document, paper, or close-up text",
+    "a clean street or regular urban scene with no problems",
+    "a photo of a person, face, or pet",
+    "an indoor scene, furniture, or household items",
+    "a generic photo of nature, trees, sky, or abstract colors"
 ]
 
 # Load models and pre-calculate text embeddings
@@ -85,7 +87,7 @@ async def get_embedding(file: UploadFile = File(...)):
             
             # We consider the first label as the "Positive" civic issue class
             civic_issue_confidence = float(probs[0])
-            is_valid = civic_issue_confidence > 0.45  # Tuned threshold for general civic issues
+            is_valid = civic_issue_confidence > 0.55  # Increased threshold for better precision
             
             return {
                 "embedding": normalized_embedding[0].tolist(),

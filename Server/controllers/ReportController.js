@@ -28,29 +28,25 @@ const createReport = async (req, res) => {
         let cloudinaryResult;
 
         try {
-            cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
-                folder: "reports_uploads",
-            });
+            // Parallelize Cloudinary upload and AI processing for significantly faster response times
+            const formData = new FormData();
+            formData.append('file', fs.createReadStream(req.file.path));
 
-            // --- AI ENGINE INTEGRATION ---
-            let aiResult = null;
-            try {
-                const formData = new FormData();
-                formData.append('file', fs.createReadStream(req.file.path));
+            const baseUrl = process.env.AI_SERVER_URL.endsWith('/') 
+                ? process.env.AI_SERVER_URL.slice(0, -1) 
+                : process.env.AI_SERVER_URL;
 
-                // Handle potential trailing slash in AI_SERVER_URL
-                const baseUrl = process.env.AI_SERVER_URL.endsWith('/') 
-                    ? process.env.AI_SERVER_URL.slice(0, -1) 
-                    : process.env.AI_SERVER_URL;
+            const [cloudinaryResult, aiResponse] = await Promise.all([
+                cloudinary.uploader.upload(req.file.path, { folder: "reports_uploads" }),
+                axios.post(`${baseUrl}/get_embedding`, formData, { 
+                    headers: { ...formData.getHeaders() } 
+                }).catch(aiError => {
+                    console.error("AI Engine Error:", aiError.message);
+                    return { data: null }; // Fallback
+                })
+            ]);
 
-                const aiResponse = await axios.post(`${baseUrl}/get_embedding`, formData, {
-                    headers: { ...formData.getHeaders() }
-                });
-                aiResult = aiResponse.data; // { embedding, is_valid, confidence }
-            } catch (aiError) {
-                console.error("AI Engine Error:", aiError.message);
-                // Fallback: Proceed with basic checks if AI is down
-            }
+            const aiResult = aiResponse.data; // { embedding, is_valid, confidence }
 
             // Handle AI Rejection based on confidence threshold
             const CONFIDENCE_THRESHOLD = 0.5; 
