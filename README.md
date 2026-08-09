@@ -1,196 +1,286 @@
-#  SnapFix
+# SnapFix
 
-### *Snap. Report. Fix.*
+SnapFix is a civic issue management platform that turns public complaints into an operational workflow. The project connects citizens, gig workers, and administrators through a single closed loop: report an issue, validate it, assign work, verify completion, and release payment only after evidence is confirmed.
 
-> **India doesn’t lack apps — it lacks systems that work together.**
+This repository is not a single app; it is a multi-part system that includes a React client for citizens and workers, a government/admin dashboard, an Express API, MongoDB persistence, and a Python AI service that validates whether uploaded images match real civic problems.
 
-SnapFix is a **real-time civic-tech platform** that transforms how civic issues are reported, resolved, and verified by creating a **closed-loop ecosystem** between **Citizens, Government Authorities, and Local Workers**.
+## Why this project exists
 
-Built for **Elvion Hackathon 2026** by **Team Risk Takers**.
+Most civic issue systems fail because they stop at submission. A problem gets reported, but there is no reliable path from complaint to execution to closure. SnapFix tries to address that gap by making the lifecycle explicit and auditable.
 
----
+The underlying workflow is:
 
-##  Problem Statement
+Report → Validate → Deduplicate → Assign → Execute → Verify → Settle
 
-Civic issues such as potholes, garbage dumping, broken streetlights, and water leaks often remain **unreported, delayed, or unresolved** due to:
+- 3 app surfaces: citizen/worker frontend, admin dashboard, and AI service
+- 8 backend route modules in the API layer
+- 8 controller modules implementing the operational logic
+- 8 Mongoose model files defining the data model
+- 3 role domains: citizen, gig worker, and admin
+- 2 geospatial workflow patterns built on MongoDB 2dsphere queries
+- 1 FastAPI-based AI validation service using CLIP
+- 1 Cloudinary media pipeline for photo uploads
+- 1 notification layer for state transitions and user-facing updates
+- 1 proof-before-payment rule for task settlement
+- 1 smoke-test file in the Python test directory
 
-* Complex and slow government portals
-* Fragmented civic apps solving only partial problems
-* Zero transparency after complaint submission
-* No verified closure or accountability
+## Architecture
 
-Despite massive investments in smart-city infrastructure, **citizen feedback loops are broken**.
+```mermaid
+flowchart LR
+    Citizen[Citizen Client] -->|report / upvote / verify| API[Express API]
+    Worker[Gig Worker Client] -->|discover tasks / bid / upload proof| API
+    Admin[Admin Dashboard] -->|approve bids / monitor / release payment| API
+    API -->|reads and writes| DB[(MongoDB)]
+    API -->|stores images| Cloud[Cloudinary]
+    API -->|AI validation| AI[FastAPI + CLIP]
+```
 
----
+### 1. Frontend layer
 
-##  Solution: SnapFix
+The repository contains two React applications:
 
-SnapFix digitizes the **entire problem-to-solution lifecycle**:
+- [Client](Client): citizen and gig worker experience
+- [Admin](Admin): government/admin operations dashboard
 
-> **Report → Assign → Resolve → Verify**
+This split is intentional. Citizens and workers do not share the same service model, and the admin surface is a separate operational tool with monitoring and assignment workflows.
 
-It connects:
+### 2. API layer
 
-* **Citizens** (issue reporting & verification)
-* **Government/Admins** (monitoring & approvals)
-* **Gig Workers / Contractors** (execution & proof-based payouts)
+The backend entry point is [Server/server.js](Server/server.js). It initializes the Express app, registers route modules, sets up CORS for the known frontend origins, connects to MongoDB, and configures Cloudinary.
 
-All in **one transparent, real-time system**.
+The API is organized by domain and responsibility:
 
----
+- authentication and account handling
+- report submission and duplicate detection
+- worker bidding
+- task proof submission and verification
+- admin assignment and payout authorization
+- notifications
 
-##  Key Features
+The main route modules are under [Server/routes](Server/routes).
 
-###  Citizen-Centric
+### 3. Persistence layer
 
-* One-minute issue reporting (Snap → Describe → Submit)
-* Auto **geo-tagged & time-stamped** photos
-* Live status tracking
-* Community upvoting for priority issues
-* Citizen-led verification & ratings
-* Optional anonymity
-* Bilingual (English / Hindi)
+The database model is implemented with Mongoose under [Server/models](Server/models). The important collections include:
 
-###  Gig Worker Integration
+- User
+- Worker
+- Admin
+- Report
+- Bid
+- Task
+- Notification
+- Payment
 
-* Civic issues listed as **local gigs**
-* Transparent bidding via resolution reports
-* Proof-based work submission (before/after photos)
-* Citizen verification triggers payment
-* Ratings, badges & work portfolio
+The data model is tightly tied to the lifecycle of civic operations. Reports carry coordinates, embeddings, AI confidence, status, and user metadata instead of being merely freeform text records.
 
-###  Admin Dashboard
+### 4. AI validation layer
 
-* Live city-wide issue heatmaps
-* Status tracking (Reported → Assigned → Resolved → Verified)
-* Smart worker recommendations
-* Performance analytics & reports
-* Reopen issues if quality is poor
-* Export-ready audit data
+The Python service in [Model/main.py](Model/main.py) uses CLIP to classify whether an uploaded image looks like a valid civic issue. It computes image embeddings, compares them against zero-shot text prompts, and returns:
 
-###  Smart Automation
+- an embedding vector
+- a validity flag
+- a confidence score
 
-* Duplicate issue detection
-* AI-based issue categorization
-* Priority suggestions based on upvotes & severity
+This is a pragmatic validation gate before a report becomes part of the operational workflow, not a full custom training pipeline.
 
----
+## Core workflows
 
-##  Platform Workflow
+### Citizen report creation
 
-### Citizen Flow
+The most important orchestration is in [Server/controllers/ReportController.js](Server/controllers/ReportController.js).
 
-1. Snap & upload issue (geo-tagged)
-2. Add description/category
-3. Track status in real time
-4. Upvote nearby issues
-5. Verify and rate completed work
+The flow is:
 
-### Worker Flow
+1. User submits a report with title, description, category, and coordinates.
+2. The backend validates the location and uploads the image to Cloudinary.
+3. The same file is sent to the AI service for semantic validation.
+4. The AI service returns `is_valid` and `confidence`.
+5. If the image is rejected, the report is not created.
+6. The backend checks nearby reports using a MongoDB geospatial query.
+7. If a similar issue already exists nearby, the user’s action becomes an upvote rather than a duplicate report.
+8. Otherwise, a new report is created with metadata, embedding, status, and image URL.
 
-1. Discover nearby civic tasks
-2. Submit resolution report (cost, time, team)
-3. Get admin approval
-4. Fix issue & upload proof
-5. Receive payment after citizen verification
+This is one of the repository’s strongest technical paths because it combines media upload, geospatial matching, AI validation, and domain persistence in one request.
 
-### Admin Flow
+### Worker discovery and bidding
 
-1. Monitor live dashboard & heatmaps
-2. Approve workers or assign tasks
-3. Track progress with proof
-4. Analyze performance metrics
-5. Ensure verified closure
+Worker workflows are implemented across [Server/controllers/workerController.js](Server/controllers/workerController.js) and [Server/controllers/bidController.js](Server/controllers/bidController.js).
 
----
+A worker queries nearby reports using geospatial filters and makes a bid with amount, notes, and duration. The bid model enforces a uniqueness constraint to prevent duplicate bids for the same report from the same worker.
 
-##  Tech Stack
+### Admin assignment and payout
 
-**MERN Stack**
+The admin workflow sits in [Server/controllers/adminController.js](Server/controllers/adminController.js). An administrator can:
 
-* **MongoDB** – Flexible, scalable civic data storage
-* **Express.js** – RESTful backend APIs
-* **React.js** – Mobile-first user interface
-* **Node.js** – Server-side logic
+- review issues
+- approve a worker bid
+- assign a task
+- track progress
+- release payment only after required checks are complete
 
-### Why MERN?
+This is where the project transitions from issue tracking to operational settlement.
 
-* Single language (JavaScript) across stack
-* Rapid development & scalability
-* Strong open-source ecosystem
-* Ideal for real-time, data-heavy civic platforms
+### Proof submission and citizen verification
 
----
+The task lifecycle is implemented in [Server/controllers/taskController.js](Server/controllers/taskController.js).
 
-##  Impact & Benefits
+After assignment, the worker uploads proof of completed work. The citizen then verifies whether the work is satisfactory:
 
-* ⏱️ **Up to 60% faster issue resolution**
-* ✅ **Citizen-verified closures (up to 90%)**
-* 📉 **30–40% reduction in admin workload**
-* 💼 **New micro-job opportunities for local workers**
-* 🔍 **End-to-end transparency & accountability**
+- if accepted, the task is marked complete and the report is resolved
+- if rejected, the task stays rejected and the report is marked unsuccessful
 
----
+This creates an accountability gate and prevents automatic closure based on a single worker action.
 
-##  Scalability
+### Notifications
 
-* Deployable across **4,800+ Urban Local Bodies**
-* Cloud-native & API-driven
-* Setup in **<10 days per city**
-* Offline-friendly & bilingual
-* Extendable to sanitation, water, disaster response
-* CSR & Smart City Mission fundable
+The notification mechanism in [Server/controllers/notificationController.js](Server/controllers/notificationController.js) ties the domain together. It tracks state transitions for users and workers such as:
 
----
+- report creation
+- duplicate detection
+- bid approval
+- proof submission
+- verification or rejection
+- payment release
 
-## 🏆 Unique Selling Points (USP)
+Notifications are not stylistic extras; they are operational status updates that keep the system legible to all participants.
 
-* Citizen-verified civic resolution loop
-* Gig-based civic work ecosystem
-* Proof-based payments (no favoritism)
-* Community-driven prioritization
-* Transparent public dashboards
+## Important technical decisions
 
+### Geospatial logic
 
-##  Demo & Resources
+The project relies on MongoDB geospatial support via `2dsphere` indexes. The report and worker flows use proximity queries to find nearby open issues and nearby task opportunities.
 
-* **Concept Video**:
-  [https://drive.google.com/file/d/1Sq1Llx_jOaHbC2B5Mddh4IoITXeh9Gek/view](https://drive.google.com/file/d/1Sq1Llx_jOaHbC2B5Mddh4IoITXeh9Gek/view)
+This matters for two reasons:
 
- **Project Screenshots**:
- 
-* **Admin Panel**:
-* <img width="1351" height="625" alt="Screenshot (123)" src="https://github.com/user-attachments/assets/a7361842-239e-417c-afd8-54001b453832" />
- <img width="1343" height="629" alt="Screenshot (125)" src="https://github.com/user-attachments/assets/69854a7d-3f4b-43db-9db1-cf993501bec4" />
- <img width="1347" height="594" alt="Screenshot (128)" src="https://github.com/user-attachments/assets/bcf0348d-4c35-4143-ae01-54d09f93f533" />
- <img width="1351" height="573" alt="Screenshot (129)" src="https://github.com/user-attachments/assets/37570fc0-a8e2-4070-8044-3da87601d366" />
- <img width="1340" height="590" alt="Screenshot (131)" src="https://github.com/user-attachments/assets/03f4350d-9c21-4fb7-bd2f-312fe10b85c8" />
- <img width="1366" height="584" alt="Screenshot (132)" src="https://github.com/user-attachments/assets/396f1d6a-85a1-4692-8d50-6ac53e82b374" />
+- duplicate suppression before new reports are created
+- worker discovery of local civic tasks
 
- * **Citizen Panel**:
- * <img width="1347" height="572" alt="Screenshot (133)" src="https://github.com/user-attachments/assets/b8421ba4-cb56-45b2-b97d-2f861fb14d17" />
- <img width="1351" height="578" alt="Screenshot (134)" src="https://github.com/user-attachments/assets/b7723615-a505-44a6-94dd-e8257224f02b" />
- <img width="1328" height="588" alt="Screenshot (136)" src="https://github.com/user-attachments/assets/c6911cf8-bf21-4c5b-b835-0c4dfbbb1459" />
- <img width="1344" height="601" alt="Screenshot (137)" src="https://github.com/user-attachments/assets/fdbd326a-e2a8-49e9-9d4c-8e8ba605ff8b" />
- <img width="1346" height="580" alt="Screenshot (138)" src="https://github.com/user-attachments/assets/f8e39805-d57a-4cad-a413-b4d3b5339d48" />
- <img width="1341" height="560" alt="Screenshot (139)" src="https://github.com/user-attachments/assets/25d75ba1-3630-4d99-b4fa-6272062d8f03" />
- <img width="1346" height="586" alt="Screenshot (140)" src="https://github.com/user-attachments/assets/36ebb037-79e3-4629-aa33-e68718d30a54" />
- <img width="1354" height="553" alt="Screenshot (141)" src="https://github.com/user-attachments/assets/f101fde4-f322-41ef-a136-affb63995646" />
+### AI validation as a soft but useful gate
 
-*  **GigWorker Panel** :
-*  <img width="877" height="597" alt="Screenshot (142)" src="https://github.com/user-attachments/assets/3091a7cc-d96b-4f01-90e0-38fa66f608b7" />
- <img width="1366" height="587" alt="Screenshot (143)" src="https://github.com/user-attachments/assets/65ac98a9-4180-4f4c-8938-e75350161310" />
- <img width="1366" height="510" alt="Screenshot (144)" src="https://github.com/user-attachments/assets/e3515b66-c883-4973-8ce6-c42160655e3a" />
- <img width="1351" height="598" alt="Screenshot (145)" src="https://github.com/user-attachments/assets/2e0b5454-a214-4457-a4bd-e2ca215bc45f" />
- <img width="1346" height="592" alt="Screenshot (146)" src="https://github.com/user-attachments/assets/ea5998a8-9039-49f1-8921-88cb3f12b915" />
+The AI layer in [Model/main.py](Model/main.py) loads `openai/clip-vit-base-patch32` and compares the image to a set of zero-shot prompts. It then calculates a confidence score and marks the image as valid only when the result crosses a threshold.
 
+This helps reduce low-quality or irrelevant uploads from polluting the system without trying to build a full public-sector classification system in one step.
 
-##  Team
+### Proof-before-payment
 
-**Team Name:** Risk Takers
-**Hackathon:** Elvion Hackathon 2026
+One of the clearest design decisions in the codebase is that the system does not automatically release money just because a task is assigned. Payment is gated by verification and task state. This is a meaningful trust mechanism.
 
-##  License
-This project is developed for **educational & hackathon purposes**.
-License details can be added as per future deployment requirements.
+### Role-aware access control
 
+Authentication is implemented in [Server/controllers/authController.js](Server/controllers/authController.js) with `bcrypt` and JWTs. Different roles are resolved at the middleware layer and enforced in protected routes.
+
+This keeps the access model simple but workable for a three-role system.
+
+## Project structure
+
+```text
+SnapFix/
+├── Admin/
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.js
+├── Client/
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.js
+├── Model/
+│   ├── app/
+│   ├── test/
+│   ├── main.py
+│   ├── Dockerfile
+│   └── requirements.txt
+├── Server/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── scratch/
+│   ├── .env
+│   ├── package.json
+│   ├── server.js
+│   └── README.md
+├── README.md
+└── ...
+```
+
+## Tech stack
+
+| Layer | Technology | Role |
+| --- | --- | --- |
+| Frontend | React + Vite | User interfaces for citizens, workers, and admins |
+| API | Node.js + Express | Business logic and route orchestration |
+| Persistence | MongoDB + Mongoose | Durable issue, bid, task, and payment state |
+| AI | FastAPI + CLIP | Semantic validation of uploaded civic images |
+| Media | Cloudinary | Photo storage and delivery |
+| Auth | JWT + bcrypt | Identity and access control |
+| Geospatial | MongoDB 2dsphere | Nearby issue and worker matching |
+| Containerization | Docker | AI service packaging |
+
+## Local setup
+
+### Prerequisites
+
+- Node.js and npm
+- Python 3.11+
+- MongoDB instance
+- Cloudinary account
+- running AI service or equivalent environment
+
+### 1. Install backend dependencies
+
+```bash
+cd Server
+npm install
+```
+
+### 2. Install the citizen/worker frontend
+
+```bash
+cd Client
+npm install
+```
+
+### 3. Install the admin frontend
+
+```bash
+cd Admin
+npm install
+```
+
+### 4. Start the backend
+
+```bash
+cd Server
+npm run dev
+```
+
+### 5. Start the citizen/worker app
+
+```bash
+cd Client
+npm run dev
+```
+
+### 6. Start the admin app
+
+```bash
+cd Admin
+npm run dev
+```
+
+### 7. Start the AI service
+
+```bash
+cd Model
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+## Bottom line
+
+SnapFix is best described as a civic operations platform, not just a complaint app. It combines report intake, geospatial matching, AI-assisted validation, bid assignment, proof upload, citizen verification, and payment settlement into one workflow.
+
+The real engineering value is in the closed-loop lifecycle and the domain logic that connects the different actors. The repository demonstrates a coherent system for turning local civic complaints into accountable, verified action.
