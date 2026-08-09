@@ -21,8 +21,6 @@ Report → Validate → Deduplicate → Assign → Execute → Verify → Settle
 - 1 FastAPI-based AI validation service using CLIP
 - 1 Cloudinary media pipeline for photo uploads
 - 1 notification layer for state transitions and user-facing updates
-- 1 proof-before-payment rule for task settlement
-- 1 smoke-test file in the Python test directory
 
 ## Architecture
 
