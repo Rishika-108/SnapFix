@@ -1,11 +1,15 @@
 import React, { useRef } from "react";
+import { compressImage } from "../../utils/imageCompressor";
 
 const ImageUpload = ({ image, previewImage, handleImageUpload }) => {
   const fileInputRef = useRef(null);
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const file = e.target.files[0];
-    handleImageUpload(file);
+    if (file) {
+      const compressed = await compressImage(file);
+      handleImageUpload(compressed);
+    }
   };
 
   return (

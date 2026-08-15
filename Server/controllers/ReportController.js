@@ -5,6 +5,15 @@ import fs from "fs";
 import axios from "axios";
 import { createNotification } from "./notificationController.js";
 import FormData from 'form-data';
+import mongoose from 'mongoose';
+import sharp from 'sharp';
+import https from 'https';
+
+const httpsAgent = new https.Agent({
+    keepAlive: true,
+    maxSockets: 50,
+    keepAliveMsecs: 30000
+});
 
 const calculateCosineSimilarity = (vec1, vec2) => {
     if (!vec1 || !vec2 || vec1.length === 0 || vec1.length !== vec2.length) return 0;
@@ -15,151 +24,620 @@ const calculateCosineSimilarity = (vec1, vec2) => {
     return dotProduct;
 };
 
-//create a new report
+//create a new report - Original
+// const createReport = async (req, res) => {
+//     const start = performance.now();
+//     try {
+//         const { title, description, category, latitude, longitude } = req.body;
+//         // AI Logic for checking duplicate and classifying issue
+//         if (latitude == null || longitude == null) {
+//             return res.status(400).json({ success: false, message: "Location is missing" })
+//         }
+
+//         const userId = req.user?._id
+//         let cloudinaryResult;
+
+//         try {
+//             // Parallelize Cloudinary upload and AI processing for significantly faster response times
+//             const formData = new FormData();
+//             formData.append('file', fs.createReadStream(req.file.path));
+
+//             const baseUrl = process.env.AI_SERVER_URL.endsWith('/') 
+//                 ? process.env.AI_SERVER_URL.slice(0, -1) 
+//                 : process.env.AI_SERVER_URL;
+
+//             const [cloudinaryResult, aiResponse] = await Promise.all([
+//                 cloudinary.uploader.upload(req.file.path, { folder: "reports_uploads" }),
+//                 axios.post(`${baseUrl}/get_embedding`, formData, { 
+//                     headers: { ...formData.getHeaders() } 
+//                 }).catch(aiError => {
+//                     console.error("AI Engine Error:", aiError.message);
+//                     return { data: null }; // Fallback
+//                 })
+//             ]);
+
+//             const aiResult = aiResponse.data; // { embedding, is_valid, confidence }
+
+//             // Handle AI Rejection based on confidence threshold
+//             const CONFIDENCE_THRESHOLD = 0.5; 
+//             if (aiResult && (!aiResult.is_valid || aiResult.confidence < CONFIDENCE_THRESHOLD)) {
+//                 return res.status(400).json({ 
+//                     success: false, 
+//                     message: `Our AI system flagged this image as a non-civic issue or is not confident enough (Confidence: ${(aiResult.confidence * 100).toFixed(1)}%). Please upload a relevant and clear photo of a civic problem.`,
+//                     aiDetail: aiResult
+//                 });
+//             }
+
+//             // Handle duplicates - Check Mongo for nearby reports and compare embeddings
+//             const nearbyReports = await Report.find({
+//                 status: { $in: ['Pending', 'In Progress'] },
+//                 location: {
+//                     $near: {
+//                         $geometry: { type: "Point", coordinates: [parseFloat(longitude), parseFloat(latitude)] },
+//                         $maxDistance: 50 // 50 meters
+//                     }
+//                 }
+//             }).limit(10);
+
+//             let duplicateReport = null;
+//             if (aiResult && aiResult.embedding) {
+//                 for (const r of nearbyReports) {
+//                     const similarity = calculateCosineSimilarity(aiResult.embedding, r.embedding);
+//                     if (similarity > 0.9) { // 90% similarity threshold for CLIP embeddings
+//                         duplicateReport = r;
+//                         break;
+//                     }
+//                 }
+//             } else {
+//                 // Fallback to category/distance if no AI result
+//                 duplicateReport = nearbyReports.find(r => r.category === category);
+//             }
+
+//             if (duplicateReport) {
+//                 // Auto-upvote the existing report instead of creating a new one
+//                 const alreadyUpvoted = duplicateReport.upvotedUsers.some(
+//                     (uid) => uid.toString() === userId?.toString()
+//                 );
+
+//                 if (!alreadyUpvoted && userId) {
+//                     duplicateReport.upvotedUsers.push(userId);
+//                     duplicateReport.upvotes = duplicateReport.upvotedUsers.length;
+//                     await duplicateReport.save();
+
+//                     await createNotification(userId, "User", "Duplicate Issue Detected", `A similar issue in the category "${duplicateReport.category}" was already reported nearby. We've automatically added your upvote to the existing report to increase its priority!`);
+//                 }
+
+//                 return res.status(200).json({ 
+//                     success: true, 
+//                     message: "A similar issue is already reported. Your upvote has been added to it.",
+//                     report: duplicateReport,
+//                     isDuplicate: true
+//                 });
+//             }
+
+//             // --- SUSTAINABLE TRANSLATION LOGIC ---
+//             // In a real production app, you would call a translation API here (e.g., Google, DeepL, or your own AI).
+//             // For this hackathon, we initialize both to the input, but provide the structure for auto-translation.
+//             const localizedContent = {
+//                 en: { title, description },
+//                 hi: { title, description } // Placeholder for auto-translated Hindi
+//             };
+
+//             const report = await Report.create({
+//                 title, 
+//                 description, 
+//                 imageUrl: cloudinaryResult.secure_url, 
+//                 category: category, // Keep user category or use AI if implemented later
+//                 createdBy: userId || null,
+//                 location: {
+//                     type: 'Point',
+//                     coordinates: [parseFloat(longitude), parseFloat(latitude)]
+//                 },
+//                 priority: 'Low', // AI doesn't return priority in this version
+//                 aiConfidence: aiResult ? aiResult.confidence : 0,
+//                 embedding: aiResult ? aiResult.embedding : [],
+//                 localizedContent
+//             })
+
+//             if (userId) {
+//                 await User.findByIdAndUpdate(
+//                     userId,
+//                     { $push: { reports: report._id } },
+//                     { new: true }
+//                 );
+//                 await createNotification(userId, "User", "Report Created", `Your report "${title}" has been successfully submitted and is pending admin approval.`);
+//             }
+//               console.log(
+//               `POST /reports completed in ${duration.toFixed(2)} ms`
+//               ); 
+
+//             res.status(201).json({
+//                 success: true, message: "Report raised successfully",
+//                 report: {
+//                     id: report._id, title: report.title, description: report.description,
+//                     imageUrl: report.imageUrl, category: report.category, status: report.status,
+//                     upvotes: report.upvotes, createdBy: report.createdBy, location: report.location
+//                 }
+//             })
+//         } finally {
+//             // Delete temp file after everything is done
+//             if (req.file && req.file.path) {
+//                 fs.unlink(req.file.path, (err) => {
+//                     if (err) console.error("Failed to delete temp file:", err);
+//                 });
+//             }
+//         }
+//     } catch (error) {
+//         console.log(error.message);
+//         res.status(500).json({ success: false, message: "Could not create Report" })
+
+//     }
+// }
+
+// Create a new report - Time testing version
 const createReport = async (req, res) => {
+    const requestStart = performance.now();
+
     try {
-        const { title, description, category, latitude, longitude } = req.body;
-        // AI Logic for checking duplicate and classifying issue
+        const {
+            title,
+            description,
+            category,
+            latitude,
+            longitude
+        } = req.body;
+
+        // =========================================================
+        // 0. VALIDATION
+        // =========================================================
+
         if (latitude == null || longitude == null) {
-            return res.status(400).json({ success: false, message: "Location is missing" })
+            return res.status(400).json({
+                success: false,
+                message: "Location is missing"
+            });
         }
 
-        const userId = req.user?._id
-        let cloudinaryResult;
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "Image is required"
+            });
+        }
 
-        try {
-            // Parallelize Cloudinary upload and AI processing for significantly faster response times
-            const formData = new FormData();
-            formData.append('file', fs.createReadStream(req.file.path));
+        const userId = req.user?._id;
 
-            const baseUrl = process.env.AI_SERVER_URL.endsWith('/') 
-                ? process.env.AI_SERVER_URL.slice(0, -1) 
-                : process.env.AI_SERVER_URL;
+        // =========================================================
+        // 1. CLOUDINARY + AI
+        // =========================================================
 
-            const [cloudinaryResult, aiResponse] = await Promise.all([
-                cloudinary.uploader.upload(req.file.path, { folder: "reports_uploads" }),
-                axios.post(`${baseUrl}/get_embedding`, formData, { 
-                    headers: { ...formData.getHeaders() } 
-                }).catch(aiError => {
-                    console.error("AI Engine Error:", aiError.message);
-                    return { data: null }; // Fallback
-                })
-            ]);
+        const compressionStart = performance.now();
 
-            const aiResult = aiResponse.data; // { embedding, is_valid, confidence }
+        // 1. Fast in-memory downscaling & JPEG compression via sharp (takes ~10-15ms)
+        const compressedBuffer = await sharp(req.file.path)
+            .resize(1280, 1280, { fit: 'inside', withoutEnlargement: true })
+            .jpeg({ quality: 80 })
+            .toBuffer();
 
-            // Handle AI Rejection based on confidence threshold
-            const CONFIDENCE_THRESHOLD = 0.5; 
-            if (aiResult && (!aiResult.is_valid || aiResult.confidence < CONFIDENCE_THRESHOLD)) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: `Our AI system flagged this image as a non-civic issue or is not confident enough (Confidence: ${(aiResult.confidence * 100).toFixed(1)}%). Please upload a relevant and clear photo of a civic problem.`,
-                    aiDetail: aiResult
-                });
-            }
+        console.log(
+            `⏱️ Sharp compression: ${(performance.now() - compressionStart).toFixed(2)} ms ` +
+            `(${(req.file.size / 1024).toFixed(0)}KB -> ${(compressedBuffer.length / 1024).toFixed(0)}KB)`
+        );
 
-            // Handle duplicates - Check Mongo for nearby reports and compare embeddings
-            const nearbyReports = await Report.find({
-                status: { $in: ['Pending', 'In Progress'] },
-                location: {
-                    $near: {
-                        $geometry: { type: "Point", coordinates: [parseFloat(longitude), parseFloat(latitude)] },
-                        $maxDistance: 50 // 50 meters
+        const cloudinaryStart = performance.now();
+        const aiStart = performance.now();
+
+        const baseUrl = process.env.AI_SERVER_URL?.replace(/\/$/, "");
+
+        // 2. Stream compressed buffer (~100KB) to Cloudinary via upload_stream
+        const cloudinaryPromise = new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: "reports_uploads",
+                    resource_type: "image"
+                },
+                (error, result) => {
+                    if (error) {
+                        console.error("❌ Cloudinary Error:", error.message);
+                        reject(error);
+                    } else {
+                        console.log(
+                            `⏱️ Cloudinary upload: ${(performance.now() - cloudinaryStart).toFixed(2)} ms`
+                        );
+                        resolve(result);
                     }
                 }
-            }).limit(10);
+            );
+            uploadStream.end(compressedBuffer);
+        });
 
-            let duplicateReport = null;
-            if (aiResult && aiResult.embedding) {
-                for (const r of nearbyReports) {
-                    const similarity = calculateCosineSimilarity(aiResult.embedding, r.embedding);
-                    if (similarity > 0.9) { // 90% similarity threshold for CLIP embeddings
-                        duplicateReport = r;
-                        break;
-                    }
-                }
-            } else {
-                // Fallback to category/distance if no AI result
-                duplicateReport = nearbyReports.find(r => r.category === category);
+        // 3. Prepare AI payload with compressed buffer
+        const formData = new FormData();
+        formData.append(
+            "file",
+            compressedBuffer,
+            {
+                filename: "report.jpg",
+                contentType: "image/jpeg"
             }
+        );
 
-            if (duplicateReport) {
-                // Auto-upvote the existing report instead of creating a new one
-                const alreadyUpvoted = duplicateReport.upvotedUsers.some(
-                    (uid) => uid.toString() === userId?.toString()
+        // Start AI immediately
+        const aiPromise = axios
+            .post(
+                `${baseUrl}/get_embedding`,
+                formData,
+                {
+                    headers: {
+                        ...formData.getHeaders()
+                    },
+                    httpsAgent,
+                    timeout: 15000
+                }
+            )
+            .then(response => {
+                console.log(
+                    `⏱️ AI request: ${(performance.now() - aiStart).toFixed(2)} ms`
                 );
 
-                if (!alreadyUpvoted && userId) {
-                    duplicateReport.upvotedUsers.push(userId);
-                    duplicateReport.upvotes = duplicateReport.upvotedUsers.length;
-                    await duplicateReport.save();
-                    
-                    await createNotification(userId, "User", "Duplicate Issue Detected", `A similar issue in the category "${duplicateReport.category}" was already reported nearby. We've automatically added your upvote to the existing report to increase its priority!`);
-                }
+                return response;
+            })
+            .catch(error => {
+                console.error(
+                    "❌ AI Engine Error:",
+                    error.message
+                );
 
-                return res.status(200).json({ 
-                    success: true, 
-                    message: "A similar issue is already reported. Your upvote has been added to it.",
-                    report: duplicateReport,
-                    isDuplicate: true
-                });
+                console.log(
+                    `⏱️ AI request failed: ${(performance.now() - aiStart).toFixed(2)} ms`
+                );
+
+                return {
+                    data: null
+                };
+            });
+
+        const parallelStart = performance.now();
+
+        const [
+            cloudinaryResult,
+            aiResponse
+        ] = await Promise.all([
+            cloudinaryPromise,
+            aiPromise
+        ]);
+
+        console.log(
+            `⏱️ Cloudinary + AI total: ${(performance.now() - parallelStart).toFixed(2)} ms`
+        );
+
+        const aiResult = aiResponse?.data;
+
+        // =========================================================
+        // 2. AI VALIDATION
+        // =========================================================
+
+        const aiValidationStart = performance.now();
+
+        const CONFIDENCE_THRESHOLD = 0.5;
+
+        if (
+            aiResult &&
+            (
+                !aiResult.is_valid ||
+                aiResult.confidence < CONFIDENCE_THRESHOLD
+            )
+        ) {
+            console.log(
+                `⏱️ AI validation: ${(performance.now() - aiValidationStart).toFixed(2)} ms`
+            );
+
+            return res.status(400).json({
+                success: false,
+                message:
+                    `Our AI system flagged this image as a non-civic issue ` +
+                    `or is not confident enough ` +
+                    `(Confidence: ${(aiResult.confidence * 100).toFixed(1)}%). ` +
+                    `Please upload a relevant and clear photo of a civic problem.`,
+                aiDetail: aiResult
+            });
+        }
+
+        console.log(
+            `⏱️ AI validation: ${(performance.now() - aiValidationStart).toFixed(2)} ms`
+        );
+
+        // =========================================================
+        // 3. NEARBY REPORT QUERY
+        // =========================================================
+
+        const duplicateQueryStart = performance.now();
+
+        const nearbyReports = await Report.find({
+            status: {
+                $in: ["Pending", "In Progress"]
+            },
+            location: {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [
+                            Number(longitude),
+                            Number(latitude)
+                        ]
+                    },
+                    $maxDistance: 50
+                }
+            }
+        })
+            .select(
+                "_id category embedding upvotedUsers upvotes createdBy title"
+            )
+            .limit(10)
+            .lean();
+
+        console.log(
+            `⏱️ Nearby report query: ${(performance.now() - duplicateQueryStart).toFixed(2)} ms`
+        );
+
+        // =========================================================
+        // 4. DUPLICATE CHECK
+        // =========================================================
+
+        const similarityStart = performance.now();
+
+        let duplicateReport = null;
+
+        if (aiResult?.embedding) {
+
+            for (const report of nearbyReports) {
+
+                const similarity = calculateCosineSimilarity(
+                    aiResult.embedding,
+                    report.embedding
+                );
+
+                if (similarity > 0.9) {
+                    duplicateReport = report;
+                    break;
+                }
             }
 
-            // --- SUSTAINABLE TRANSLATION LOGIC ---
-            // In a real production app, you would call a translation API here (e.g., Google, DeepL, or your own AI).
-            // For this hackathon, we initialize both to the input, but provide the structure for auto-translation.
-            const localizedContent = {
-                en: { title, description },
-                hi: { title, description } // Placeholder for auto-translated Hindi
-            };
+        } else {
 
-            const report = await Report.create({
-                title, 
-                description, 
-                imageUrl: cloudinaryResult.secure_url, 
-                category: category, // Keep user category or use AI if implemented later
-                createdBy: userId || null,
-                location: {
-                    type: 'Point',
-                    coordinates: [parseFloat(longitude), parseFloat(latitude)]
-                },
-                priority: 'Low', // AI doesn't return priority in this version
-                aiConfidence: aiResult ? aiResult.confidence : 0,
-                embedding: aiResult ? aiResult.embedding : [],
-                localizedContent
-            })
+            duplicateReport = nearbyReports.find(
+                report => report.category === category
+            );
 
-            if (userId) {
+        }
+
+        console.log(
+            `⏱️ Embedding comparison: ${(performance.now() - similarityStart).toFixed(2)} ms`
+        );
+
+        // =========================================================
+        // 5. HANDLE DUPLICATE
+        // =========================================================
+
+        if (duplicateReport) {
+
+            const duplicateStart = performance.now();
+
+            const alreadyUpvoted =
+                duplicateReport.upvotedUsers?.some(
+                    uid =>
+                        uid.toString() === userId?.toString()
+                );
+
+            if (!alreadyUpvoted && userId) {
+
+                await Report.findByIdAndUpdate(
+                    duplicateReport._id,
+                    {
+                        $addToSet: {
+                            upvotedUsers: userId
+                        },
+                        $inc: {
+                            upvotes: 1
+                        }
+                    }
+                );
+
+                await createNotification(
+                    userId,
+                    "User",
+                    "Duplicate Issue Detected",
+                    `A similar issue in the category "${duplicateReport.category}" ` +
+                    `was already reported nearby. We've automatically added ` +
+                    `your upvote to the existing report to increase its priority!`
+                );
+            }
+
+            console.log(
+                `⏱️ Duplicate handling: ${(performance.now() - duplicateStart).toFixed(2)} ms`
+            );
+
+            console.log(
+                `🚀 TOTAL POST /reports: ${(performance.now() - requestStart).toFixed(2)} ms`
+            );
+
+            return res.status(200).json({
+                success: true,
+                message:
+                    "A similar issue is already reported. " +
+                    "Your upvote has been added to it.",
+                report: duplicateReport,
+                isDuplicate: true
+            });
+        }
+
+        // =========================================================
+        // 6. LOCALIZED CONTENT
+        // =========================================================
+
+        const localizedContent = {
+            en: {
+                title,
+                description
+            },
+            hi: {
+                title,
+                description
+            }
+        };
+
+        // =========================================================
+        // 7. CREATE REPORT
+        // =========================================================
+
+        const reportDbStart = performance.now();
+
+        const reportDoc = {
+            title,
+            description,
+            imageUrl: cloudinaryResult.secure_url,
+            category,
+            createdBy: userId ? new mongoose.Types.ObjectId(userId) : null,
+            location: {
+                type: "Point",
+                coordinates: [
+                    Number(longitude),
+                    Number(latitude)
+                ]
+            },
+            upvotes: 0,
+            upvotedUsers: [],
+            status: "Pending",
+            assignedGigWorker: null,
+            adminApprovalStatus: "Pending",
+            paymentReleased: false,
+            priority: "Low",
+            aiConfidence: aiResult?.confidence || 0,
+            embedding: aiResult?.embedding || [],
+            localizedContent,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+
+        const insertResult = await Report.collection.insertOne(reportDoc);
+        const report = { _id: insertResult.insertedId, ...reportDoc };
+
+        console.log(
+            `⏱️ Report DB create: ${(performance.now() - reportDbStart).toFixed(2)} ms`
+        );
+
+        // =========================================================
+        // 8. RESPONSE
+        // =========================================================
+
+        const totalTime = performance.now() - requestStart;
+
+        console.log(
+            `🚀 TOTAL POST /reports: ${totalTime.toFixed(2)} ms`
+        );
+
+        const responsePayload = {
+            success: true,
+            message: "Report raised successfully",
+            report: {
+                id: report._id,
+                title: report.title,
+                description: report.description,
+                imageUrl: report.imageUrl,
+                category: report.category,
+                status: report.status,
+                upvotes: report.upvotes,
+                createdBy: report.createdBy,
+                location: report.location
+            }
+        };
+
+        // Send response immediately.
+        // AI validation, duplicate detection and Report.create()
+        // have already completed at this point.
+        res.status(201).json(responsePayload);
+
+        // =========================================================
+        // 9. SECONDARY WORK
+        // =========================================================
+        // These operations are NOT required to decide whether the
+        // report is valid, so they don't need to delay the response.
+
+        if (userId) {
+
+            // USER UPDATE
+            const userUpdateStart = performance.now();
+
+            try {
                 await User.findByIdAndUpdate(
                     userId,
-                    { $push: { reports: report._id } },
-                    { new: true }
+                    {
+                        $push: {
+                            reports: report._id
+                        }
+                    }
                 );
-                await createNotification(userId, "User", "Report Created", `Your report "${title}" has been successfully submitted and is pending admin approval.`);
+
+                console.log(
+                    `⏱️ Background user update: ${(performance.now() - userUpdateStart).toFixed(2)} ms`
+                );
+
+            } catch (error) {
+                console.error(
+                    "❌ Background user update failed:",
+                    error.message
+                );
             }
 
-            res.status(201).json({
-                success: true, message: "Report raised successfully",
-                report: {
-                    id: report._id, title: report.title, description: report.description,
-                    imageUrl: report.imageUrl, category: report.category, status: report.status,
-                    upvotes: report.upvotes, createdBy: report.createdBy, location: report.location
-                }
-            })
-        } finally {
-            // Delete temp file after everything is done
-            if (req.file && req.file.path) {
-                fs.unlink(req.file.path, (err) => {
-                    if (err) console.error("Failed to delete temp file:", err);
-                });
+            // NOTIFICATION
+            const notificationStart = performance.now();
+
+            try {
+                await createNotification(
+                    userId,
+                    "User",
+                    "Report Created",
+                    `Your report "${title}" has been successfully submitted ` +
+                    `and is pending admin approval.`
+                );
+
+                console.log(
+                    `⏱️ Background notification: ${(performance.now() - notificationStart).toFixed(2)} ms`
+                );
+
+            } catch (error) {
+                console.error(
+                    "❌ Background notification failed:",
+                    error.message
+                );
             }
         }
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).json({ success: false, message: "Could not create Report" })
 
+        return;
+
+
+
+    } finally {
+
+        // =========================================================
+        // DELETE TEMPORARY FILE
+        // =========================================================
+
+        if (req.file?.path) {
+            fs.unlink(
+                req.file.path,
+                err => {
+                    if (err) {
+                        console.error(
+                            "Failed to delete temp file:",
+                            err
+                        );
+                    }
+                }
+            );
+        }
     }
-}
+};
 
 //Upvote an particular report
 const upvoteAReport = async (req, res) => {

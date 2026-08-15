@@ -32,7 +32,14 @@ LABELS = [
 try:
     logger.info("Loading CLIP model...")
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    if device == "cpu":
+        import os
+        num_cores = min(8, os.cpu_count() or 4)
+        torch.set_num_threads(num_cores)
+        logger.info(f"Set PyTorch CPU threads to {num_cores}")
+
     clip_model = CLIPModel.from_pretrained(CLIP_MODEL_NAME).to(device)
+    clip_model.eval()
     clip_processor = CLIPProcessor.from_pretrained(CLIP_MODEL_NAME)
     
     logger.info("Pre-calculating text embeddings for zero-shot classification...")
@@ -66,12 +73,14 @@ async def get_embedding(file: UploadFile = File(...)):
     try:
         image_bytes = await file.read()
         img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        # Direct fast resize to exact 224x224 CLIP input resolution
+        img = img.resize((224, 224), Image.Resampling.BILINEAR)
     except Exception as e:
         logger.exception("Error processing uploaded image")
         raise HTTPException(status_code=400, detail="Invalid image file")
 
     try:
-        with torch.no_grad():
+        with torch.inference_mode():
             # 1. Process image and get raw features
             inputs = clip_processor(images=img, return_tensors="pt").to(device)
             image_features = clip_model.get_image_features(**inputs)

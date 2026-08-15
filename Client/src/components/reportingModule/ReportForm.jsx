@@ -6,6 +6,8 @@ import { CitizenAPI } from "../../api/api";
 import CitizenNavbar from "../generalComponents/Navbars/CitizenNavbar";
 import { useTranslation } from "../../hooks/useTranslation";
 
+import { compressImage } from "../../utils/imageCompressor";
+
 const ReportForm = () => {
   const { t } = useTranslation();
   const [report, setReport] = useState({
@@ -73,11 +75,16 @@ const detectLocation = useCallback(() => {
     setLoading(true);
 
     try {
+      let imageToSend = report.image;
+      if (imageToSend) {
+        imageToSend = await compressImage(imageToSend);
+      }
+
       const formData = new FormData();
       formData.append("title", report.title);
       formData.append("description", report.description);
       formData.append("category", report.category);
-      formData.append("image", report.image);
+      formData.append("image", imageToSend);
       formData.append("latitude", report.location.lat);
       formData.append("longitude", report.location.lng);
       formData.append("locationName", report.location.name);
