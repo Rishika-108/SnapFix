@@ -5,10 +5,31 @@ const reportSchema = new mongoose.Schema({
     description: { type: String, required: true },
     category: { type: String, required: true },
     imageUrl: { type: String, required: true },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, 
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     location: {
         type: { type: String, enum: ['Point'], default: 'Point' },
-        coordinates: { type: [Number], required: true }
+        coordinates: {
+            type: [Number],
+            required: true,
+            validate: {
+                validator(coords) {
+                    if (!coords || coords.length !== 2) {
+                        return false;
+                    }
+
+                    const [longitude, latitude] = coords;
+
+                    return (
+                        longitude >= -180 &&
+                        longitude <= 180 &&
+                        latitude >= -90 &&
+                        latitude <= 90
+                    );
+                },
+                message:
+                    "Longitude must be between -180 and 180 and latitude must be between -90 and 90."
+            }
+        }
     },
     upvotes: { type: Number, default: 0 },
     upvotedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
