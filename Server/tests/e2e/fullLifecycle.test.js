@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import request from "supertest";
 import app from "../../app.js";
 import Report from "../../models/reportModel.js";
@@ -22,9 +23,6 @@ import {
 } from "../helpers/testHelpers.js";
 import { Writable } from "stream";
 
-jest.mock("cloudinary");
-jest.mock("axios");
-
 describe("Section 4: End-to-End (E2E) Full Lifecycle System Workflow Test", () => {
     beforeAll(async () => {
         setupTestEnv();
@@ -36,7 +34,7 @@ describe("Section 4: End-to-End (E2E) Full Lifecycle System Workflow Test", () =
 
     afterEach(async () => {
         await clearTestDB();
-        jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
     afterAll(async () => {
@@ -46,18 +44,21 @@ describe("Section 4: End-to-End (E2E) Full Lifecycle System Workflow Test", () =
     test("E2E-01: Complete Multi-Actor Civic Issue Lifecycle (Citizen -> AI -> Worker -> Admin -> Worker -> Citizen -> Admin)", async () => {
         const sampleImage = getSampleImagePath();
 
-        // Configure Mocks
-        cloudinary.uploader.upload_stream.mockImplementation((options, callback) => {
+        // Configure Spies
+        jest.spyOn(cloudinary.uploader, "upload_stream").mockImplementation((options, callback) => {
+            const cb = typeof options === 'function' ? options : callback;
             const writable = new Writable({ write(c, e, n) { n(); } });
-            setTimeout(() => callback(null, { secure_url: "https://res.cloudinary.com/test/civic_issue.jpg" }), 10);
+            process.nextTick(() => {
+                if (cb) cb(null, { secure_url: "https://res.cloudinary.com/test/civic_issue.jpg" });
+            });
             return writable;
         });
 
-        cloudinary.uploader.upload.mockResolvedValue({
+        jest.spyOn(cloudinary.uploader, "upload").mockResolvedValue({
             secure_url: "https://res.cloudinary.com/test/proof_completed.jpg"
         });
 
-        axios.post.mockResolvedValue({
+        jest.spyOn(axios, "post").mockResolvedValue({
             data: {
                 is_valid: true,
                 confidence: 0.94,

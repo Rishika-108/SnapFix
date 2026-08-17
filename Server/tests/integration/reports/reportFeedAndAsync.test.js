@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import request from "supertest";
 import app from "../../../app.js";
 import Report from "../../../models/reportModel.js";
@@ -17,9 +18,6 @@ import {
 } from "../../helpers/testHelpers.js";
 import { Writable } from "stream";
 
-jest.mock("cloudinary");
-jest.mock("axios");
-
 describe("Suite B: Feed Querying & Async Operations (IT-REP-04 & IT-REP-05)", () => {
     beforeAll(async () => {
         setupTestEnv();
@@ -29,7 +27,7 @@ describe("Suite B: Feed Querying & Async Operations (IT-REP-04 & IT-REP-05)", ()
 
     afterEach(async () => {
         await clearTestDB();
-        jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
     afterAll(async () => {
@@ -83,7 +81,7 @@ describe("Suite B: Feed Querying & Async Operations (IT-REP-04 & IT-REP-05)", ()
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.reports).toBeDefined();
-        
+
         const reportIds = res.body.reports.map(r => r._id.toString());
         expect(reportIds).toContain(nearbyReport._id.toString());
         expect(reportIds).not.toContain(distantReport._id.toString());
@@ -93,13 +91,16 @@ describe("Suite B: Feed Querying & Async Operations (IT-REP-04 & IT-REP-05)", ()
         const { citizen, token } = await createTestCitizen();
         const sampleImage = getSampleImagePath();
 
-        cloudinary.uploader.upload_stream.mockImplementation((options, callback) => {
+        jest.spyOn(cloudinary.uploader, "upload_stream").mockImplementation((options, callback) => {
+            const cb = typeof options === 'function' ? options : callback;
             const writable = new Writable({ write(c, e, n) { n(); } });
-            setTimeout(() => callback(null, { secure_url: "https://res.cloudinary.com/test/async.jpg" }), 10);
+            process.nextTick(() => {
+                if (cb) cb(null, { secure_url: "https://res.cloudinary.com/test/async.jpg" });
+            });
             return writable;
         });
 
-        axios.post.mockResolvedValueOnce({
+        jest.spyOn(axios, "post").mockResolvedValueOnce({
             data: {
                 is_valid: true,
                 confidence: 0.88,
@@ -123,7 +124,7 @@ describe("Suite B: Feed Querying & Async Operations (IT-REP-04 & IT-REP-05)", ()
         const reportId = res.body.report.id;
 
         // Allow async background work (User update & Notification creation) to complete
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 300));
 
         // 1. Verify User reports array updated
         const updatedUser = await User.findById(citizen._id);

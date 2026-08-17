@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import request from "supertest";
 import app from "../../../app.js";
 import Report from "../../../models/reportModel.js";
@@ -15,9 +16,6 @@ import {
 } from "../../helpers/testHelpers.js";
 import { Writable } from "stream";
 
-jest.mock("cloudinary");
-jest.mock("axios");
-
 describe("Suite B: IT-REP-01 Report Intake & Ingestion", () => {
     beforeAll(async () => {
         setupTestEnv();
@@ -27,7 +25,7 @@ describe("Suite B: IT-REP-01 Report Intake & Ingestion", () => {
 
     afterEach(async () => {
         await clearTestDB();
-        jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
     afterAll(async () => {
@@ -38,24 +36,27 @@ describe("Suite B: IT-REP-01 Report Intake & Ingestion", () => {
         const { citizen, token } = await createTestCitizen();
         const sampleImage = getSampleImagePath();
 
-        // Mock Cloudinary upload_stream
-        cloudinary.uploader.upload_stream.mockImplementation((options, callback) => {
+        // Spy on Cloudinary upload_stream
+        jest.spyOn(cloudinary.uploader, "upload_stream").mockImplementation((options, callback) => {
+            const cb = typeof options === 'function' ? options : callback;
             const writable = new Writable({
                 write(chunk, encoding, next) {
                     next();
                 }
             });
-            setTimeout(() => {
-                callback(null, {
-                    secure_url: "https://res.cloudinary.com/snapfix/image/upload/v123456/reports_uploads/sample.jpg"
-                });
-            }, 10);
+            process.nextTick(() => {
+                if (cb) {
+                    cb(null, {
+                        secure_url: "https://res.cloudinary.com/snapfix/image/upload/v123456/reports_uploads/sample.jpg"
+                    });
+                }
+            });
             return writable;
         });
 
-        // Mock AI FastAPI /get_embedding response
+        // Spy on AI FastAPI /get_embedding response
         const mockEmbedding = Array(512).fill(0.1);
-        axios.post.mockResolvedValueOnce({
+        jest.spyOn(axios, "post").mockResolvedValueOnce({
             data: {
                 is_valid: true,
                 confidence: 0.95,

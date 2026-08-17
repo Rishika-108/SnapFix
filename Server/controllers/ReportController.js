@@ -458,7 +458,8 @@ const createReport = async (req, res) => {
             } catch (error) {
                 console.error(
                     "❌ Background notification failed:",
-                    error.message
+                    error.message,
+
                 );
             }
         }
@@ -467,6 +468,12 @@ const createReport = async (req, res) => {
 
 
 
+    } catch (error) {
+        console.error("CREATE REPORT ERROR:", error);
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Internal Server Error"
+        });
     } finally {
 
         // =========================================================

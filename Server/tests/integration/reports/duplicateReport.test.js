@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import request from "supertest";
 import app from "../../../app.js";
 import Report from "../../../models/reportModel.js";
@@ -15,9 +16,6 @@ import {
 } from "../../helpers/testHelpers.js";
 import { Writable } from "stream";
 
-jest.mock("cloudinary");
-jest.mock("axios");
-
 describe("Suite B: Duplicate Suppression & Fallback (IT-REP-02 & IT-REP-03)", () => {
     beforeAll(async () => {
         setupTestEnv();
@@ -27,7 +25,7 @@ describe("Suite B: Duplicate Suppression & Fallback (IT-REP-02 & IT-REP-03)", ()
 
     afterEach(async () => {
         await clearTestDB();
-        jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
     afterAll(async () => {
@@ -57,14 +55,17 @@ describe("Suite B: Duplicate Suppression & Fallback (IT-REP-02 & IT-REP-03)", ()
             embedding: mockVec
         });
 
-        cloudinary.uploader.upload_stream.mockImplementation((options, callback) => {
+        jest.spyOn(cloudinary.uploader, "upload_stream").mockImplementation((options, callback) => {
+            const cb = typeof options === 'function' ? options : callback;
             const writable = new Writable({ write(c, e, n) { n(); } });
-            setTimeout(() => callback(null, { secure_url: "https://res.cloudinary.com/test/new.jpg" }), 10);
+            process.nextTick(() => {
+                if (cb) cb(null, { secure_url: "https://res.cloudinary.com/test/new.jpg" });
+            });
             return writable;
         });
 
         // AI returns identical vector -> Cosine similarity = 1.0 > 0.90
-        axios.post.mockResolvedValueOnce({
+        jest.spyOn(axios, "post").mockResolvedValueOnce({
             data: {
                 is_valid: true,
                 confidence: 0.92,
@@ -115,14 +116,17 @@ describe("Suite B: Duplicate Suppression & Fallback (IT-REP-02 & IT-REP-03)", ()
             upvotedUsers: []
         });
 
-        cloudinary.uploader.upload_stream.mockImplementation((options, callback) => {
+        jest.spyOn(cloudinary.uploader, "upload_stream").mockImplementation((options, callback) => {
+            const cb = typeof options === 'function' ? options : callback;
             const writable = new Writable({ write(c, e, n) { n(); } });
-            setTimeout(() => callback(null, { secure_url: "https://res.cloudinary.com/test/fallback.jpg" }), 10);
+            process.nextTick(() => {
+                if (cb) cb(null, { secure_url: "https://res.cloudinary.com/test/fallback.jpg" });
+            });
             return writable;
         });
 
         // Simulate AI service failure / timeout
-        axios.post.mockRejectedValueOnce(new Error("AI service connection timeout"));
+        jest.spyOn(axios, "post").mockRejectedValueOnce(new Error("AI service connection timeout"));
 
         // Submit new report within 50m with matching category "Water"
         const res = await request(app)
