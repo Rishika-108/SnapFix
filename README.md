@@ -254,8 +254,97 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 ---
 
+## 🧪 Automated Testing & Quality Assurance Suite
+
+SnapFix incorporates a comprehensive multi-tiered automated testing pyramid designed to ensure data integrity, spatial query correctness, role-based authorization, and resilient end-to-end civic operations across all services.
+
+```text
+               / \
+              /   \     E2E Workflow Tests (Full Multi-Actor Lifecycles)
+             / E2E \    [Tool: Supertest Pipeline / Playwright API]
+            /-------\
+           /         \   Integration Tests (Routes + Controllers + MongoDB + Cloudinary + AI)
+          / Integration \ [Tool: Jest (ESM) + Supertest + MongoDB Memory Server]
+         /---------------\
+        /                 \  Unit Tests (Pure Functions, Math, Schemas & Security Utilities)
+       /       Unit        \ [Tool: Jest Unit Runner, Pytest Native]
+      /---------------------\
+```
+
+### 1. Test Architecture & Stack
+
+| Layer | Tools & Libraries | Purpose |
+| :--- | :--- | :--- |
+| **Test Runner & Assertions** | `Jest` (Node ESM `--experimental-vm-modules`) | Test execution, global injection, and assertion framework |
+| **API Integration** | `Supertest` | HTTP request simulation against Express application routes |
+| **In-Memory Database** | `mongodb-memory-server` | Ephemeral, isolated MongoDB instance for fast zero-side-effect test runs |
+| **Mocking & Spies** | `jest.spyOn()`, `jest.fn()` | Interception of external I/O (Cloudinary streaming, FastAPI AI endpoints) |
+| **AI Perception Testing** | `pytest` + `httpx` (FastAPI TestClient) | Unit and integration testing for CLIP vision-language inference in Python |
+
+---
+
+### 2. Test Suite Organization & Coverage Breakdown
+
+The test suite is partitioned into **Unit**, **Integration**, and **End-to-End (E2E)** tiers across `Server/tests/` and `Model/test/`:
+
+#### 🧩 Unit Testing Suite (`Server/tests/unit/` & `Model/test/`)
+- **Mathematical & Algorithm Logic (`math/`):** Validates vector cosine similarity calculations (`UT-MATH-01` to `UT-MATH-04`), handling identical, orthogonal, dimension-mismatched, and null/empty embedding vectors.
+- **Model Schema Validations (`schema/`):** Validates Mongoose schema constraints, coordinates bounds (`Longitude -180..180, Latitude -90..90`), bid amounts (`min: 0`), task ratings (`max: 5`), approval status enums, user role defaults, and payment audit models (`UT-SCH-01` to `UT-SCH-07`).
+- **Security & Authentication Helpers (`auth/`):** Verifies bcrypt salt hashing/comparison and JWT token signing and payload decoding (`UT-AUTH-01`, `UT-AUTH-02`).
+- **AI Vector Normalization (`Model/test/`):** Confirms L2-normalization on CLIP prompt feature tensors ($\sqrt{\sum x_i^2} = 1.0 \pm 1e-5$).
+
+#### 🔌 Integration Testing Suite (`Server/tests/integration/`)
+- **Authentication & Role Resolution (`auth/auth.test.js`):** Citizen and gig worker registration, geospatial coordinates ingestion, duplicate email conflicts (409), password authentication (200/400), admin auto-bootstrap, and JWT authorization middleware guards (`IT-AUTH-01` to `IT-AUTH-10`).
+- **Report Ingestion & Deduplication (`reports/`):** Multipart photo upload with `sharp` buffer compression, parallel AI embedding attachment, spatial `$near` 50m radius search, vector duplicate suppression (> 0.90 similarity) with atomic upvoting, and category-matching fallback (`IT-REP-01` to `IT-REP-05`).
+- **User History & Community Feed (`reports/userReports.test.js`):** User `my-reports` retrieval with attached task status and ratings, empty states, upvote toggling mechanics, and location feed queries (`IT-USR-01` to `IT-USR-07`).
+- **Bidding & Worker Discovery (`bids/`):** Nearby job querying (5km radius), unique compound index bid constraints, and worker profile retrieval (`IT-BID-01` to `IT-BID-03`, `IT-WRK-01`, `IT-WRK-02`).
+- **Task Execution & Proof Verification (`tasks/tasks.test.js`):** Work proof photo submission with geo-tagging, duplicate proof blocking, citizen acceptance/rejection transitions, and assigned worker/admin access controls (`IT-TSK-01` to `IT-TSK-09`).
+- **Admin Operations & Audited Settlement (`admin/`):** Bid approval cascades, competing bids auto-rejection, double-assignment guards, completed task aggregation, and citizen-verified payout release (`IT-ADM-01` to `IT-ADM-07`, `IT-PAY-01`, `IT-PAY-02`).
+- **Event-Driven Notifications (`notifications/notifications.test.js`):** In-app notification queue retrieval and read-status updates (`IT-NOTIF-01`, `IT-NOTIF-02`).
+
+#### 🔄 End-to-End System Workflows (`Server/tests/e2e/`)
+- **Workflow 1: Full Happy Path Civic Lifecycle (`fullLifecycle.test.js`):**
+  $$\text{Citizen Report} \rightarrow \text{AI Validation} \rightarrow \text{Worker 5km Discovery} \rightarrow \text{Bid Submission} \rightarrow \text{Admin Approval} \rightarrow \text{Proof Upload} \rightarrow \text{Citizen Acceptance} \rightarrow \text{Payout Release}$$
+- **Workflow 2: Work Quality Dispute & Rejection (`workDisputeWorkflow.test.js`):**
+  Evaluates citizen rejection of sub-par work (`isSatisfied: false`), cascading status updates to `Rejected`, and automatic payout blocking.
+- **Workflow 3: Competitive Multi-Worker Bidding & Settlement (`competitiveBiddingWorkflow.test.js`):**
+  Evaluates competing bids from multiple gig workers, admin selection, automatic rejection of competing offers, proof submission, and atomic wallet credit with audit logs (`TXN-*`).
+
+---
+
+### 3. Running Automated Tests
+
+#### Backend API Test Suites (Unit, Integration & E2E)
+```bash
+cd Server
+
+# Run all test suites
+npm test
+
+# Run tests with code coverage report
+npm run test:coverage
+
+# Run tests in watch mode during development
+npm run test:watch
+
+# Run a specific test suite
+npm test -- tests/integration/auth/auth.test.js
+npm test -- tests/e2e/
+```
+
+#### AI Perception Service Test Suite (Python / FastAPI)
+```bash
+cd Model
+
+# Run FastAPI CLIP service tests
+pytest --verbose
+```
+
+---
+
 ## Bottom Line
 
 SnapFix is a civic operations platform that converts public complaints into an accountable, verified, and settled workflow. 
 
-Its real engineering value lies in its **parallel I/O orchestration**, **two-tier geospatial & vector duplicate suppression engine**, **pre-calculated zero-shot AI perception layer**, **fault-tolerant fallbacks**, and **proof-gated financial settlement ledger**.
+Its real engineering value lies in its **parallel I/O orchestration**, **two-tier geospatial & vector duplicate suppression engine**, **pre-calculated zero-shot AI perception layer**, **fault-tolerant fallbacks**, **proof-gated financial settlement ledger**, and **comprehensive automated testing pyramid**.
+

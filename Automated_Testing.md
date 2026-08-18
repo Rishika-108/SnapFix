@@ -29,28 +29,40 @@ This document provides a comprehensive test plan for the **SnapFix** civic issue
 
 ## 🔍 2. Test Coverage Audit & Untested Areas Breakdown
 
-Based on backend test coverage execution across the repository:
+Based on the automated testing implementation and test execution across the repository:
 
-### Current Baseline Metrics
-- **Overall Code Coverage**: 59.5% Statements | 45.7% Branches | 54.5% Functions | 60.0% Lines
+### Baseline Metrics & Testing Scope
+- **Initial Overall Code Coverage**: 59.5% Statements | 45.7% Branches | 54.5% Functions | 60.0% Lines
 - **Server Core (`Server/`)**: 84.2% Statements | 25.0% Branches
 - **Controllers (`Server/controllers/`)**: 49.9% Statements | 38.2% Branches | 44.7% Functions
 - **Middleware (`Server/middleware/`)**: 80.8% Statements | 76.9% Branches
 - **Models (`Server/models/`)**: 96.6% Statements | 95.8% Branches
 
-### Untested & Under-Tested Areas Summary
+---
 
-| Component / Module | Current Stmt Coverage | Untested Code Paths & Edge Cases | Target Test Cases |
-| :--- | :--- | :--- | :--- |
-| **`authController.js`** | **8.06%** | Registration & login for Citizens, Gig Workers, and Admin; password hashing validation; duplicate email conflicts; missing GPS coordinates; admin auto-creation fallback; 500 error catch blocks. | `IT-AUTH-01` to `IT-AUTH-07` |
-| **`userController.js`** | **5.88%** | `myReports` endpoint (`GET /api/user/my-reports`); population of associated task status, proofs, ratings; empty report list handling; unauthenticated access guards. | `IT-USR-01`, `IT-USR-02` |
-| **`notificationController.js`** | **26.31%** | Notification feed retrieval (`GET /api/notifications`); role-based filtering (User/Worker/Admin); marking notifications as read (`PUT /api/notifications/read/:id`). | `IT-NOTIF-01`, `IT-NOTIF-02` |
-| **`taskController.js`** | **48.38%** | Proof upload validation (missing files, coordinates); non-assigned worker rejection; duplicate proof submission block; citizen work rejection branch (`isSatisfied: false`); worker task listing (`getMyTasks`); task details access control (`getTaskDetail`). | `IT-TSK-01` to `IT-TSK-09` |
-| **`workerController.js`** | **58.33%** | Worker profile retrieval (`GET /api/worker/profile`); non-worker role access block (403); missing/invalid worker GPS coordinate handling in feed. | `IT-WRK-01`, `IT-WRK-02` |
-| **`adminController.js`** | **50.00%** | `viewAllReports` role authorization; `viewReportWithBid` missing reports/bids; `getCompletedTasks` payout list aggregation; non-admin 403 guards; unverified task payment block; unlinked worker payment edge cases. | `IT-ADM-04` to `IT-ADM-07` |
-| **`ReportController.js`** | **71.52%** | Missing image / location input validation; upvote toggle & removal (`POST /api/report/upvote/:id`); single report detail retrieval (`GET /api/report/get-report/:id`); zero-report user location query. | `IT-USR-03` to `IT-USR-07` |
-| **`authMiddleware.js`** | **80.76%** | Missing/malformed Authorization header (`Bearer`); unknown token roles; expired session/deleted user account handling; invalid token catch block. | `IT-AUTH-08` to `IT-AUTH-10` |
-| **Model Schemas** | **96.55%** | User schema validation rules, Worker approval status enums, Payment audit constraints, Notification enums. | `UT-SCH-04` to `UT-SCH-07` |
+### Coverage Audit, Implementation Status & Traceability Matrix
+
+| Component / Module | Baseline Stmt Coverage | Previously Untested Code Paths & Edge Cases | Implemented Test Suite File | Test Cases Implemented | Implementation Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`authController.js`** | **8.06%** | Citizen/Worker/Admin registration & login; bcrypt password hashing validation; duplicate email conflicts (409); missing worker GPS coordinates (400); admin auto-bootstrap from env; 500 error catches. | [tests/integration/auth/auth.test.js](file:///c:/Users/hp/Music/MyProjects/SnapFix/Server/tests/integration/auth/auth.test.js) | `IT-AUTH-01` to `IT-AUTH-07` | ✅ **Covered** |
+| **`userController.js`** | **5.88%** | `myReports` endpoint (`GET /api/user/my-reports`); population of associated task status, proofs, ratings; empty report array handling; unauthenticated access guards (401). | [tests/integration/reports/userReports.test.js](file:///c:/Users/hp/Music/MyProjects/SnapFix/Server/tests/integration/reports/userReports.test.js) | `IT-USR-01`, `IT-USR-02` | ✅ **Covered** |
+| **`notificationController.js`** | **26.31%** | Notification feed retrieval (`GET /api/notifications`); role-based filtering (User/Worker/Admin); marking notifications as read (`PUT /api/notifications/read/:id`); ID validation. | [tests/integration/notifications/notifications.test.js](file:///c:/Users/hp/Music/MyProjects/SnapFix/Server/tests/integration/notifications/notifications.test.js) | `IT-NOTIF-01`, `IT-NOTIF-02` | ✅ **Covered** |
+| **`taskController.js`** | **48.38%** | Proof upload input validation (missing file/coords); non-assigned worker rejection (403); duplicate proof submission block (400); citizen work rejection branch (`isSatisfied: false`); worker task listing (`getMyTasks`); task details access control (`getTaskDetail`). | [tests/integration/tasks/tasks.test.js](file:///c:/Users/hp/Music/MyProjects/SnapFix/Server/tests/integration/tasks/tasks.test.js) | `IT-TSK-01` to `IT-TSK-09` | ✅ **Covered** |
+| **`workerController.js`** | **58.33%** | Worker profile retrieval (`GET /api/worker/profile`); non-worker role access block (403); missing/invalid worker GPS coordinate handling in feed (400). | [tests/integration/bids/workerProfile.test.js](file:///c:/Users/hp/Music/MyProjects/SnapFix/Server/tests/integration/bids/workerProfile.test.js) | `IT-WRK-01`, `IT-WRK-02` | ✅ **Covered** |
+| **`adminController.js`** | **50.00%** | `viewAllReports` role authorization; `viewReportWithBid` missing reports/bids (404); `getCompletedTasks` payout list aggregation; non-admin 403 guards; unverified task payment block; duplicate payment release prevention. | [tests/integration/admin/adminReports.test.js](file:///c:/Users/hp/Music/MyProjects/SnapFix/Server/tests/integration/admin/adminReports.test.js) | `IT-ADM-04` to `IT-ADM-07` | ✅ **Covered** |
+| **`ReportController.js`** | **71.52%** | Missing image / location input validation (400); upvote toggle & removal (`POST /api/report/upvote/:id`); single report detail retrieval (`GET /api/report/get-report/:id`); zero-report user location query. | [tests/integration/reports/userReports.test.js](file:///c:/Users/hp/Music/MyProjects/SnapFix/Server/tests/integration/reports/userReports.test.js) | `IT-USR-03` to `IT-USR-07` | ✅ **Covered** |
+| **`authMiddleware.js`** | **80.76%** | Missing/malformed Authorization header (`Bearer`); unknown token roles; expired session/deleted user account handling (404); invalid/tampered token catch block (401). | [tests/integration/auth/auth.test.js](file:///c:/Users/hp/Music/MyProjects/SnapFix/Server/tests/integration/auth/auth.test.js) | `IT-AUTH-08` to `IT-AUTH-10` | ✅ **Covered** |
+| **Model Schemas** | **96.55%** | User schema validation rules, Worker approval status enums, Payment audit non-negative amounts, Notification userType enums. | [tests/unit/schema/](file:///c:/Users/hp/Music/MyProjects/SnapFix/Server/tests/unit/schema/) | `UT-SCH-04` to `UT-SCH-07` | ✅ **Covered** |
+| **E2E Workflows** | **Baseline** | Work quality disputes & citizen rejection lifecycle; multi-worker competitive bidding & financial settlement. | [tests/e2e/](file:///c:/Users/hp/Music/MyProjects/SnapFix/Server/tests/e2e/) | `E2E-WF-02`, `E2E-WF-03` | ✅ **Covered** |
+
+---
+
+### Key Gap Closures & Architectural Safeguards
+1. **Authentication & Identity Management:** Full coverage of all 3 identity types (`Citizen`, `GigWorker`, `Admin`) including password hashing verification, unique email constraint handling, auto-bootstrapping, and strict role resolution.
+2. **Task Lifecycle & Verification:** Implemented both positive acceptance (`isSatisfied: true`) and negative dispute/rework flows (`isSatisfied: false`), non-creator verification guards, and duplicate submission blocks.
+3. **Audited Financial Settlement:** Complete coverage for payment release preconditions (`verifiedByCitizen: true`, `status: "Completed"`), double-spend prevention, and immutable `Payment` record generation.
+4. **Geospatial & Vector Deduplication:** Fully tested edge cases including 50m spatial duplicate detection, cosine similarity $> 0.90$ atomic upvoting, AI timeout fallback, and empty location feeds.
+5. **Defensive Parameter Validation:** Added pre-query `mongoose.Types.ObjectId.isValid(id)` checks across controllers (`adminController`, `taskController`, `bidController`, `notificationController`, `ReportController`) to prevent unhandled CastErrors on undefined or invalid route parameters.
 
 ---
 
