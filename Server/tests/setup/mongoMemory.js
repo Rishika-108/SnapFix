@@ -6,8 +6,10 @@ let mongoServer;
 export const connectTestDB = async () => {
     if (mongoose.connection.readyState === 0) {
         mongoServer = await MongoMemoryServer.create({
-            instance: { dbName: "snapfix_test" },
-            spawnTimeoutMS: 60000
+            instance: {
+                dbName: "snapfix_test",
+                launchTimeout: 60000
+            }
         });
         const uri = mongoServer.getUri();
         await mongoose.connect(uri);

@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import jwt from "jsonwebtoken";
 import User from "../../models/userModel.js";
 import Worker from "../../models/gigWorkerModel.js";

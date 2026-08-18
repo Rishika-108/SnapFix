@@ -35,36 +35,37 @@ const viewReportWithBid = async (req, res) => {
         if (!['Local', 'State', 'Central', 'admin'].includes(req.role)) {
             return res.status(403).json({ success: false, message: "Access Denied" });
         }
-        const { id } = req.params // Obtains Report ID
+        const id = req.params.id || req.params.reportId || req.body?.reportId || req.body?.id;
+
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid or missing Report ID" });
+        }
 
         const report = await Report.findById(id)
-            .populate("createdBy", "name")
+            .populate("createdBy", "name");
 
         if (!report)
-            return res.status(404).json({ success: false, message: "Could not find this particular report" })
+            return res.status(404).json({ success: false, message: "Could not find this particular report" });
 
-        const getBids = await Bid.find({ reportId: id})
-            .populate("gigWorkerId", "name email")
+        const getBids = await Bid.find({ reportId: id })
+            .populate("gigWorkerId", "name email");
 
         if (getBids.length === 0)
-            return res.status(404).json({ success: false, message: "No Bids on this particular Report" })
+            return res.status(404).json({ success: false, message: "No Bids on this particular Report" });
 
         return res.status(200).json({
             success: true, message: "Report with bid fetched successfully",
             report, getBids
-
-        })
+        });
     } catch (error) {
-        console.log(error.message)
-        res.status(500).json({ success: false, message: "Could not fetch reports with the bids" })
+        console.log(error.message);
+        res.status(500).json({ success: false, message: "Could not fetch reports with the bids" });
     }
-
-}
+};
 
 //Updates the status of the bid for the worker side
 const approveBid = async (req, res) => {
   try {
-    console.log("🔥 approveBid HIT", req.params.id);
     const adminId = req.user?._id;
 
     if (!adminId) {
@@ -75,7 +76,11 @@ const approveBid = async (req, res) => {
       return res.status(403).json({ success: false, message: "Access Denied" });
     }
 
-    const { id } = req.params; // bidId
+    const id = req.params.id || req.params.bidId || req.body?.bidId || req.body?.id; // bidId
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid or missing Bid ID" });
+    }
 
     const bid = await Bid.findById(id);
     if (!bid) {
@@ -164,9 +169,13 @@ const paymentRelease = async (req, res) => {
     if (!['Local', 'State', 'Central', 'admin'].includes(req.role)) {
       return res.status(403).json({ success: false, message: "Access Denied" });
     }
-    const {id} = req.params // Task ID
+    const id = req.params.id || req.params.taskId || req.body?.taskId || req.body?.id; // Task ID
     
-    const task = await Task.findById(id).populate("reportId gigWorkerId")
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid or missing Task ID" });
+    }
+
+    const task = await Task.findById(id).populate("reportId gigWorkerId");
     if(!task) {
         return res.status(404).json({success: false, message: "Task Not Found"})
     }

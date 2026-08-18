@@ -499,30 +499,33 @@ const createReport = async (req, res) => {
 //Upvote an particular report
 const upvoteAReport = async (req, res) => {
     try {
-        const userId = req.user?._id
-        const { id } = req.params
-        const report = await Report.findById(id)
+        const userId = req.user?._id;
+        const id = req.params.id || req.body?.id;
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid or missing Report ID" });
+        }
+        const report = await Report.findById(id);
         if (!report) {
-            return res.status(404).json({ success: false, message: "Report not found" })
+            return res.status(404).json({ success: false, message: "Report not found" });
         }
         const alreadyUpvoted = report.upvotedUsers.some(
             (uid) => uid.toString() === userId.toString()
-        )
+        );
 
         if (alreadyUpvoted) {
-            report.upvotedUsers.pull(userId)
+            report.upvotedUsers.pull(userId);
             await User.findByIdAndUpdate(
                 userId,
                 { $pull: { upvotedReports: report._id } },
                 { new: true }
-            )
+            );
         } else {
-            report.upvotedUsers.push(userId)
+            report.upvotedUsers.push(userId);
             await User.findByIdAndUpdate(
                 userId,
                 { $addToSet: { upvotedReports: report._id } },
                 { new: true }
-            )
+            );
             // Notify report creator that someone upvoted their report
             if (report.createdBy && report.createdBy.toString() !== userId.toString()) {
                 await createNotification(report.createdBy, "User", "New Upvote", `Your report "${report.title}" received a new upvote!`);
@@ -530,30 +533,33 @@ const upvoteAReport = async (req, res) => {
         }
         report.upvotes = report.upvotedUsers.length;
         await report.save();
-        res.status(200).json({ success: true, message: alreadyUpvoted ? "Upvote removed" : "Issue upvoted", upvotes: report.upvotes })
+        res.status(200).json({ success: true, message: alreadyUpvoted ? "Upvote removed" : "Issue upvoted", upvotes: report.upvotes });
 
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({ success: false, message: "Could not upvote" })
+        res.status(500).json({ success: false, message: "Could not upvote" });
     }
-}
+};
 
 
 // Get to view a particular report in detail - Who is looking at report in detail - ? Gig worker? Maybe?
 // Is even citizen viewing it in detail before upvoting?
 const getParticularReports = async (req, res) => {
     try {
-        const { id } = req.params
-        const report = await Report.findById(id)
+        const id = req.params.id || req.body?.id;
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid or missing Report ID" });
+        }
+        const report = await Report.findById(id);
         if (!report)
-            return res.status(400).json({ success: false, message: "Could not find report" })
+            return res.status(400).json({ success: false, message: "Could not find report" });
 
-        res.status(200).json({ success: true, report })
+        res.status(200).json({ success: true, report });
     } catch (error) {
-        console.log(error.message)
-        res.status(500).json({ success: false, message: 'Could not fetch that report' })
+        console.log(error.message);
+        res.status(500).json({ success: false, message: 'Could not fetch that report' });
     }
-}
+};
 
 // Need to develop it for the community section
 const getReportsByLocation = async (req, res) => {

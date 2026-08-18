@@ -1,6 +1,7 @@
-import Report from "../models/reportModel.js"
-import Task from "../models/taskAssignmentModel.js"
-import { v2 as cloudinary } from 'cloudinary'
+import mongoose from "mongoose";
+import Report from "../models/reportModel.js";
+import Task from "../models/taskAssignmentModel.js";
+import { v2 as cloudinary } from 'cloudinary';
 import fs from "fs";
 import { createNotification } from "./notificationController.js";
 
@@ -8,7 +9,7 @@ import { createNotification } from "./notificationController.js";
 const uploadProof = async (req, res) => {
   try {
     // 1️⃣ Extract params FIRST
-    const { id } = req.params; // Task ID
+    const id = req.params.id || req.params.taskId || req.body?.taskId || req.body?.id; // Task ID
     const { remarks, latitude, longitude } = req.body;
 
     // 2️⃣ Auth checks
@@ -21,6 +22,13 @@ const uploadProof = async (req, res) => {
       return res.status(403).json({
         success: false,
         message: "Access denied: only gig workers can upload proof",
+      });
+    }
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or missing Task ID",
       });
     }
 
@@ -120,15 +128,19 @@ const verifyByCitizen = async (req, res) => {
         if (req.role !== 'citizen') {
             return res.status(403).json({ success: false, message: "Only the report creator can verify tasks" });
         }
-        const { id } = req.params
-        const { isSatisfied } = req.body
+        const id = req.params.id || req.params.taskId || req.body?.taskId || req.body?.id;
+        const { isSatisfied } = req.body;
+
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid or missing Task ID" });
+        }
 
         const completedTask = await Task.findById(id)
-            .populate("reportId", "createdBy status")
+            .populate("reportId", "createdBy status");
 
-        if (!completedTask) return res.status(404).json({ success: false, message: "Task not completed" })
+        if (!completedTask) return res.status(404).json({ success: false, message: "Task not completed" });
         if (completedTask?.reportId?.createdBy?.toString() !== userId.toString())
-            return res.status(403).json({ success: false, message: "You are not authorised to verify the task" })
+            return res.status(403).json({ success: false, message: "You are not authorised to verify the task" });
 
 
         if (isSatisfied) {
@@ -211,8 +223,13 @@ const getMyTasks = async (req, res) => {
 // Not currently much in use - Maybe for later versions
 const getTaskDetail = async (req, res) => {
     try {
-        const { id } = req.params
-        const task = await Task.findById(id)
+        const id = req.params.id || req.params.taskId || req.body?.taskId || req.body?.id;
+
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid or missing Task ID" });
+        }
+
+        const task = await Task.findById(id);
 
         if (!task) return res.status(404).json({ success: false, message: 'Tasks not assigned' })
 

@@ -131,8 +131,8 @@ describe("Suite B: Feed Querying & Async Operations (IT-REP-04 & IT-REP-05)", ()
         expect(updatedUser.reports.map(r => r.toString())).toContain(reportId.toString());
 
         // 2. Verify Notification created
-        const notifications = await Notification.find({ recipientId: citizen._id });
+        const notifications = await Notification.find({ userId: citizen._id });
         expect(notifications.length).toBeGreaterThan(0);
-        expect(notifications[0].title).toBe("Report Created");
+        expect(notifications[0].type).toBe("Report Created");
     });
 });

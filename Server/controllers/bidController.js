@@ -5,10 +5,14 @@ import Bid from "../models/bidModel.js"
 const createBid = async (req, res) => {
     try {
         const userId = req.user?._id
-        const { id } = req.params
-        const { bidAmount, resourceNote, duration } = req.body
+        const id = req.params.id || req.params.reportId || req.body?.reportId || req.body?.id;
+        const { bidAmount, resourceNote, duration } = req.body;
 
-        if (!userId) return res.status(400).json({ success: false, message: 'User not logged In' })
+        if (!userId) return res.status(400).json({ success: false, message: 'User not logged In' });
+
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid or missing Report ID" });
+        }
 
         // Check if report exists
         const report = await mongoose.model('Report').findById(id);

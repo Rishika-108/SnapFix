@@ -1,218 +1,774 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1786943464610" clover="3.2.0">
-  <project timestamp="1786943464610" name="All files">
-    <metrics statements="186" coveredstatements="33" conditionals="77" coveredconditionals="21" methods="17" coveredmethods="2" elements="280" coveredelements="56" complexity="0" loc="186" ncloc="186" packages="2" files="7" classes="7"/>
-    <package name="controllers">
-      <metrics statements="166" coveredstatements="14" conditionals="59" coveredconditionals="6" methods="16" coveredmethods="1"/>
-      <file name="ReportController.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\controllers\ReportController.js">
-        <metrics statements="147" coveredstatements="11" conditionals="55" coveredconditionals="6" methods="13" coveredmethods="1"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="18" count="1" type="stmt"/>
-        <line num="19" count="4" type="cond" truecount="6" falsecount="0"/>
-        <line num="20" count="2" type="stmt"/>
-        <line num="21" count="2" type="stmt"/>
-        <line num="22" count="4" type="stmt"/>
-        <line num="24" count="2" type="stmt"/>
-        <line num="28" count="1" type="stmt"/>
-        <line num="29" count="0" type="stmt"/>
-        <line num="31" count="0" type="stmt"/>
+<coverage generated="1787060805078" clover="3.2.0">
+  <project timestamp="1787060805078" name="All files">
+    <metrics statements="661" coveredstatements="552" conditionals="341" coveredconditionals="234" methods="55" coveredmethods="50" elements="1057" coveredelements="836" complexity="0" loc="661" ncloc="661" packages="7" files="29" classes="29"/>
+    <package name="Server">
+      <metrics statements="19" coveredstatements="16" conditionals="4" coveredconditionals="1" methods="1" coveredmethods="1"/>
+      <file name="app.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\app.js">
+        <metrics statements="19" coveredstatements="16" conditionals="4" coveredconditionals="1" methods="1" coveredmethods="1"/>
+        <line num="2" count="16" type="stmt"/>
+        <line num="17" count="16" type="stmt"/>
+        <line num="19" count="16" type="stmt"/>
+        <line num="21" count="16" type="stmt"/>
+        <line num="23" count="16" type="stmt"/>
+        <line num="30" count="16" type="stmt"/>
+        <line num="33" count="82" type="cond" truecount="1" falsecount="1"/>
+        <line num="34" count="82" type="stmt"/>
+        <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="38" count="0" type="stmt"/>
-        <line num="44" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="45" count="0" type="stmt"/>
-        <line num="51" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="52" count="0" type="stmt"/>
-        <line num="58" count="0" type="stmt"/>
-        <line num="64" count="0" type="stmt"/>
-        <line num="67" count="0" type="stmt"/>
-        <line num="72" count="0" type="stmt"/>
-        <line num="77" count="0" type="stmt"/>
-        <line num="78" count="0" type="stmt"/>
-        <line num="80" count="0" type="stmt"/>
-        <line num="83" count="0" type="stmt"/>
-        <line num="84" count="0" type="stmt"/>
-        <line num="90" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="91" count="0" type="stmt"/>
-        <line num="92" count="0" type="stmt"/>
-        <line num="94" count="0" type="stmt"/>
-        <line num="97" count="0" type="stmt"/>
-        <line num="101" count="0" type="stmt"/>
-        <line num="105" count="0" type="stmt"/>
-        <line num="106" count="0" type="stmt"/>
-        <line num="116" count="0" type="stmt"/>
-        <line num="129" count="0" type="stmt"/>
-        <line num="133" count="0" type="stmt"/>
-        <line num="136" count="0" type="stmt"/>
-        <line num="141" count="0" type="stmt"/>
-        <line num="145" count="0" type="stmt"/>
-        <line num="150" count="0" type="stmt"/>
-        <line num="155" count="0" type="stmt"/>
-        <line num="160" count="0" type="stmt"/>
-        <line num="164" count="0" type="stmt"/>
-        <line num="170" count="0" type="stmt"/>
-        <line num="172" count="0" type="stmt"/>
-        <line num="174" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="181" count="0" type="stmt"/>
-        <line num="185" count="0" type="stmt"/>
-        <line num="196" count="0" type="stmt"/>
-        <line num="204" count="0" type="stmt"/>
-        <line num="206" count="0" type="stmt"/>
-        <line num="229" count="0" type="stmt"/>
-        <line num="237" count="0" type="stmt"/>
-        <line num="239" count="0" type="stmt"/>
-        <line num="241" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="243" count="0" type="stmt"/>
-        <line num="245" count="0" type="stmt"/>
-        <line num="250" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="251" count="0" type="stmt"/>
-        <line num="252" count="0" type="stmt"/>
-        <line num="258" count="0" type="stmt"/>
-        <line num="259" count="0" type="stmt"/>
-        <line num="264" count="0" type="stmt"/>
-        <line num="272" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="274" count="0" type="stmt"/>
-        <line num="277" count="0" type="stmt"/>
-        <line num="279" count="0" type="stmt"/>
-        <line num="282" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="284" count="0" type="stmt"/>
-        <line num="296" count="0" type="stmt"/>
-        <line num="306" count="0" type="stmt"/>
-        <line num="310" count="0" type="stmt"/>
-        <line num="314" count="0" type="stmt"/>
-        <line num="328" count="0" type="stmt"/>
-        <line num="343" count="0" type="stmt"/>
-        <line num="345" count="0" type="stmt"/>
-        <line num="372" count="0" type="stmt"/>
-        <line num="373" count="0" type="stmt"/>
-        <line num="375" count="0" type="stmt"/>
-        <line num="383" count="0" type="stmt"/>
-        <line num="385" count="0" type="stmt"/>
-        <line num="389" count="0" type="stmt"/>
-        <line num="408" count="0" type="stmt"/>
-        <line num="416" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="419" count="0" type="stmt"/>
-        <line num="421" count="0" type="stmt"/>
-        <line num="422" count="0" type="stmt"/>
-        <line num="431" count="0" type="stmt"/>
-        <line num="436" count="0" type="stmt"/>
-        <line num="443" count="0" type="stmt"/>
-        <line num="445" count="0" type="stmt"/>
-        <line num="446" count="0" type="stmt"/>
-        <line num="454" count="0" type="stmt"/>
-        <line num="459" count="0" type="stmt"/>
-        <line num="466" count="0" type="stmt"/>
-        <line num="476" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="477" count="0" type="stmt"/>
-        <line num="480" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="481" count="0" type="stmt"/>
-        <line num="493" count="1" type="stmt"/>
-        <line num="494" count="0" type="stmt"/>
-        <line num="495" count="0" type="stmt"/>
-        <line num="496" count="0" type="stmt"/>
-        <line num="497" count="0" type="stmt"/>
-        <line num="498" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="499" count="0" type="stmt"/>
-        <line num="501" count="0" type="stmt"/>
-        <line num="502" count="0" type="stmt"/>
-        <line num="505" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="506" count="0" type="stmt"/>
-        <line num="507" count="0" type="stmt"/>
-        <line num="513" count="0" type="stmt"/>
-        <line num="514" count="0" type="stmt"/>
-        <line num="520" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="521" count="0" type="stmt"/>
-        <line num="524" count="0" type="stmt"/>
-        <line num="525" count="0" type="stmt"/>
-        <line num="526" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="529" count="0" type="stmt"/>
-        <line num="530" count="0" type="stmt"/>
-        <line num="537" count="1" type="stmt"/>
-        <line num="538" count="0" type="stmt"/>
-        <line num="539" count="0" type="stmt"/>
-        <line num="540" count="0" type="stmt"/>
-        <line num="541" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="542" count="0" type="stmt"/>
-        <line num="544" count="0" type="stmt"/>
-        <line num="546" count="0" type="stmt"/>
-        <line num="547" count="0" type="stmt"/>
-        <line num="552" count="1" type="stmt"/>
-        <line num="553" count="0" type="stmt"/>
-        <line num="554" count="0" type="stmt"/>
-        <line num="557" count="0" type="stmt"/>
-        <line num="559" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="560" count="0" type="stmt"/>
-        <line num="566" count="0" type="stmt"/>
-        <line num="567" count="0" type="stmt"/>
-        <line num="570" count="0" type="stmt"/>
-        <line num="571" count="0" type="stmt"/>
-        <line num="573" count="0" type="stmt"/>
-        <line num="585" count="0" type="stmt"/>
-        <line num="589" count="0" type="stmt"/>
-        <line num="590" count="0" type="stmt"/>
-        <line num="591" count="0" type="stmt"/>
-        <line num="594" count="0" type="stmt"/>
-        <line num="595" count="0" type="stmt"/>
-        <line num="602" count="0" type="stmt"/>
-        <line num="603" count="0" type="stmt"/>
-      </file>
-      <file name="notificationController.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\controllers\notificationController.js">
-        <metrics statements="19" coveredstatements="3" conditionals="4" coveredconditionals="0" methods="3" coveredmethods="0"/>
-        <line num="4" count="1" type="stmt"/>
-        <line num="5" count="0" type="stmt"/>
-        <line num="6" count="0" type="stmt"/>
-        <line num="7" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="9" count="0" type="stmt"/>
-        <line num="13" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="16" count="0" type="stmt"/>
-        <line num="21" count="1" type="stmt"/>
-        <line num="22" count="0" type="stmt"/>
-        <line num="23" count="0" type="stmt"/>
-        <line num="24" count="0" type="stmt"/>
-        <line num="25" count="0" type="stmt"/>
-        <line num="27" count="0" type="stmt"/>
-        <line num="28" count="0" type="stmt"/>
-        <line num="33" count="1" type="stmt"/>
-        <line num="34" count="0" type="stmt"/>
-        <line num="35" count="0" type="stmt"/>
-        <line num="37" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="49" count="16" type="stmt"/>
+        <line num="50" count="16" type="stmt"/>
+        <line num="51" count="16" type="stmt"/>
+        <line num="52" count="16" type="stmt"/>
+        <line num="53" count="16" type="stmt"/>
+        <line num="54" count="16" type="stmt"/>
+        <line num="55" count="16" type="stmt"/>
+        <line num="56" count="16" type="stmt"/>
       </file>
     </package>
-    <package name="models">
-      <metrics statements="20" coveredstatements="19" conditionals="18" coveredconditionals="15" methods="1" coveredmethods="1"/>
+    <package name="Server.controllers">
+      <metrics statements="501" coveredstatements="405" conditionals="281" coveredconditionals="189" methods="38" coveredmethods="37"/>
+      <file name="ReportController.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\controllers\ReportController.js">
+        <metrics statements="153" coveredstatements="134" conditionals="69" coveredconditionals="52" methods="13" coveredmethods="12"/>
+        <line num="12" count="17" type="stmt"/>
+        <line num="18" count="17" type="stmt"/>
+        <line num="19" count="5" type="cond" truecount="6" falsecount="0"/>
+        <line num="20" count="3" type="stmt"/>
+        <line num="21" count="3" type="stmt"/>
+        <line num="22" count="6" type="stmt"/>
+        <line num="24" count="3" type="stmt"/>
+        <line num="28" count="17" type="stmt"/>
+        <line num="29" count="9" type="stmt"/>
+        <line num="31" count="9" type="stmt"/>
+        <line num="38" count="9" type="stmt"/>
+        <line num="44" count="9" type="cond" truecount="4" falsecount="0"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="51" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="58" count="7" type="stmt"/>
+        <line num="64" count="7" type="stmt"/>
+        <line num="67" count="7" type="stmt"/>
+        <line num="72" count="7" type="stmt"/>
+        <line num="77" count="7" type="stmt"/>
+        <line num="78" count="7" type="stmt"/>
+        <line num="80" count="7" type="stmt"/>
+        <line num="83" count="7" type="stmt"/>
+        <line num="84" count="7" type="stmt"/>
+        <line num="90" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="94" count="7" type="stmt"/>
+        <line num="97" count="7" type="stmt"/>
+        <line num="101" count="7" type="stmt"/>
+        <line num="105" count="7" type="stmt"/>
+        <line num="106" count="7" type="stmt"/>
+        <line num="116" count="7" type="stmt"/>
+        <line num="129" count="6" type="stmt"/>
+        <line num="133" count="6" type="stmt"/>
+        <line num="136" count="1" type="stmt"/>
+        <line num="141" count="1" type="stmt"/>
+        <line num="145" count="1" type="stmt"/>
+        <line num="150" count="7" type="stmt"/>
+        <line num="155" count="7" type="stmt"/>
+        <line num="160" count="7" type="stmt"/>
+        <line num="164" count="7" type="stmt"/>
+        <line num="170" count="7" type="stmt"/>
+        <line num="172" count="7" type="stmt"/>
+        <line num="174" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="181" count="0" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="196" count="7" type="stmt"/>
+        <line num="204" count="7" type="stmt"/>
+        <line num="206" count="7" type="stmt"/>
+        <line num="229" count="7" type="stmt"/>
+        <line num="237" count="7" type="stmt"/>
+        <line num="239" count="7" type="stmt"/>
+        <line num="241" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="243" count="6" type="stmt"/>
+        <line num="245" count="1" type="stmt"/>
+        <line num="250" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="251" count="1" type="stmt"/>
+        <line num="252" count="1" type="stmt"/>
+        <line num="258" count="1" type="stmt"/>
+        <line num="259" count="1" type="stmt"/>
+        <line num="264" count="7" type="stmt"/>
+        <line num="272" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="274" count="2" type="stmt"/>
+        <line num="277" count="2" type="stmt"/>
+        <line num="279" count="0" type="stmt"/>
+        <line num="282" count="2" type="cond" truecount="3" falsecount="1"/>
+        <line num="284" count="2" type="stmt"/>
+        <line num="296" count="2" type="stmt"/>
+        <line num="306" count="2" type="stmt"/>
+        <line num="310" count="2" type="stmt"/>
+        <line num="314" count="2" type="stmt"/>
+        <line num="328" count="5" type="stmt"/>
+        <line num="343" count="5" type="stmt"/>
+        <line num="345" count="5" type="stmt"/>
+        <line num="372" count="5" type="stmt"/>
+        <line num="373" count="5" type="stmt"/>
+        <line num="375" count="5" type="stmt"/>
+        <line num="383" count="5" type="stmt"/>
+        <line num="385" count="5" type="stmt"/>
+        <line num="389" count="5" type="stmt"/>
+        <line num="408" count="5" type="stmt"/>
+        <line num="416" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="419" count="5" type="stmt"/>
+        <line num="421" count="5" type="stmt"/>
+        <line num="422" count="5" type="stmt"/>
+        <line num="431" count="5" type="stmt"/>
+        <line num="436" count="0" type="stmt"/>
+        <line num="443" count="5" type="stmt"/>
+        <line num="445" count="5" type="stmt"/>
+        <line num="446" count="5" type="stmt"/>
+        <line num="454" count="5" type="stmt"/>
+        <line num="459" count="0" type="stmt"/>
+        <line num="467" count="5" type="stmt"/>
+        <line num="472" count="0" type="stmt"/>
+        <line num="473" count="0" type="stmt"/>
+        <line num="483" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="484" count="7" type="stmt"/>
+        <line num="487" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="488" count="0" type="stmt"/>
+        <line num="500" count="17" type="stmt"/>
+        <line num="501" count="2" type="stmt"/>
+        <line num="502" count="2" type="stmt"/>
+        <line num="503" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="504" count="2" type="cond" truecount="3" falsecount="1"/>
+        <line num="505" count="0" type="stmt"/>
+        <line num="507" count="2" type="stmt"/>
+        <line num="508" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="509" count="0" type="stmt"/>
+        <line num="511" count="2" type="stmt"/>
+        <line num="512" count="1" type="stmt"/>
+        <line num="515" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="516" count="1" type="stmt"/>
+        <line num="517" count="1" type="stmt"/>
+        <line num="523" count="1" type="stmt"/>
+        <line num="524" count="1" type="stmt"/>
+        <line num="530" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="531" count="1" type="stmt"/>
+        <line num="534" count="2" type="stmt"/>
+        <line num="535" count="2" type="stmt"/>
+        <line num="536" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="539" count="0" type="stmt"/>
+        <line num="540" count="0" type="stmt"/>
+        <line num="547" count="17" type="stmt"/>
+        <line num="548" count="2" type="stmt"/>
+        <line num="549" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="550" count="2" type="cond" truecount="3" falsecount="1"/>
+        <line num="551" count="0" type="stmt"/>
+        <line num="553" count="2" type="stmt"/>
+        <line num="554" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="555" count="1" type="stmt"/>
+        <line num="557" count="1" type="stmt"/>
+        <line num="559" count="0" type="stmt"/>
+        <line num="560" count="0" type="stmt"/>
+        <line num="565" count="17" type="stmt"/>
+        <line num="566" count="2" type="stmt"/>
+        <line num="567" count="2" type="stmt"/>
+        <line num="570" count="2" type="stmt"/>
+        <line num="572" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="573" count="1" type="stmt"/>
+        <line num="579" count="1" type="stmt"/>
+        <line num="580" count="1" type="stmt"/>
+        <line num="583" count="1" type="stmt"/>
+        <line num="584" count="1" type="stmt"/>
+        <line num="586" count="1" type="stmt"/>
+        <line num="598" count="1" type="stmt"/>
+        <line num="602" count="1" type="stmt"/>
+        <line num="603" count="1" type="stmt"/>
+        <line num="604" count="2" type="stmt"/>
+        <line num="607" count="1" type="stmt"/>
+        <line num="608" count="1" type="stmt"/>
+        <line num="615" count="0" type="stmt"/>
+        <line num="616" count="0" type="stmt"/>
+      </file>
+      <file name="adminController.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\controllers\adminController.js">
+        <metrics statements="113" coveredstatements="84" conditionals="82" coveredconditionals="49" methods="6" coveredmethods="6"/>
+        <line num="11" count="16" type="stmt"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="17" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="29" count="16" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="31" count="3" type="stmt"/>
+        <line num="32" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="35" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="38" count="3" type="cond" truecount="1" falsecount="3"/>
+        <line num="40" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="44" count="3" type="stmt"/>
+        <line num="47" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="50" count="3" type="stmt"/>
+        <line num="53" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="67" count="16" type="stmt"/>
+        <line num="68" count="6" type="stmt"/>
+        <line num="69" count="6" type="stmt"/>
+        <line num="71" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="75" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="79" count="6" type="cond" truecount="1" falsecount="3"/>
+        <line num="81" count="6" type="cond" truecount="3" falsecount="1"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="85" count="6" type="stmt"/>
+        <line num="86" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="90" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="95" count="6" type="stmt"/>
+        <line num="96" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="97" count="1" type="stmt"/>
+        <line num="104" count="5" type="stmt"/>
+        <line num="105" count="5" type="stmt"/>
+        <line num="108" count="5" type="stmt"/>
+        <line num="114" count="5" type="stmt"/>
+        <line num="123" count="5" type="stmt"/>
+        <line num="135" count="5" type="stmt"/>
+        <line num="144" count="5" type="stmt"/>
+        <line num="147" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="148" count="5" type="stmt"/>
+        <line num="151" count="5" type="stmt"/>
+        <line num="155" count="0" type="stmt"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="162" count="16" type="stmt"/>
+        <line num="163" count="6" type="stmt"/>
+        <line num="164" count="6" type="stmt"/>
+        <line num="165" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="166" count="0" type="stmt"/>
+        <line num="169" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="170" count="0" type="stmt"/>
+        <line num="172" count="6" type="cond" truecount="1" falsecount="3"/>
+        <line num="174" count="6" type="cond" truecount="3" falsecount="1"/>
+        <line num="175" count="0" type="stmt"/>
+        <line num="178" count="6" type="stmt"/>
+        <line num="179" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="180" count="0" type="stmt"/>
+        <line num="184" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="185" count="2" type="stmt"/>
+        <line num="191" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="192" count="1" type="stmt"/>
+        <line num="195" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="196" count="0" type="stmt"/>
+        <line num="200" count="3" type="stmt"/>
+        <line num="206" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="207" count="0" type="stmt"/>
+        <line num="210" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="213" count="3" type="stmt"/>
+        <line num="214" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="215" count="0" type="stmt"/>
+        <line num="219" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="220" count="3" type="stmt"/>
+        <line num="223" count="3" type="stmt"/>
+        <line num="224" count="3" type="stmt"/>
+        <line num="233" count="3" type="stmt"/>
+        <line num="236" count="3" type="stmt"/>
+        <line num="237" count="3" type="stmt"/>
+        <line num="241" count="3" type="stmt"/>
+        <line num="249" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="250" count="3" type="stmt"/>
+        <line num="258" count="3" type="stmt"/>
+        <line num="266" count="0" type="stmt"/>
+        <line num="267" count="0" type="stmt"/>
+        <line num="272" count="16" type="stmt"/>
+        <line num="273" count="2" type="stmt"/>
+        <line num="274" count="2" type="stmt"/>
+        <line num="275" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="276" count="0" type="stmt"/>
+        <line num="279" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="280" count="0" type="stmt"/>
+        <line num="283" count="2" type="stmt"/>
+        <line num="292" count="2" type="stmt"/>
+        <line num="293" count="2" type="stmt"/>
+        <line num="299" count="2" type="stmt"/>
+        <line num="306" count="2" type="stmt"/>
+        <line num="311" count="0" type="stmt"/>
+        <line num="312" count="0" type="stmt"/>
+      </file>
+      <file name="authController.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\controllers\authController.js">
+        <metrics statements="60" coveredstatements="47" conditionals="24" coveredconditionals="19" methods="6" coveredmethods="6"/>
+        <line num="7" count="16" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="9" count="4" type="stmt"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="13" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="3" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="30" count="16" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="34" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="49" count="16" type="stmt"/>
+        <line num="50" count="3" type="stmt"/>
+        <line num="51" count="3" type="stmt"/>
+        <line num="52" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="2" type="stmt"/>
+        <line num="57" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="60" count="2" type="stmt"/>
+        <line num="61" count="2" type="stmt"/>
+        <line num="62" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="65" count="2" type="stmt"/>
+        <line num="73" count="2" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="87" count="16" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="90" count="1" type="stmt"/>
+        <line num="91" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="94" count="1" type="stmt"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="109" count="16" type="stmt"/>
+        <line num="110" count="1" type="stmt"/>
+        <line num="111" count="1" type="stmt"/>
+        <line num="112" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="115" count="1" type="stmt"/>
+        <line num="117" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="119" count="1" type="stmt"/>
+        <line num="120" count="1" type="stmt"/>
+        <line num="127" count="1" type="stmt"/>
+        <line num="128" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="132" count="1" type="stmt"/>
+        <line num="133" count="1" type="stmt"/>
+        <line num="135" count="0" type="stmt"/>
+        <line num="136" count="0" type="stmt"/>
+      </file>
+      <file name="bidController.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\controllers\bidController.js">
+        <metrics statements="18" coveredstatements="14" conditionals="14" coveredconditionals="8" methods="1" coveredmethods="1"/>
+        <line num="5" count="16" type="stmt"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="8" count="6" type="cond" truecount="1" falsecount="3"/>
+        <line num="9" count="6" type="stmt"/>
+        <line num="11" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="13" count="6" type="cond" truecount="3" falsecount="1"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="18" count="6" type="stmt"/>
+        <line num="19" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="23" count="6" type="stmt"/>
+        <line num="24" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="30" count="5" type="stmt"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+      </file>
+      <file name="notificationController.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\controllers\notificationController.js">
+        <metrics statements="21" coveredstatements="15" conditionals="10" coveredconditionals="5" methods="3" coveredmethods="3"/>
+        <line num="5" count="17" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="1" type="cond" truecount="1" falsecount="3"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="22" count="17" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="24" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="25" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="37" count="17" type="stmt"/>
+        <line num="38" count="33" type="stmt"/>
+        <line num="39" count="33" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+      </file>
+      <file name="taskController.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\controllers\taskController.js">
+        <metrics statements="96" coveredstatements="80" conditionals="64" coveredconditionals="43" methods="4" coveredmethods="4"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="10" count="9" type="stmt"/>
+        <line num="12" count="9" type="cond" truecount="1" falsecount="3"/>
+        <line num="13" count="9" type="stmt"/>
+        <line num="16" count="9" type="stmt"/>
+        <line num="17" count="9" type="cond" truecount="1" falsecount="1"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="21" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="28" count="8" type="cond" truecount="3" falsecount="1"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="36" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="43" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="51" count="6" type="stmt"/>
+        <line num="52" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="60" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="67" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="75" count="4" type="stmt"/>
+        <line num="80" count="4" type="stmt"/>
+        <line num="83" count="4" type="stmt"/>
+        <line num="93" count="4" type="stmt"/>
+        <line num="94" count="4" type="stmt"/>
+        <line num="97" count="4" type="stmt"/>
+        <line num="105" count="4" type="stmt"/>
+        <line num="106" count="4" type="cond" truecount="3" falsecount="1"/>
+        <line num="107" count="4" type="stmt"/>
+        <line num="110" count="4" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="124" count="16" type="stmt"/>
+        <line num="125" count="6" type="stmt"/>
+        <line num="126" count="6" type="stmt"/>
+        <line num="127" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="128" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="131" count="6" type="cond" truecount="1" falsecount="3"/>
+        <line num="132" count="6" type="stmt"/>
+        <line num="134" count="6" type="cond" truecount="3" falsecount="1"/>
+        <line num="135" count="0" type="stmt"/>
+        <line num="138" count="6" type="stmt"/>
+        <line num="141" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="142" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="143" count="1" type="stmt"/>
+        <line num="146" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="147" count="3" type="stmt"/>
+        <line num="148" count="3" type="stmt"/>
+        <line num="149" count="3" type="stmt"/>
+        <line num="150" count="3" type="stmt"/>
+        <line num="152" count="3" type="stmt"/>
+        <line num="155" count="3" type="stmt"/>
+        <line num="157" count="3" type="stmt"/>
+        <line num="160" count="3" type="stmt"/>
+        <line num="162" count="3" type="stmt"/>
+        <line num="164" count="2" type="stmt"/>
+        <line num="165" count="2" type="stmt"/>
+        <line num="166" count="2" type="stmt"/>
+        <line num="167" count="2" type="stmt"/>
+        <line num="169" count="2" type="stmt"/>
+        <line num="172" count="2" type="stmt"/>
+        <line num="174" count="2" type="stmt"/>
+        <line num="177" count="2" type="stmt"/>
+        <line num="179" count="2" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="186" count="0" type="stmt"/>
+        <line num="191" count="16" type="stmt"/>
+        <line num="192" count="1" type="stmt"/>
+        <line num="193" count="1" type="stmt"/>
+        <line num="195" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="196" count="0" type="stmt"/>
+        <line num="199" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="200" count="0" type="stmt"/>
+        <line num="203" count="1" type="stmt"/>
+        <line num="207" count="1" type="stmt"/>
+        <line num="213" count="0" type="stmt"/>
+        <line num="214" count="0" type="stmt"/>
+        <line num="224" count="16" type="stmt"/>
+        <line num="225" count="3" type="stmt"/>
+        <line num="226" count="3" type="cond" truecount="1" falsecount="3"/>
+        <line num="228" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="229" count="0" type="stmt"/>
+        <line num="232" count="3" type="stmt"/>
+        <line num="234" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="236" count="3" type="stmt"/>
+        <line num="237" count="3" type="stmt"/>
+        <line num="239" count="3" type="stmt"/>
+        <line num="240" count="3" type="stmt"/>
+        <line num="242" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="243" count="1" type="stmt"/>
+        <line num="246" count="2" type="stmt"/>
+        <line num="248" count="0" type="stmt"/>
+        <line num="249" count="0" type="stmt"/>
+      </file>
+      <file name="userController.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\controllers\userController.js">
+        <metrics statements="17" coveredstatements="13" conditionals="10" coveredconditionals="6" methods="2" coveredmethods="2"/>
+        <line num="4" count="16" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="7" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="25" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="32" count="2" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+      </file>
+      <file name="workerController.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\controllers\workerController.js">
+        <metrics statements="23" coveredstatements="18" conditionals="8" coveredconditionals="7" methods="3" coveredmethods="3"/>
+        <line num="6" count="16" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="11" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="43" count="2" type="stmt"/>
+        <line num="44" count="2" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="63" count="16" type="stmt"/>
+        <line num="64" count="2" type="stmt"/>
+        <line num="65" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="Server.middleware">
+      <metrics statements="26" coveredstatements="25" conditionals="13" coveredconditionals="12" methods="2" coveredmethods="2"/>
+      <file name="authMiddleware.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\middleware\authMiddleware.js">
+        <metrics statements="23" coveredstatements="22" conditionals="13" coveredconditionals="12" methods="1" coveredmethods="1"/>
+        <line num="7" count="16" type="stmt"/>
+        <line num="8" count="69" type="stmt"/>
+        <line num="9" count="69" type="stmt"/>
+        <line num="11" count="69" type="cond" truecount="4" falsecount="0"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="14" count="68" type="stmt"/>
+        <line num="16" count="68" type="stmt"/>
+        <line num="20" count="67" type="cond" truecount="6" falsecount="1"/>
+        <line num="22" count="28" type="stmt"/>
+        <line num="23" count="28" type="stmt"/>
+        <line num="25" count="20" type="stmt"/>
+        <line num="26" count="20" type="stmt"/>
+        <line num="31" count="19" type="stmt"/>
+        <line num="32" count="19" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="37" count="67" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="41" count="66" type="stmt"/>
+        <line num="42" count="66" type="stmt"/>
+        <line num="43" count="66" type="stmt"/>
+        <line num="44" count="66" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+      </file>
+      <file name="multer.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\middleware\multer.js">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="3" count="16" type="stmt"/>
+        <line num="5" count="15" type="stmt"/>
+        <line num="9" count="16" type="stmt"/>
+      </file>
+    </package>
+    <package name="Server.models">
+      <metrics statements="29" coveredstatements="28" conditionals="24" coveredconditionals="23" methods="1" coveredmethods="1"/>
+      <file name="adminModel.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\models\adminModel.js">
+        <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
+        <line num="3" count="16" type="stmt"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="11" count="16" type="cond" truecount="2" falsecount="0"/>
+      </file>
       <file name="bidModel.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\models\bidModel.js">
         <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="17" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="3" count="17" type="stmt"/>
+        <line num="12" count="17" type="stmt"/>
+        <line num="17" count="17" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="gigWorkerModel.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\models\gigWorkerModel.js">
+        <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
+        <line num="3" count="17" type="stmt"/>
+        <line num="20" count="17" type="stmt"/>
+        <line num="21" count="17" type="cond" truecount="2" falsecount="0"/>
       </file>
       <file name="notificationModel.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\models\notificationModel.js">
         <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="11" count="1" type="stmt"/>
-        <line num="13" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="3" count="18" type="stmt"/>
+        <line num="11" count="18" type="stmt"/>
+        <line num="13" count="18" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="paymentModel.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\models\paymentModel.js">
+        <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
+        <line num="3" count="17" type="stmt"/>
+        <line num="13" count="17" type="stmt"/>
+        <line num="16" count="17" type="cond" truecount="2" falsecount="0"/>
       </file>
       <file name="reportModel.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\models\reportModel.js">
-        <metrics statements="8" coveredstatements="7" conditionals="10" coveredconditionals="7" methods="1" coveredmethods="1"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="16" count="1" type="cond" truecount="3" falsecount="1"/>
+        <metrics statements="8" coveredstatements="7" conditionals="10" coveredconditionals="9" methods="1" coveredmethods="1"/>
+        <line num="3" count="18" type="stmt"/>
+        <line num="16" count="34" type="cond" truecount="3" falsecount="1"/>
         <line num="17" count="0" type="stmt"/>
-        <line num="20" count="1" type="stmt"/>
-        <line num="22" count="1" type="stmt"/>
-        <line num="49" count="2" type="stmt"/>
-        <line num="50" count="2" type="stmt"/>
-        <line num="52" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="34" type="stmt"/>
+        <line num="22" count="34" type="stmt"/>
+        <line num="49" count="18" type="stmt"/>
+        <line num="50" count="18" type="stmt"/>
+        <line num="52" count="18" type="cond" truecount="2" falsecount="0"/>
       </file>
       <file name="taskAssignmentModel.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\models\taskAssignmentModel.js">
         <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="24" count="1" type="stmt"/>
-        <line num="27" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="3" count="17" type="stmt"/>
+        <line num="24" count="17" type="stmt"/>
+        <line num="27" count="17" type="cond" truecount="2" falsecount="0"/>
       </file>
       <file name="userModel.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\models\userModel.js">
         <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="14" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="3" count="18" type="stmt"/>
+        <line num="12" count="18" type="stmt"/>
+        <line num="14" count="18" type="cond" truecount="2" falsecount="0"/>
+      </file>
+    </package>
+    <package name="Server.routes">
+      <metrics statements="32" coveredstatements="32" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="adminRoute.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\routes\adminRoute.js">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="5" count="16" type="stmt"/>
+        <line num="7" count="16" type="stmt"/>
+        <line num="8" count="16" type="stmt"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="10" count="16" type="stmt"/>
+        <line num="11" count="16" type="stmt"/>
+      </file>
+      <file name="authRoute.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\routes\authRoute.js">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="4" count="16" type="stmt"/>
+        <line num="6" count="16" type="stmt"/>
+        <line num="7" count="16" type="stmt"/>
+        <line num="8" count="16" type="stmt"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="10" count="16" type="stmt"/>
+      </file>
+      <file name="bidRoute.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\routes\bidRoute.js">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="6" count="16" type="stmt"/>
+        <line num="8" count="16" type="stmt"/>
+      </file>
+      <file name="notificationRoute.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\routes\notificationRoute.js">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="5" count="16" type="stmt"/>
+        <line num="7" count="16" type="stmt"/>
+        <line num="8" count="16" type="stmt"/>
+      </file>
+      <file name="reportRoute.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\routes\reportRoute.js">
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="6" count="16" type="stmt"/>
+        <line num="8" count="16" type="stmt"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="10" count="16" type="stmt"/>
+        <line num="11" count="16" type="stmt"/>
+      </file>
+      <file name="taskRoute.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\routes\taskRoute.js">
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="6" count="16" type="stmt"/>
+        <line num="8" count="16" type="stmt"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="10" count="16" type="stmt"/>
+        <line num="11" count="16" type="stmt"/>
+      </file>
+      <file name="userRoute.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\routes\userRoute.js">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="5" count="16" type="stmt"/>
+        <line num="7" count="16" type="stmt"/>
+      </file>
+      <file name="workerRoute.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\routes\workerRoute.js">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="5" count="16" type="stmt"/>
+        <line num="7" count="16" type="stmt"/>
+        <line num="8" count="16" type="stmt"/>
+      </file>
+    </package>
+    <package name="Server.tests.helpers">
+      <metrics statements="35" coveredstatements="27" conditionals="11" coveredconditionals="5" methods="10" coveredmethods="6"/>
+      <file name="testHelpers.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\tests\helpers\testHelpers.js">
+        <metrics statements="35" coveredstatements="27" conditionals="11" coveredconditionals="5" methods="10" coveredmethods="6"/>
+        <line num="10" count="16" type="stmt"/>
+        <line num="12" count="16" type="stmt"/>
+        <line num="13" count="16" type="stmt"/>
+        <line num="14" count="16" type="stmt"/>
+        <line num="17" count="16" type="stmt"/>
+        <line num="18" count="98" type="cond" truecount="1" falsecount="1"/>
+        <line num="21" count="16" type="cond" truecount="1" falsecount="0"/>
+        <line num="22" count="44" type="stmt"/>
+        <line num="29" count="44" type="stmt"/>
+        <line num="30" count="44" type="stmt"/>
+        <line num="33" count="16" type="cond" truecount="1" falsecount="0"/>
+        <line num="34" count="31" type="stmt"/>
+        <line num="48" count="31" type="stmt"/>
+        <line num="49" count="31" type="stmt"/>
+        <line num="52" count="16" type="cond" truecount="1" falsecount="0"/>
+        <line num="53" count="22" type="stmt"/>
+        <line num="59" count="22" type="stmt"/>
+        <line num="60" count="22" type="stmt"/>
+        <line num="63" count="16" type="stmt"/>
+        <line num="64" count="11" type="stmt"/>
+        <line num="65" count="11" type="cond" truecount="1" falsecount="1"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="68" count="11" type="stmt"/>
+        <line num="69" count="11" type="stmt"/>
+        <line num="72" count="11" type="stmt"/>
+        <line num="74" count="11" type="stmt"/>
+        <line num="75" count="11" type="stmt"/>
+        <line num="78" count="16" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="87" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="89" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="Server.tests.setup">
+      <metrics statements="19" coveredstatements="19" conditionals="8" coveredconditionals="4" methods="3" coveredmethods="3"/>
+      <file name="mongoMemory.js" path="C:\Users\hp\Music\MyProjects\SnapFix\Server\tests\setup\mongoMemory.js">
+        <metrics statements="19" coveredstatements="19" conditionals="8" coveredconditionals="4" methods="3" coveredmethods="3"/>
+        <line num="6" count="16" type="stmt"/>
+        <line num="7" count="16" type="cond" truecount="1" falsecount="1"/>
+        <line num="8" count="16" type="stmt"/>
+        <line num="14" count="16" type="stmt"/>
+        <line num="15" count="16" type="stmt"/>
+        <line num="19" count="16" type="stmt"/>
+        <line num="20" count="16" type="cond" truecount="1" falsecount="1"/>
+        <line num="21" count="16" type="stmt"/>
+        <line num="22" count="16" type="stmt"/>
+        <line num="23" count="16" type="stmt"/>
+        <line num="28" count="16" type="cond" truecount="1" falsecount="1"/>
+        <line num="29" count="16" type="stmt"/>
+        <line num="30" count="16" type="stmt"/>
+        <line num="34" count="16" type="stmt"/>
+        <line num="38" count="16" type="stmt"/>
+        <line num="39" count="50" type="cond" truecount="1" falsecount="1"/>
+        <line num="40" count="50" type="stmt"/>
+        <line num="41" count="50" type="stmt"/>
+        <line num="42" count="400" type="stmt"/>
       </file>
     </package>
   </project>

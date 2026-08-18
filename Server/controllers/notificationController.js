@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Notification from "../models/notificationModel.js";
 
 // Fetch notifications for a user
@@ -20,7 +21,10 @@ const getNotifications = async (req, res) => {
 // Mark notification as read
 const markAsRead = async (req, res) => {
     try {
-        const { id } = req.params;
+        const id = req.params.id || req.body?.id;
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid or missing Notification ID" });
+        }
         await Notification.findByIdAndUpdate(id, { isRead: true });
         res.status(200).json({ success: true, message: "Notification marked as read" });
     } catch (error) {
