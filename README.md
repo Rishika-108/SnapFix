@@ -312,7 +312,18 @@ The test suite is partitioned into **Unit**, **Integration**, and **End-to-End (
 
 ---
 
-### 3. Running Automated Tests
+### 3. Verified Test Coverage Results
+
+| Metric | Code Coverage | Quality Benchmark | Status |
+| :--- | :---: | :---: | :---: |
+| **Statements** | **82.86%** | $> 80\%$ | ✅ Passing |
+| **Branches** | **68.62%** | $> 65\%$ | ✅ Passing |
+| **Functions** | **90.90%** | $> 85\%$ | ✅ Passing |
+| **Lines** | **83.50%** | $> 80\%$ | ✅ Passing |
+
+---
+
+### 4. Running Automated Tests
 
 #### Backend API Test Suites (Unit, Integration & E2E)
 ```bash

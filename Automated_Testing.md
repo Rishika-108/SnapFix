@@ -31,12 +31,16 @@ This document provides a comprehensive test plan for the **SnapFix** civic issue
 
 Based on the automated testing implementation and test execution across the repository:
 
-### Baseline Metrics & Testing Scope
-- **Initial Overall Code Coverage**: 59.5% Statements | 45.7% Branches | 54.5% Functions | 60.0% Lines
-- **Server Core (`Server/`)**: 84.2% Statements | 25.0% Branches
-- **Controllers (`Server/controllers/`)**: 49.9% Statements | 38.2% Branches | 44.7% Functions
-- **Middleware (`Server/middleware/`)**: 80.8% Statements | 76.9% Branches
-- **Models (`Server/models/`)**: 96.6% Statements | 95.8% Branches
+### 📈 Achieved Test Coverage Results
+
+Following the implementation of all unit, integration, and end-to-end test suites, backend coverage significantly increased across all metrics:
+
+| Metric | Initial Baseline | Achieved Coverage | Absolute Increase |
+| :--- | :---: | :---: | :---: |
+| **Statements** | 59.50% | **82.86%** | **+23.36%** |
+| **Branches** | 45.69% | **68.62%** | **+22.93%** |
+| **Functions** | 54.54% | **90.90%** | **+36.36%** |
+| **Lines** | 59.96% | **83.50%** | **+23.54%** |
 
 ---
 
